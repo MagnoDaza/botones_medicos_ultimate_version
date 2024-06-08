@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:uuid/uuid.dart';
 import '../button_data.dart';
 
 class OutlinedButtonData extends ButtonData {

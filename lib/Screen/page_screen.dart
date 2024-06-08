@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
-import '../botones/button_data.dart';
+import '../botones/boton/button_factory.dart';
 import '../botones/quill/quill_page.dart';
 import '../controller/button_model.dart';
 import '../controller/color_notifier.dart';

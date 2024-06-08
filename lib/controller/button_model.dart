@@ -62,14 +62,14 @@ class ButtonModel with ChangeNotifier {
   }
 
   // Inicializar botones con la fábrica de botones
-  void initializeButtons(
-      ButtonFactory buttonFactory, TextEditingController controller) {
+  void initializeButtons(ButtonFactory buttonFactory,
+      TextEditingController controller, QuillController quillController) {
     if (!_buttonsInitialized) {
       for (ButtonType type in ButtonType.values) {
         addButton(buttonFactory.createButton(
           type,
           controller.text,
-          Document(),
+          quillController.document,
         ));
       }
       _buttonsInitialized = true;
@@ -93,6 +93,9 @@ class ButtonModel with ChangeNotifier {
       newIsItalic: false,
       newIsUnderline: false,
       newIsBorder: false,
+      document: Document.fromJson(
+        _factoryButtons[_selectedIndex].document.toDelta().toJson(),
+      ),
     );
     _selectedIndex = index;
     _factoryButtons[_selectedIndex] =
@@ -102,6 +105,9 @@ class ButtonModel with ChangeNotifier {
       newIsItalic: isItalic ?? false,
       newIsUnderline: isUnderline ?? false,
       newIsBorder: isBorder ?? false,
+      document: Document.fromJson(
+        _factoryButtons[_selectedIndex].document.toDelta().toJson(),
+      ),
     );
     notifyListeners();
   }

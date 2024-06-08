@@ -55,6 +55,7 @@ class AdaptiveButtonData extends ButtonData {
     required bool newIsItalic,
     required bool newIsUnderline,
     required bool newIsBorder,
+    required Document document,
   }) {
     return copyWith(
       text: newText,

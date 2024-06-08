@@ -21,6 +21,7 @@ class ButtonPageState extends State<ButtonPage> {
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _buttonTextController = TextEditingController();
   final QuillController _controller = QuillController.basic();
+
   late ButtonFactory buttonFactory;
   String message = '';
   bool isReadOnly = false;
@@ -47,7 +48,8 @@ class ButtonPageState extends State<ButtonPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-      buttonModel.initializeButtons(buttonFactory, _buttonTextController);
+      buttonModel.initializeButtons(
+          buttonFactory, _buttonTextController, _controller);
     });
   }
 

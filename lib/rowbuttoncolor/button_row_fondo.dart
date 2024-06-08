@@ -7,16 +7,17 @@ class ColorButtonRowFondo extends StatefulWidget {
   final Function(Color) updateButtonColor;
   final Color initialColor;
 
-  ColorButtonRowFondo({
+  const ColorButtonRowFondo({
+    super.key,
     required this.updateButtonColor,
     this.initialColor = const Color(0xFF4F4F4F),
   });
 
   @override
-  _ColorButtonRowFondoState createState() => _ColorButtonRowFondoState();
+  ColorButtonRowFondoState createState() => ColorButtonRowFondoState();
 }
 
-class _ColorButtonRowFondoState extends State<ColorButtonRowFondo> {
+class ColorButtonRowFondoState extends State<ColorButtonRowFondo> {
   late Color currentColor;
 
   @override

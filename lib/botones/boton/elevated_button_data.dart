@@ -10,7 +10,7 @@ class ElevatedButtonData extends ButtonData {
     required String id,
     required ButtonType type,
     required String text,
-    required QuillController controller,
+    required Document document,
     required this.color,
     required this.textColor,
     required bool isBold,
@@ -21,7 +21,7 @@ class ElevatedButtonData extends ButtonData {
           id: id,
           type: type,
           text: text,
-          controller: controller,
+          document: document,
           isBold: isBold,
           isItalic: isItalic,
           isUnderline: isUnderline,
@@ -56,20 +56,22 @@ class ElevatedButtonData extends ButtonData {
 
   @override
   ElevatedButtonData copyWith({
+    String? id,
+    ButtonType? type,
     String? text,
-    QuillController? controller,
+    Document? document,
+    Color? color,
+    Color? textColor,
     bool? isBold,
     bool? isItalic,
     bool? isUnderline,
     bool? isBorder,
-    Color? color,
-    Color? textColor,
   }) {
     return ElevatedButtonData(
-      id: id,
-      type: type,
+      id: id ?? this.id,
+      type: type ?? this.type,
       text: text ?? this.text,
-      controller: controller ?? this.controller,
+      document: document ?? this.document,
       color: color ?? this.color,
       textColor: textColor ?? this.textColor,
       isBold: isBold ?? this.isBold,
@@ -80,13 +82,21 @@ class ElevatedButtonData extends ButtonData {
   }
 
   @override
-  ElevatedButtonData cloneWithText(String newText, bool newIsBold,
-      bool newIsItalic, bool newIsUnderline, bool newIsBorder) {
+  ElevatedButtonData cloneWithText({
+    required String newText,
+    required bool newIsBold,
+    required bool newIsItalic,
+    required bool newIsUnderline,
+    required bool newIsBorder,
+  }) {
     return copyWith(
-        text: newText,
-        isBold: newIsBold,
-        isItalic: newIsItalic,
-        isUnderline: newIsUnderline,
-        isBorder: newIsBorder);
+      text: newText,
+      isBold: newIsBold,
+      isItalic: newIsItalic,
+      isUnderline: newIsUnderline,
+      isBorder: newIsBorder,
+      document:
+          Document.fromJson(document.toDelta().toJson()), // Clonar el documento
+    );
   }
 }

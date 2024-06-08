@@ -9,15 +9,15 @@ import 'boton/elevated_button_data.dart';
 import 'boton/outlined_button_data.dart';
 import 'button_sheet.dart';
 
-//--Clase genérica de botones
+// Enum para tipos de botones
 enum ButtonType { elevated, outlined, adaptive }
 
+// Clase abstracta para datos de botones
 abstract class ButtonData {
   final String id;
   final ButtonType type;
   final String text;
-  final QuillController controller;
-
+  final Document document;
   final bool isBold;
   final bool isItalic;
   final bool isUnderline;
@@ -27,14 +27,19 @@ abstract class ButtonData {
     required this.id,
     required this.type,
     required this.text,
-    required this.controller,
+    required this.document,
     required this.isBold,
     required this.isItalic,
-    required this.isBorder,
     required this.isUnderline,
+    required this.isBorder,
   });
 
+  // Mostrar una hoja inferior personalizada
   void onPressed(BuildContext context) {
+    QuillController controller = QuillController(
+      document: document,
+      selection: const TextSelection.collapsed(offset: 0),
+    );
     showCustomBottomSheet(
       context: context,
       controller: controller,
@@ -42,23 +47,31 @@ abstract class ButtonData {
     );
   }
 
+  // Construir el widget del botón
   Widget build(BuildContext context);
 
-  //-- Método para clonar el botón con un nuevo texto y nuevo  isBold, isItalic, isUnderline, isBorder
-  ButtonData cloneWithText(String newText, bool newIsBold, bool newIsItalic,
-      bool newIsUnderline, bool newIsBorder) {
+  // Clonar el botón con nuevo texto y estilos
+  ButtonData cloneWithText({
+    required String newText,
+    required bool newIsBold,
+    required bool newIsItalic,
+    required bool newIsUnderline,
+    required bool newIsBorder,
+  }) {
     return copyWith(
       text: newText,
       isBold: newIsBold,
       isItalic: newIsItalic,
       isUnderline: newIsUnderline,
       isBorder: newIsBorder,
+      document: Document.fromJson(document.toDelta().toJson()),
     );
   }
 
+  // Método copyWith para actualizar propiedades
   ButtonData copyWith({
     String? text,
-    QuillController? controller,
+    Document? document,
     bool? isBold,
     bool? isItalic,
     bool? isUnderline,
@@ -66,15 +79,19 @@ abstract class ButtonData {
   });
 }
 
-// Fábrica de botones que también maneja la actualización
+// Fábrica de botones
 class ButtonFactory {
   final ColorNotifier colorNotifier;
   final TextStyleNotifier textStyleNotifier;
 
   ButtonFactory(this.colorNotifier, this.textStyleNotifier);
 
+  // Crear un botón con los valores iniciales
   ButtonData createButton(
-      ButtonType type, String text, QuillController controller) {
+    ButtonType type,
+    String text,
+    Document document,
+  ) {
     String buttonId = const Uuid().v4();
     Color backgroundColor = colorNotifier.getBackgroundColor(buttonId);
     Color textColor = colorNotifier.getTextColor(buttonId);
@@ -83,14 +100,14 @@ class ButtonFactory {
     bool isUnderline = textStyleNotifier.isUnderline;
     bool isBorder = textStyleNotifier.isBorder;
 
-    // Creación de botones según el tipo
+    // Crear botón según el tipo
     switch (type) {
       case ButtonType.elevated:
         return ElevatedButtonData(
           id: buttonId,
           type: type,
           text: text,
-          controller: controller,
+          document: document,
           color: backgroundColor,
           textColor: textColor,
           isBold: isBold,
@@ -103,7 +120,7 @@ class ButtonFactory {
           id: buttonId,
           type: type,
           text: text,
-          controller: controller,
+          document: document,
           isBold: isBold,
           isItalic: isItalic,
           isUnderline: isUnderline,
@@ -114,7 +131,7 @@ class ButtonFactory {
           id: buttonId,
           type: type,
           text: text,
-          controller: controller,
+          document: document,
           isBold: isBold,
           isItalic: isItalic,
           isUnderline: isUnderline,
@@ -125,12 +142,11 @@ class ButtonFactory {
     }
   }
 
-  // Método unificado para actualizar botones
+  // Actualizar propiedades del botón
   ButtonData updateButton(ButtonData button, Map<String, dynamic> newValues) {
-    // Actualización de botones según el tipo
     return button.copyWith(
       text: newValues['text'],
-      controller: newValues['controller'],
+      document: newValues['document'],
       isBold: newValues['isBold'],
       isItalic: newValues['isItalic'],
       isUnderline: newValues['isUnderline'],

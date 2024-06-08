@@ -48,8 +48,8 @@ class ButtonModel with ChangeNotifier {
 
   // Eliminar un botón en una posición específica
   void removeButton(int index) {
-    if (index >= 0 && index < _factoryButtons.length) {
-      _factoryButtons.removeAt(index);
+    if (index >= 0 && index < _savedButtons.length) {
+      _savedButtons.removeAt(index);
       notifyListeners();
     }
   }

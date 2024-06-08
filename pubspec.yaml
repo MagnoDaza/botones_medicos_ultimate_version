@@ -43,6 +43,7 @@ dependencies:
   chips_choice: ^3.0.1
   expansion_tile_group: ^1.2.4
   fluttertoast: ^8.2.6
+  uuid: ^4.4.0
 
 dev_dependencies:
   flutter_test:

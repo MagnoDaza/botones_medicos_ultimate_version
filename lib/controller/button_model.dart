@@ -83,6 +83,8 @@ class ButtonModel with ChangeNotifier {
         );
 
     updateButton(_selectedIndex, resetButton);
+    //refresca el boton seleccionado
+    selectButton(_selectedIndex);
     notifyListeners();
   }
 
@@ -110,10 +112,10 @@ class ButtonModel with ChangeNotifier {
     _factoryButtons[_selectedIndex] =
         _factoryButtons[_selectedIndex].cloneWithText(
       newText: buttonText,
-      newIsBold: isBold ?? false,
-      newIsItalic: isItalic ?? false,
-      newIsUnderline: isUnderline ?? false,
-      newIsBorder: isBorder ?? false,
+      newIsBold: false,
+      newIsItalic: false,
+      newIsUnderline: false,
+      newIsBorder: false,
       //clona los datos del documento actual
       document: document ?? _factoryButtons[_selectedIndex].document,
     );

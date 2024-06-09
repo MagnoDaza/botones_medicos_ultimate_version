@@ -7,7 +7,7 @@ import 'controller_expansion_panel.dart';
 class CustomExpansionPanel extends StatelessWidget {
   final List<PanelItem> items;
 
-  CustomExpansionPanel({required this.items});
+  const CustomExpansionPanel({super.key, required this.items});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +28,8 @@ class CustomExpansionPanel extends StatelessWidget {
                 initiallyExpanded: model.expandedIndex == index,
                 isHasBottomBorder: false,
                 isHasLeftBorder: false,
+                isHasRightBorder: false,
+                isHasTopBorder: false,
                 children: item.expandedValue,
               );
             }).toList(),

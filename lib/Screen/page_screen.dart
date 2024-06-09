@@ -98,6 +98,22 @@ class ButtonPageState extends State<ButtonPage> {
               Provider.of<ThemeNotifier>(context, listen: false).toggleTheme();
             },
           ),
+
+          //ADD BUTTON FOR SAVE BUTTON
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () {
+              saveButton();
+              setState(() {
+                message =
+                    'Se ha creado un nuevo botón con el texto ${_buttonTextController.text}';
+                _buttonTextController.text = '';
+                final buttonModel =
+                    Provider.of<ButtonModel>(context, listen: false);
+                buttonModel.resetButton();
+              });
+            },
+          ),
         ],
       ),
       body: SafeArea(
@@ -139,40 +155,41 @@ class ButtonPageState extends State<ButtonPage> {
                   CustomExpansionPanel(
                     items: [
                       PanelItem(
-                          headerValue: "Texto",
-                          expandedValue: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                //texto de tamaño h3 que dice "ingresar texto"
-                                const Text(
-                                  "Ingresar texto",
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            QuillPage(controller: _controller),
-                                      ),
-                                    )
-                                        .then((result) {
-                                      if (result != null) {
-                                        setState(() {
-                                          _controller.document =
-                                              Document.fromJson(result);
-                                        });
-                                      }
-                                    });
-                                  },
-                                  child: const Text('Ingresar texto'),
-                                ),
-                              ],
-                            )
-                          ],
-                          leading: const Icon(Icons.text_snippet))
+                        leading: const Icon(Icons.text_snippet),
+                        headerValue: "Texto",
+                        expandedValue: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              //texto de tamaño h3 que dice "ingresar texto"
+                              const Text(
+                                "Ingresar texto",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          QuillPage(controller: _controller),
+                                    ),
+                                  )
+                                      .then((result) {
+                                    if (result != null) {
+                                      setState(() {
+                                        _controller.document =
+                                            Document.fromJson(result);
+                                      });
+                                    }
+                                  });
+                                },
+                                child: const Text('Ingresar texto'),
+                              ),
+                            ],
+                          )
+                        ],
+                      )
                     ],
                   ),
 

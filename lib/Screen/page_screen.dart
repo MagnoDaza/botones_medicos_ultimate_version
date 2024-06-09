@@ -82,11 +82,6 @@ class ButtonPageState extends State<ButtonPage> {
         buttonModel.factoryButtons[buttonModel.selectedIndex];
 
     buttonModel.saveButton(selectedButton);
-    buttonModel
-        .resetButton(); // Reset the selected button to the default button.
-    setState(() {
-      message = 'Se ha guardado el botón: ${selectedButton.text}';
-    });
   }
 
   @override
@@ -159,7 +154,10 @@ class ButtonPageState extends State<ButtonPage> {
                   setState(() {
                     message =
                         'Se ha creado un nuevo botón con el texto ${_buttonTextController.text}';
-                    _buttonTextController.text = '';
+                    final buttonModel =
+                        Provider.of<ButtonModel>(context, listen: false);
+                    buttonModel
+                        .resetButton(); // Reset the selected button to the default button.
                   });
                 }
               },

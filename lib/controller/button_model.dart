@@ -64,10 +64,7 @@ class ButtonModel with ChangeNotifier {
     if (!_buttonsInitialized) {
       for (ButtonType type in ButtonType.values) {
         addButton(buttonFactory.createButton(
-          type,
-          textController.text,
-          Document(),
-        ));
+            type, textController.text, controller.document));
       }
       _buttonsInitialized = true;
       selectButton(0);
@@ -84,8 +81,6 @@ class ButtonModel with ChangeNotifier {
         _defaultText,
         _emptyDocument // Nuevo documento vacío
         );
-
-    _factoryButtons[_selectedIndex] = resetButton;
 
     updateButton(_selectedIndex, resetButton);
     notifyListeners();

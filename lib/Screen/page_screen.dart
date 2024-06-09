@@ -3,6 +3,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import '../botones/boton/button_factory.dart';
 import '../botones/quill/quill_page.dart';
+import '../common/refresh_indicator.dart';
 import '../controller/button_model.dart';
 import '../controller/color_notifier.dart';
 import '../controller/text_style_notifier.dart';
@@ -98,75 +99,78 @@ class ButtonPageState extends State<ButtonPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 160,
-              child: ButtonPreview(
-                controller: _buttonTextController,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 160,
+                child: ButtonPreview(
+                  controller: _buttonTextController,
+                  textStyleNotifier: Provider.of<TextStyleNotifier>(context),
+                ),
+              ),
+              ButtonOptions(
                 textStyleNotifier: Provider.of<TextStyleNotifier>(context),
+                buttonTextController: _buttonTextController,
               ),
-            ),
-            ButtonOptions(
-              textStyleNotifier: Provider.of<TextStyleNotifier>(context),
-              buttonTextController: _buttonTextController,
-            ),
-            TextFormField(
-              focusNode: _focusNode,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Texto del botón',
-                hintText: 'Texto del botón',
+              TextFormField(
+                focusNode: _focusNode,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Texto del botón',
+                  hintText: 'Texto del botón',
+                ),
+                controller: _buttonTextController,
+                onChanged: (text) {
+                  updateButtonAttributes({'text': text});
+                },
               ),
-              controller: _buttonTextController,
-              onChanged: (text) {
-                updateButtonAttributes({'text': text});
-              },
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .push(
-                  MaterialPageRoute(
-                    builder: (context) => QuillPage(controller: _controller),
-                  ),
-                )
-                    .then((result) {
-                  if (result != null) {
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(
+                    MaterialPageRoute(
+                      builder: (context) => QuillPage(controller: _controller),
+                    ),
+                  )
+                      .then((result) {
+                    if (result != null) {
+                      setState(() {
+                        _controller.document = Document.fromJson(result);
+                      });
+                    }
+                  });
+                },
+                child: const Text('Ingresar texto'),
+              ),
+              ElevatedButton(
+                child: const Text('Guardar'),
+                onPressed: () {
+                  if (_buttonTextController.text.isEmpty) {
                     setState(() {
-                      _controller.document = Document.fromJson(result);
+                      message =
+                          'Por favor, proporciona un texto para el botón.';
+                    });
+                  } else {
+                    saveButton();
+                    setState(() {
+                      message =
+                          'Se ha creado un nuevo botón con el texto ${_buttonTextController.text}';
+                      //el texto del _buttonTextController.text se muestra en el mensaje como vacio entre comillar ""
+                      _buttonTextController.text = '';
+                      // Reset the selected button to the default button.
+                      final buttonModel =
+                          Provider.of<ButtonModel>(context, listen: false);
+                      buttonModel
+                          .resetButton(); // Reset the selected button to the default button.
                     });
                   }
-                });
-              },
-              child: const Text('Ingresar texto'),
-            ),
-            ElevatedButton(
-              child: const Text('Guardar'),
-              onPressed: () {
-                if (_buttonTextController.text.isEmpty) {
-                  setState(() {
-                    message = 'Por favor, proporciona un texto para el botón.';
-                  });
-                } else {
-                  saveButton();
-                  setState(() {
-                    message =
-                        'Se ha creado un nuevo botón con el texto ${_buttonTextController.text}';
-                    //el texto del _buttonTextController.text se muestra en el mensaje como vacio entre comillar ""
-
-                    // Reset the selected button to the default button.
-                    final buttonModel =
-                        Provider.of<ButtonModel>(context, listen: false);
-                    buttonModel
-                        .resetButton(); // Reset the selected button to the default button.
-                  });
-                }
-              },
-            ),
-            Text(message),
-          ],
+                },
+              ),
+              Text(message),
+            ],
+          ),
         ),
       ),
     );

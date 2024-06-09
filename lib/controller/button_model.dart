@@ -103,7 +103,8 @@ class ButtonModel with ChangeNotifier {
       newIsItalic: false,
       newIsUnderline: false,
       newIsBorder: false,
-      document: Document(), // Nuevo documento vacío
+      //clona los datos del documento actual
+      document: document ?? _factoryButtons[_selectedIndex].document,
     );
     _selectedIndex = index;
     _factoryButtons[_selectedIndex] =
@@ -113,7 +114,8 @@ class ButtonModel with ChangeNotifier {
       newIsItalic: isItalic ?? false,
       newIsUnderline: isUnderline ?? false,
       newIsBorder: isBorder ?? false,
-      document: Document(), // Nuevo documento vacío
+      //clona los datos del documento actual
+      document: document ?? _factoryButtons[_selectedIndex].document,
     );
     notifyListeners();
   }

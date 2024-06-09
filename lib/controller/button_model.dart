@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-
 import '../botones/boton/button_factory.dart';
 import '../botones/button_data.dart';
 
@@ -12,7 +11,11 @@ class ButtonModel with ChangeNotifier {
   int _selectedIndex = 0;
   bool _buttonsInitialized = false;
 
-  ButtonModel(ButtonFactory buttonFactory);
+  final Document _emptyDocument = Document();
+
+  final ButtonFactory buttonFactory;
+
+  ButtonModel(this.buttonFactory);
 
   List<ButtonData> get factoryButtons => _factoryButtons;
   int get selectedIndex => _selectedIndex;
@@ -55,26 +58,37 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
-  // Limpiar la lista de botones
-  void clearButtons() {
-    _factoryButtons.clear();
-    notifyListeners();
-  }
-
   // Inicializar botones con la fábrica de botones
   void initializeButtons(ButtonFactory buttonFactory,
-      TextEditingController controller, QuillController quillController) {
+      TextEditingController textController, QuillController controller) {
     if (!_buttonsInitialized) {
       for (ButtonType type in ButtonType.values) {
         addButton(buttonFactory.createButton(
           type,
-          controller.text,
-          quillController.document,
+          textController.text,
+          Document(),
         ));
       }
       _buttonsInitialized = true;
       selectButton(0);
     }
+  }
+
+  // Crear un nuevo botón y reiniciar el botón seleccionado
+  void resetButton() {
+    final buttonModel = this;
+    final selectedButton =
+        buttonModel.factoryButtons[buttonModel.selectedIndex];
+    final resetButton = buttonFactory.createButton(
+        selectedButton.type, // Tipo predeterminado, puede modificarse
+        _defaultText,
+        _emptyDocument // Nuevo documento vacío
+        );
+
+    _factoryButtons[_selectedIndex] = resetButton;
+
+    updateButton(_selectedIndex, resetButton);
+    notifyListeners();
   }
 
   // Clonar el texto del botón con nuevos estilos
@@ -85,6 +99,7 @@ class ButtonModel with ChangeNotifier {
     bool? isItalic,
     bool? isUnderline,
     bool? isBorder,
+    Document? document,
   }) {
     _factoryButtons[_selectedIndex] =
         _factoryButtons[_selectedIndex].cloneWithText(
@@ -93,9 +108,7 @@ class ButtonModel with ChangeNotifier {
       newIsItalic: false,
       newIsUnderline: false,
       newIsBorder: false,
-      document: Document.fromJson(
-        _factoryButtons[_selectedIndex].document.toDelta().toJson(),
-      ),
+      document: Document(), // Nuevo documento vacío
     );
     _selectedIndex = index;
     _factoryButtons[_selectedIndex] =
@@ -105,9 +118,7 @@ class ButtonModel with ChangeNotifier {
       newIsItalic: isItalic ?? false,
       newIsUnderline: isUnderline ?? false,
       newIsBorder: isBorder ?? false,
-      document: Document.fromJson(
-        _factoryButtons[_selectedIndex].document.toDelta().toJson(),
-      ),
+      document: Document(), // Nuevo documento vacío
     );
     notifyListeners();
   }

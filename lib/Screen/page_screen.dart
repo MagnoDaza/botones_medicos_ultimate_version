@@ -21,7 +21,6 @@ class ButtonPageState extends State<ButtonPage> {
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _buttonTextController = TextEditingController();
   final QuillController _controller = QuillController.basic();
-
   late ButtonFactory buttonFactory;
   String message = '';
   bool isReadOnly = false;
@@ -31,7 +30,6 @@ class ButtonPageState extends State<ButtonPage> {
     super.initState();
     _controller.readOnly = isReadOnly;
     _buttonTextController.text = 'Servicio';
-
     _focusNode.addListener(() {
       if (_focusNode.hasFocus) {
         setState(() {
@@ -49,41 +47,43 @@ class ButtonPageState extends State<ButtonPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final buttonModel = Provider.of<ButtonModel>(context, listen: false);
       buttonModel.initializeButtons(
-          buttonFactory, _buttonTextController, _controller);
+        buttonFactory,
+        _buttonTextController,
+        _controller,
+      );
     });
   }
 
   @override
   void dispose() {
-    // Asegúrate de deshacerte del FocusNode cuando el widget se desmonte
+    // Dispose the FocusNode and TextEditingController when the widget is removed from the widget tree.
     _focusNode.dispose();
     _buttonTextController.dispose();
     super.dispose();
   }
 
   void updateButtonAttributes(Map<String, dynamic> newValues) {
-    //El setState se utiliza para actualizar el estado del widget y que se pueda clonar el texto del boton seleccionado
+    // Update the state to reflect changes in button attributes.
     setState(() {
+      final buttonModel = Provider.of<ButtonModel>(context, listen: false);
       final selectedButton =
-          Provider.of<ButtonModel>(context, listen: false).factoryButtons[
-              Provider.of<ButtonModel>(context, listen: false).selectedIndex];
-
+          buttonModel.factoryButtons[buttonModel.selectedIndex];
       final updatedButton =
           buttonFactory.updateButton(selectedButton, newValues);
 
-      Provider.of<ButtonModel>(context, listen: false).updateButton(
-        Provider.of<ButtonModel>(context, listen: false).selectedIndex,
-        updatedButton,
-      );
+      buttonModel.updateButton(buttonModel.selectedIndex, updatedButton);
     });
   }
 
   void saveButton() {
+    // Save the currently selected button and display a message.
     final buttonModel = Provider.of<ButtonModel>(context, listen: false);
     final selectedButton =
         buttonModel.factoryButtons[buttonModel.selectedIndex];
 
     buttonModel.saveButton(selectedButton);
+    buttonModel
+        .resetButton(); // Reset the selected button to the default button.
     setState(() {
       message = 'Se ha guardado el botón: ${selectedButton.text}';
     });

@@ -27,4 +27,18 @@ class ColorNotifier with ChangeNotifier {
   Color getTextColor(String buttonId) {
     return _buttonTextColors[buttonId] ?? Colors.white; // Color por defecto
   }
+
+  //reset colors
+  void resetColors() {
+    _buttonBackgroundColors.clear();
+    _buttonTextColors.clear();
+    notifyListeners();
+  }
+
+  //resetea el color del boton seleccionado, si el boton tiene colores
+  void resetButtonColor(String buttonId) {
+    _buttonBackgroundColors.remove(buttonId);
+    _buttonTextColors.remove(buttonId);
+    notifyListeners();
+  }
 }

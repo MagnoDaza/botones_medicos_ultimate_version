@@ -3,8 +3,6 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import '../botones/boton/button_factory.dart';
 import '../botones/quill/quill_page.dart';
-import '../botones/widget/expansion_panel/custom_expansion_panel.dart';
-import '../common/refresh_indicator.dart';
 import '../controller/button_model.dart';
 import '../controller/color_notifier.dart';
 import '../controller/text_style_notifier.dart';
@@ -152,44 +150,35 @@ class ButtonPageState extends State<ButtonPage> {
                     buttonTextController: _buttonTextController,
                   ),
                   const SizedBox(height: 10),
-                  CustomExpansionPanel(
-                    items: [
-                      PanelItem(
-                        leading: const Icon(Icons.text_snippet),
-                        headerValue: "Texto",
-                        expandedValue: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              //texto de tamaño h3 que dice "ingresar texto"
-                              const Text(
-                                "Ingresar texto",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          QuillPage(controller: _controller),
-                                    ),
-                                  )
-                                      .then((result) {
-                                    if (result != null) {
-                                      setState(() {
-                                        _controller.document =
-                                            Document.fromJson(result);
-                                      });
-                                    }
-                                  });
-                                },
-                                child: const Text('Ingresar texto'),
-                              ),
-                            ],
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      //texto de tamaño h3 que dice "ingresar texto"
+                      const Text(
+                        "Ingresar texto",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  QuillPage(controller: _controller),
+                            ),
                           )
-                        ],
-                      )
+                              .then((result) {
+                            if (result != null) {
+                              setState(() {
+                                _controller.document =
+                                    Document.fromJson(result);
+                              });
+                            }
+                          });
+                        },
+                        child: const Text('Ingresar texto'),
+                      ),
                     ],
                   ),
 

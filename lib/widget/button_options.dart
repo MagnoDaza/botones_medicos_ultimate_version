@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../botones/boton/elevated_button_data.dart';
 import '../botones/button_data.dart';
+import '../botones/widget/expansion_panel/custom_expansion_panel.dart';
 import '../controller/button_model.dart';
 import '../controller/color_notifier.dart';
 import '../controller/text_style_notifier.dart';
 import '../rowbuttoncolor/button_row_fondo.dart';
 import '../rowbuttoncolor/color_button_text.dart';
+import '../rowbuttoncolor/custom_color_row.dart';
 
 class ButtonOptions extends StatefulWidget {
   final TextEditingController buttonTextController;
@@ -51,6 +53,17 @@ class ButtonOptionsState extends State<ButtonOptions> {
                 buttonData as ElevatedButtonData;
             return Column(
               children: [
+                CustomColorButtonRow(
+                  initialColor: elevatedButtonData.color,
+                  updateButtonColor: (Color newColor) {
+                    buttonModel.updateButton(
+                      buttonModel.selectedIndex,
+                      elevatedButtonData.copyWith(color: newColor),
+                    );
+                    Provider.of<ColorNotifier>(context, listen: false)
+                        .setBackgroundColor(buttonData.id, newColor);
+                  },
+                ),
                 ColorButtonRowFondo(
                   initialColor: elevatedButtonData.color,
                   updateButtonColor: (Color newColor) {

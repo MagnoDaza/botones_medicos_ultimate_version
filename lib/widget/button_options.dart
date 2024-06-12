@@ -7,8 +7,8 @@ import '../botones/widget/expansion_panel/custom_expansion_panel.dart';
 import '../controller/button_model.dart';
 import '../controller/color_notifier.dart';
 import '../controller/text_style_notifier.dart';
-import '../rowbuttoncolor/button_row_fondo.dart';
-import '../rowbuttoncolor/color_button_text.dart';
+// import '../rowbuttoncolor/button_row_fondo.dart';
+// import '../rowbuttoncolor/color_button_text.dart';
 import '../rowbuttoncolor/custom_color_row.dart';
 
 class ButtonOptions extends StatefulWidget {

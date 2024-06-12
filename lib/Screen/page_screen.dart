@@ -1,3 +1,5 @@
+import 'package:botones_medicos_ultimate_version/botones/widget/expansion_panel/custom_expansion_panel.dart';
+import 'package:botones_medicos_ultimate_version/botones/widget/rainbow_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
@@ -151,36 +153,46 @@ class ButtonPageState extends State<ButtonPage> {
                       buttonTextController: _buttonTextController,
                     ),
                     const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        //texto de tamaño h3 que dice "ingresar texto"
-                        const Text(
-                          "Ingresar texto",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context)
-                                .push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    QuillPage(controller: _controller),
-                              ),
-                            )
-                                .then((result) {
-                              if (result != null) {
-                                setState(() {
-                                  _controller.document =
-                                      Document.fromJson(result);
-                                });
-                              }
-                            });
-                          },
-                          child: const Text('Ingresar texto'),
-                        ),
-                      ],
-                    ),
+                    CustomExpansionPanel(items: [
+                      PanelItem(
+                          leading: RainbowIcon(iconData: Icons.text_fields),
+                          headerValue: "Contenido del botón",
+                          expandedValue: [
+                            Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    //texto de tamaño h3 que dice "ingresar texto"
+                                    const Text("Ingresar texto"),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .push(
+                                          MaterialPageRoute(
+                                            builder: (context) => QuillPage(
+                                                controller: _controller),
+                                          ),
+                                        )
+                                            .then((result) {
+                                          if (result != null) {
+                                            setState(() {
+                                              _controller.document =
+                                                  Document.fromJson(result);
+                                            });
+                                          }
+                                        });
+                                      },
+                                      child: const Text('Ingresar texto'),
+                                    ),
+                                  ],
+                                ),
+                                //texto del documento del quill como texto plano
+                              ],
+                            ),
+                          ]),
+                    ]),
                     ElevatedButton(
                       child: const Text('Guardar'),
                       onPressed: () {

@@ -84,6 +84,14 @@ class ButtonPageState extends State<ButtonPage> {
         buttonModel.factoryButtons[buttonModel.selectedIndex];
 
     buttonModel.saveButton(selectedButton);
+
+    setState(() {
+      message =
+          'Se ha creado un nuevo botón con el texto ${_buttonTextController.text}';
+      _buttonTextController.text = '';
+      final buttonModel = Provider.of<ButtonModel>(context, listen: false);
+      buttonModel.resetButton();
+    });
   }
 
   @override
@@ -104,14 +112,6 @@ class ButtonPageState extends State<ButtonPage> {
             icon: const Icon(Icons.save),
             onPressed: () {
               saveButton();
-              setState(() {
-                message =
-                    'Se ha creado un nuevo botón con el texto ${_buttonTextController.text}';
-                _buttonTextController.text = '';
-                final buttonModel =
-                    Provider.of<ButtonModel>(context, listen: false);
-                buttonModel.resetButton();
-              });
             },
           ),
         ],
@@ -203,18 +203,18 @@ class ButtonPageState extends State<ButtonPage> {
                           });
                         } else {
                           saveButton();
-                          setState(() {
-                            message =
-                                'Se ha creado un nuevo botón con el texto ${_buttonTextController.text}';
-                            //el texto del _buttonTextController.text se muestra en el mensaje como vacio entre comillar ""
-                            _buttonTextController.text = '';
-                            // Reset the selected button to the default button.
-                            final buttonModel = Provider.of<ButtonModel>(
-                                context,
-                                listen: false);
-                            buttonModel
-                                .resetButton(); // Reset the selected button to the default button.
-                          });
+                          // setState(() {
+                          //   message =
+                          //       'Se ha creado un nuevo botón con el texto ${_buttonTextController.text}';
+                          //   //el texto del _buttonTextController.text se muestra en el mensaje como vacio entre comillar ""
+                          //   _buttonTextController.text = '';
+                          //   // Reset the selected button to the default button.
+                          //   final buttonModel = Provider.of<ButtonModel>(
+                          //       context,
+                          //       listen: false);
+                          //   buttonModel
+                          //       .resetButton(); // Reset the selected button to the default button.
+                          // });
                         }
                       },
                     ),

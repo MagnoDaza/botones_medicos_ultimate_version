@@ -49,8 +49,9 @@ class PanelItem {
   final String headerValue;
   final List<Widget> expandedValue;
 
-  PanelItem(
-      {required this.headerValue,
-      required this.expandedValue,
-      required this.leading});
+  PanelItem({
+    required this.leading,
+    required this.headerValue,
+    required this.expandedValue,
+  });
 }

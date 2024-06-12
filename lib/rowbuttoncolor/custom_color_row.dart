@@ -27,11 +27,12 @@ class CustomColorButtonRow extends StatefulWidget {
             ];
 
   @override
-  _CustomColorButtonRowState createState() => _CustomColorButtonRowState();
+  CustomColorButtonRowState createState() => CustomColorButtonRowState();
 }
 
-class _CustomColorButtonRowState extends State<CustomColorButtonRow> {
+class CustomColorButtonRowState extends State<CustomColorButtonRow> {
   late Color currentColor;
+  Color customColor = Colors.transparent;
 
   @override
   void initState() {
@@ -45,9 +46,11 @@ class _CustomColorButtonRowState extends State<CustomColorButtonRow> {
       builder: (BuildContext context) {
         return ColorPickerDialog(
           enableAlpha: false,
-          pickerColor: currentColor,
+          pickerColor:
+              customColor == Colors.transparent ? currentColor : customColor,
           onColorChanged: (color) {
             setState(() {
+              customColor = color;
               currentColor = color;
             });
             widget.updateButtonColor(color);
@@ -76,7 +79,13 @@ class _CustomColorButtonRowState extends State<CustomColorButtonRow> {
           direction: Axis.horizontal,
           choiceCheckmark: true,
           choiceLeadingBuilder: (item, i) {
-            return Icon(Icons.circle, color: item.value);
+            if (item.value == Colors.transparent) {
+              return customColor == Colors.transparent
+                  ? RainbowIcon(iconData: Icons.circle)
+                  : Icon(Icons.circle, color: customColor);
+            } else {
+              return Icon(Icons.circle, color: item.value);
+            }
           },
           value: currentColor,
           onChanged: (val) {
@@ -85,6 +94,7 @@ class _CustomColorButtonRowState extends State<CustomColorButtonRow> {
             } else {
               setState(() {
                 currentColor = val;
+                customColor = Colors.transparent;
               });
               widget.updateButtonColor(val);
             }
@@ -92,8 +102,8 @@ class _CustomColorButtonRowState extends State<CustomColorButtonRow> {
           choiceItems: [
             ...widget.colorChoices.map((choice) {
               return C2Choice<Color>(value: choice.color, label: choice.name);
-            }).toList(),
-            C2Choice<Color>(value: Colors.transparent, label: 'Custom'),
+            }),
+            const C2Choice<Color>(value: Colors.transparent, label: 'Custom'),
           ],
         ),
       ],

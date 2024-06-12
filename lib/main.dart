@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'botones/boton/button_factory.dart';
+import 'botones/widget/expansion_panel/controller_expansion_panel.dart';
 import 'controller/button_model.dart';
 import 'controller/button_name_notifier.dart';
 import 'controller/color_notifier.dart';
@@ -16,6 +17,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => TextStyleNotifier()),
         ChangeNotifierProvider(create: (context) => ButtonNameNotifier()),
         ChangeNotifierProvider(create: (context) => ThemeNotifier()),
+        ChangeNotifierProvider(create: (context) => ExpansionPanelController()),
         // Asegúrate de crear ButtonFactory antes de ButtonModel si es necesario
         ChangeNotifierProvider(
           create: (context) => ButtonModel(

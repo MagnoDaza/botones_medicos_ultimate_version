@@ -1,3 +1,4 @@
+import 'package:botones_medicos_ultimate_version/botones/widget/rainbow_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../botones/boton/elevated_button_data.dart';
@@ -53,28 +54,58 @@ class ButtonOptionsState extends State<ButtonOptions> {
                 buttonData as ElevatedButtonData;
             return Column(
               children: [
+                Center(
+                  child: CustomExpansionPanel(items: [
+                    PanelItem(
+                        leading: RainbowIcon(
+                          iconData: Icons.colorize,
+                        ),
+                        headerValue: 'Color de fondo',
+                        expandedValue: [
+                          CustomColorButtonRow(
+                            initialColor: const Color(0xFF4F4F4F),
+                            updateButtonColor: (Color newColor) {
+                              buttonModel.updateButton(
+                                buttonModel.selectedIndex,
+                                elevatedButtonData.copyWith(color: newColor),
+                              );
+                              Provider.of<ColorNotifier>(context, listen: false)
+                                  .setBackgroundColor(buttonData.id, newColor);
+                            },
+                            colorChoices: [
+                              ColorChoice(
+                                  color: const Color(0xFF4F4F4F), name: 'Gris'),
+                              ColorChoice(
+                                  color: const Color(0xFF2196F3), name: 'Azul'),
+                            ],
+                          ),
+                        ]),
+                  ]),
+                ),
+
+                // ColorButtonRowFondo(
+                //   initialColor: elevatedButtonData.color,
+                //   updateButtonColor: (Color newColor) {
+                //     buttonModel.updateButton(
+                //       buttonModel.selectedIndex,
+                //       elevatedButtonData.copyWith(color: newColor),
+                //     );
+                //     Provider.of<ColorNotifier>(context, listen: false)
+                //         .setBackgroundColor(buttonData.id, newColor);
+                //   },
+                // ),
+
                 CustomColorButtonRow(
-                  initialColor: elevatedButtonData.color,
-                  updateButtonColor: (Color newColor) {
-                    buttonModel.updateButton(
-                      buttonModel.selectedIndex,
-                      elevatedButtonData.copyWith(color: newColor),
-                    );
-                    Provider.of<ColorNotifier>(context, listen: false)
-                        .setBackgroundColor(buttonData.id, newColor);
-                  },
-                ),
-                ColorButtonRowFondo(
-                  initialColor: elevatedButtonData.color,
-                  updateButtonColor: (Color newColor) {
-                    buttonModel.updateButton(
-                      buttonModel.selectedIndex,
-                      elevatedButtonData.copyWith(color: newColor),
-                    );
-                    Provider.of<ColorNotifier>(context, listen: false)
-                        .setBackgroundColor(buttonData.id, newColor);
-                  },
-                ),
+                    initialColor: Colors.white,
+                    updateButtonColor: (Color newColor) {
+                      buttonModel.updateButton(
+                        buttonModel.selectedIndex,
+                        elevatedButtonData.copyWith(textColor: newColor),
+                      );
+                      Provider.of<ColorNotifier>(context, listen: false)
+                          .setTextColor(buttonData.id, newColor);
+                    }),
+
                 TextColorButtonRow(
                   initialColor: elevatedButtonData.textColor,
                   updateButtonTextColor: (Color newColor) {

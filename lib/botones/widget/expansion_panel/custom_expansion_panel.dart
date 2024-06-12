@@ -14,25 +14,29 @@ class CustomExpansionPanel extends StatelessWidget {
     return Consumer<ExpansionPanelController>(
       builder: (context, model, child) {
         return SingleChildScrollView(
-          child: ExpansionTileGroup(
-            toggleType: ToggleType.expandAlwaysCurrent,
-            spaceBetweenItem: 16.0,
-            onExpansionItemChanged: (int index, bool isExpanded) {
-              model.setExpandedIndex(isExpanded ? index : -1);
-            },
-            children: items.map<ExpansionTileItem>((PanelItem item) {
-              int index = items.indexOf(item);
-              return ExpansionTileItem(
-                title: Text(item.headerValue),
-                leading: item.leading,
-                initiallyExpanded: model.expandedIndex == index,
-                isHasBottomBorder: false,
-                isHasLeftBorder: false,
-                isHasRightBorder: false,
-                isHasTopBorder: false,
-                children: item.expandedValue,
-              );
-            }).toList(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: ExpansionTileGroup(
+              toggleType: ToggleType.expandAlwaysCurrent,
+              spaceBetweenItem: 10.0,
+              onExpansionItemChanged: (int index, bool isExpanded) {
+                model.setExpandedIndex(isExpanded ? index : -1);
+              },
+              children: items.map<ExpansionTileItem>((PanelItem item) {
+                int index = items.indexOf(item);
+                return ExpansionTileItem(
+                  expandedAlignment: Alignment.center,
+                  title: Text(item.headerValue),
+                  leading: item.leading,
+                  initiallyExpanded: model.expandedIndex == index,
+                  isHasBottomBorder: false,
+                  isHasLeftBorder: false,
+                  isHasRightBorder: false,
+                  isHasTopBorder: false,
+                  children: item.expandedValue,
+                );
+              }).toList(),
+            ),
           ),
         );
       },
@@ -41,9 +45,9 @@ class CustomExpansionPanel extends StatelessWidget {
 }
 
 class PanelItem {
+  final Widget? leading;
   final String headerValue;
   final List<Widget> expandedValue;
-  final Widget? leading;
 
   PanelItem(
       {required this.headerValue,

@@ -93,4 +93,22 @@ class OutlinedButtonData extends ButtonData {
       isBorder: isBorder ?? this.isBorder,
     );
   }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return super.toJson();
+  }
+
+  factory OutlinedButtonData.fromJson(Map<String, dynamic> json) {
+    return OutlinedButtonData(
+      id: json['id'],
+      type: ButtonType.values.firstWhere((e) => e.toString() == json['type']),
+      text: json['text'],
+      document: Document.fromJson(json['document']),
+      isBold: json['isBold'] == 1,
+      isItalic: json['isItalic'] == 1,
+      isUnderline: json['isUnderline'] == 1,
+      isBorder: json['isBorder'] == 1,
+    );
+  }
 }

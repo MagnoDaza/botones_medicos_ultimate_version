@@ -100,4 +100,28 @@ class ElevatedButtonData extends ButtonData {
           Document.fromJson(document.toDelta().toJson()), // Clonar el documento
     );
   }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return super.toJson()
+      ..addAll({
+        'color': color.value,
+        'textColor': textColor.value,
+      });
+  }
+
+  factory ElevatedButtonData.fromJson(Map<String, dynamic> json) {
+    return ElevatedButtonData(
+      id: json['id'],
+      type: ButtonType.values.firstWhere((e) => e.toString() == json['type']),
+      text: json['text'],
+      document: Document.fromJson(json['document']),
+      isBold: json['isBold'] == 1,
+      isItalic: json['isItalic'] == 1,
+      isUnderline: json['isUnderline'] == 1,
+      isBorder: json['isBorder'] == 1,
+      color: Color(json['color']),
+      textColor: Color(json['textColor']),
+    );
+  }
 }

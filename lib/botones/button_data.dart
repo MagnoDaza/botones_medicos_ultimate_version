@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'boton/adaptive_button.dart';
+import 'boton/elevated_button_data.dart';
+import 'boton/outlined_button_data.dart';
 import 'button_sheet.dart';
 
 // Enum para tipos de botones
@@ -71,4 +74,34 @@ abstract class ButtonData {
     bool? isUnderline,
     bool? isBorder,
   });
+
+  // Método para convertir el objeto a JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'type': type.toString(),
+      'text': text,
+      'document': document.toDelta().toJson(),
+      'isBold': isBold ? 1 : 0,
+      'isItalic': isItalic ? 1 : 0,
+      'isUnderline': isUnderline ? 1 : 0,
+      'isBorder': isBorder ? 1 : 0,
+    };
+  }
+
+  // Método para crear una instancia desde JSON
+  static ButtonData fromJson(Map<String, dynamic> json) {
+    ButtonType type =
+        ButtonType.values.firstWhere((e) => e.toString() == json['type']);
+    switch (type) {
+      case ButtonType.elevated:
+        return ElevatedButtonData.fromJson(json);
+      case ButtonType.outlined:
+        return OutlinedButtonData.fromJson(json);
+      case ButtonType.adaptive:
+        return AdaptiveButtonData.fromJson(json);
+      default:
+        throw Exception("Unknown button type");
+    }
+  }
 }

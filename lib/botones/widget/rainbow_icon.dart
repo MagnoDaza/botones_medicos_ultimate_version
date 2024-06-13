@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class RainbowIcon extends StatelessWidget {
   final IconData iconData;
 
-  RainbowIcon({required this.iconData});
+  const RainbowIcon({super.key, required this.iconData});
 
   @override
   Widget build(BuildContext context) {

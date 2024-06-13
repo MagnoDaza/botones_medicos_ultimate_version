@@ -10,7 +10,8 @@ class ButtonPreview extends StatelessWidget {
   final TextEditingController controller;
   final TextStyleNotifier textStyleNotifier;
 
-  ButtonPreview({required this.controller, required this.textStyleNotifier});
+  const ButtonPreview(
+      {super.key, required this.controller, required this.textStyleNotifier});
 
   @override
   Widget build(BuildContext context) {

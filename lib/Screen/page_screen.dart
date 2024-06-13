@@ -116,6 +116,20 @@ class ButtonPageState extends State<ButtonPage> {
           ),
         ],
       ),
+      //boton flotante con el icono de guardar boton.
+      floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            if (_buttonTextController.text.isEmpty) {
+              setState(() {
+                message = 'Por favor, proporciona un texto para el botón.';
+              });
+            } else {
+              saveButton();
+            }
+          },
+          label: const Text("Guardar"),
+          icon: const Icon(Icons.save)),
+      //cuerpo de la aplicación
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -126,73 +140,88 @@ class ButtonPageState extends State<ButtonPage> {
                 textStyleNotifier: Provider.of<TextStyleNotifier>(context),
               ),
             ),
-            TextFormField(
-              focusNode: _focusNode,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Texto del botón',
-                hintText: 'Texto del botón',
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8),
+              child: TextFormField(
+                focusNode: _focusNode,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Texto del botón',
+                  hintText: 'Texto del botón',
+                ),
+                controller: _buttonTextController,
+                onChanged: (text) {
+                  updateButtonAttributes({'text': text});
+                },
               ),
-              controller: _buttonTextController,
-              onChanged: (text) {
-                updateButtonAttributes({'text': text});
-              },
+            ),
+            SizedBox.fromSize(
+              size: const Size.fromHeight(35),
+              child: const Padding(
+                padding: EdgeInsets.only(left: 24.0, top: 10),
+                child: Text(
+                  'Opciones de los botones',
+                  style: TextStyle(
+                    fontSize: 20,
+                    decorationStyle: TextDecorationStyle.wavy,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
             ),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const Text(
-                      'Opciones de los botones',
-                      style: TextStyle(fontSize: 20),
+                    const SizedBox(height: 20),
+                    //Texto del quillcontroller.
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          const Row(
+                            children: [
+                              RainbowIcon(iconData: Icons.text_fields),
+                              SizedBox(width: 8),
+                              Text('Contenido del botón'),
+                            ],
+                          ),
+                          // El texto
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      QuillPage(controller: _controller),
+                                ),
+                              )
+                                  .then((result) {
+                                if (result != null) {
+                                  setState(() {
+                                    _controller.document =
+                                        Document.fromJson(result);
+                                  });
+                                }
+                              });
+                            },
+                            icon: const Icon(Icons.add), // Icono del botón
+                            label: const Text('Nuevo '), // Texto del botón
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 10),
+                    //opciones de los botones
                     ButtonOptions(
                       textStyleNotifier:
                           Provider.of<TextStyleNotifier>(context),
                       buttonTextController: _buttonTextController,
                     ),
                     const SizedBox(height: 10),
-                    CustomExpansionPanel(items: [
-                      PanelItem(
-                          leading: RainbowIcon(iconData: Icons.text_fields),
-                          headerValue: "Contenido del botón",
-                          expandedValue: [
-                            Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    //texto de tamaño h3 que dice "ingresar texto"
-                                    const Text("Ingresar texto"),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .push(
-                                          MaterialPageRoute(
-                                            builder: (context) => QuillPage(
-                                                controller: _controller),
-                                          ),
-                                        )
-                                            .then((result) {
-                                          if (result != null) {
-                                            setState(() {
-                                              _controller.document =
-                                                  Document.fromJson(result);
-                                            });
-                                          }
-                                        });
-                                      },
-                                      child: const Text('Ingresar texto'),
-                                    ),
-                                  ],
-                                ),
-                                //texto del documento del quill como texto plano
-                              ],
-                            ),
-                          ]),
-                    ]),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                       child: const Text('Guardar'),
                       onPressed: () {

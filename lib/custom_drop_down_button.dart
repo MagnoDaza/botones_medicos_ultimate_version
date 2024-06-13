@@ -8,7 +8,8 @@ class CustomDropdownButton extends StatelessWidget {
   final String? dropdownValue;
   final List<String> hiddenForOptions; // Nueva propiedad
 
-  CustomDropdownButton({
+  const CustomDropdownButton({
+    super.key,
     required this.options,
     required this.alwaysVisibleChildren,
     required this.conditionallyVisibleChildren,
@@ -33,7 +34,8 @@ class CustomDropdownButton extends StatelessWidget {
         ),
         ...alwaysVisibleChildren,
         if (dropdownValue != null && !hiddenForOptions.contains(dropdownValue))
-          conditionallyVisibleChildren[dropdownValue!] ?? SizedBox.shrink(),
+          conditionallyVisibleChildren[dropdownValue!] ??
+              const SizedBox.shrink(),
       ],
     );
   }

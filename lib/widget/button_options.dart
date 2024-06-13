@@ -56,7 +56,7 @@ class ButtonOptionsState extends State<ButtonOptions> {
               children: [
                 CustomExpansionPanel(items: [
                   PanelItem(
-                      leading: RainbowIcon(
+                      leading: const RainbowIcon(
                         iconData: Icons.format_color_fill,
                       ),
                       headerValue: 'Color de fondo',
@@ -80,7 +80,8 @@ class ButtonOptionsState extends State<ButtonOptions> {
                         ),
                       ]),
                   PanelItem(
-                    leading: RainbowIcon(iconData: Icons.format_color_text),
+                    leading:
+                        const RainbowIcon(iconData: Icons.format_color_text),
                     headerValue: "Color de texto",
                     expandedValue: [
                       CustomColorButtonRow(

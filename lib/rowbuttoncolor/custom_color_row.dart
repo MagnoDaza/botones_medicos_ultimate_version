@@ -83,7 +83,7 @@ class _CustomColorButtonRowState extends State<CustomColorButtonRow> {
           choiceLeadingBuilder: (item, i) {
             if (item.value == Colors.transparent) {
               return customColor == Colors.transparent
-                  ? RainbowIcon(iconData: Icons.circle)
+                  ? const RainbowIcon(iconData: Icons.circle)
                   : Icon(Icons.circle, color: customColor);
             } else {
               return Icon(Icons.circle, color: item.value);

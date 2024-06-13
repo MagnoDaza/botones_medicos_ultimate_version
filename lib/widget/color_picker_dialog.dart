@@ -4,17 +4,17 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 class ColorPickerDialog extends StatefulWidget {
   final Color pickerColor;
   final ValueChanged<Color> onColorChanged;
-  final List<Color>? colorHistory ;
+  final List<Color>? colorHistory;
   final ValueChanged<List<Color>>? onHistoryChanged;
 
   const ColorPickerDialog({
-    Key? key,
+    super.key,
     required this.pickerColor,
     required this.onColorChanged,
     this.colorHistory,
     this.onHistoryChanged,
     this.enableAlpha = true,
-  }) : super(key: key);
+  });
 
   final bool enableAlpha;
 

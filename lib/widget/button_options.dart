@@ -148,15 +148,7 @@ class ButtonOptionsState extends State<ButtonOptions> {
           case ButtonType.adaptive:
             return Column(
               children: [
-                CustomExpansionPanel(items: [
-                  PanelItem(
-                      leading: const Icon(Icons.format_italic),
-                      headerValue: "Estilos de texto",
-                      expandedValue: [
-                        TextStyleOptions(
-                            textStyleNotifier: widget.textStyleNotifier),
-                      ])
-                ]),
+                customStylesExpansionPanelWidget(widget.textStyleNotifier),
               ],
             );
           // Implementar opciones para AdaptiveButton
@@ -251,3 +243,23 @@ class _TextStyleOptionsState extends State<TextStyleOptions> {
     );
   }
 }
+
+Widget customStylesExpansionPanelWidget(TextStyleNotifier textStyleNotifier) {
+  return CustomExpansionPanel(
+    items: [
+      PanelItem(
+        leading: const Icon(Icons.format_italic),
+        headerValue: "Estilos de texto",
+        expandedValue: [
+          TextStyleOptions(textStyleNotifier: textStyleNotifier),
+        ],
+      ),
+    ],
+  );
+}
+
+//create a function to add a all button options to the button the same at buttonoption
+
+  
+
+

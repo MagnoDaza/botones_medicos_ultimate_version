@@ -1,4 +1,3 @@
-import 'package:botones_medicos_ultimate_version/botones/widget/expansion_panel/custom_expansion_panel.dart';
 import 'package:botones_medicos_ultimate_version/botones/widget/rainbow_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -117,113 +116,128 @@ class ButtonPageState extends State<ButtonPage> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 160,
-              child: ButtonPreview(
-                controller: _buttonTextController,
-                textStyleNotifier: Provider.of<TextStyleNotifier>(context),
-              ),
-            ),
-            TextFormField(
-              focusNode: _focusNode,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Texto del botón',
-                hintText: 'Texto del botón',
-              ),
-              controller: _buttonTextController,
-              onChanged: (text) {
-                updateButtonAttributes({'text': text});
-              },
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const Text(
-                      'Opciones de los botones',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    const SizedBox(height: 10),
-                    ButtonOptions(
-                      textStyleNotifier:
-                          Provider.of<TextStyleNotifier>(context),
-                      buttonTextController: _buttonTextController,
-                    ),
-                    const SizedBox(height: 10),
-                    CustomExpansionPanel(items: [
-                      PanelItem(
-                          leading: RainbowIcon(iconData: Icons.text_fields),
-                          headerValue: "Contenido del botón",
-                          expandedValue: [
-                            Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    //texto de tamaño h3 que dice "ingresar texto"
-                                    const Text("Ingresar texto"),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .push(
-                                          MaterialPageRoute(
-                                            builder: (context) => QuillPage(
-                                                controller: _controller),
-                                          ),
-                                        )
-                                            .then((result) {
-                                          if (result != null) {
-                                            setState(() {
-                                              _controller.document =
-                                                  Document.fromJson(result);
-                                            });
-                                          }
-                                        });
-                                      },
-                                      child: const Text('Ingresar texto'),
-                                    ),
-                                  ],
-                                ),
-                                //texto del documento del quill como texto plano
-                              ],
-                            ),
-                          ]),
-                    ]),
-                    ElevatedButton(
-                      child: const Text('Guardar'),
-                      onPressed: () {
-                        if (_buttonTextController.text.isEmpty) {
-                          setState(() {
-                            message =
-                                'Por favor, proporciona un texto para el botón.';
-                          });
-                        } else {
-                          saveButton();
-                          // setState(() {
-                          //   message =
-                          //       'Se ha creado un nuevo botón con el texto ${_buttonTextController.text}';
-                          //   //el texto del _buttonTextController.text se muestra en el mensaje como vacio entre comillar ""
-                          //   _buttonTextController.text = '';
-                          //   // Reset the selected button to the default button.
-                          //   final buttonModel = Provider.of<ButtonModel>(
-                          //       context,
-                          //       listen: false);
-                          //   buttonModel
-                          //       .resetButton(); // Reset the selected button to the default button.
-                          // });
-                        }
-                      },
-                    ),
-                    Text(message),
-                  ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 160,
+                child: ButtonPreview(
+                  controller: _buttonTextController,
+                  textStyleNotifier: Provider.of<TextStyleNotifier>(context),
                 ),
               ),
-            ),
-          ],
+              TextFormField(
+                focusNode: _focusNode,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Texto del botón',
+                  hintText: 'Texto del botón',
+                ),
+                controller: _buttonTextController,
+                onChanged: (text) {
+                  updateButtonAttributes({'text': text});
+                },
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Opciones de los botones',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      const SizedBox(height: 10),
+                      ListTile(
+                        leading: RainbowIcon(iconData: Icons.description),
+                        title: const Text('Contenido'),
+                        trailing: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context)
+                                .push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    QuillPage(controller: _controller),
+                              ),
+                            )
+                                .then((result) {
+                              if (result != null) {
+                                setState(() {
+                                  _controller.document =
+                                      Document.fromJson(result);
+                                });
+                              }
+                            });
+                          },
+                          label: const Text('Nuevo'),
+                          // icon: const Icon(Icons.description)
+                        ),
+                      ),
+                      ButtonOptions(
+                        textStyleNotifier:
+                            Provider.of<TextStyleNotifier>(context),
+                        buttonTextController: _buttonTextController,
+                      ),
+
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     Row(
+                      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //       children: [
+                      //         RainbowIcon(iconData: Icons.text_fields),
+                      //         const SizedBox(height: 8),
+                      //         const Text(
+                      //           'Contenido del boton',
+                      //           textAlign: TextAlign.left,
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     ElevatedButton.icon(
+                      //       onPressed: () {
+                      //         Navigator.of(context)
+                      //             .push(
+                      //           MaterialPageRoute(
+                      //             builder: (context) =>
+                      //                 QuillPage(controller: _controller),
+                      //           ),
+                      //         )
+                      //             .then((result) {
+                      //           if (result != null) {
+                      //             setState(() {
+                      //               _controller.document =
+                      //                   Document.fromJson(result);
+                      //             });
+                      //           }
+                      //         });
+                      //       },
+                      //       label: const Text('Nuevo'),
+                      //       icon: const Icon(Icons.text_fields),
+                      //     ),
+                      //   ],
+                      // ),
+                      //texto del documento del quill como texto plano
+
+                      ElevatedButton(
+                        child: const Text('Guardar'),
+                        onPressed: () {
+                          if (_buttonTextController.text.isEmpty) {
+                            setState(() {
+                              message =
+                                  'Por favor, proporciona un texto para el botón.';
+                            });
+                          } else {
+                            saveButton();
+                          }
+                        },
+                      ),
+                      Text(message),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

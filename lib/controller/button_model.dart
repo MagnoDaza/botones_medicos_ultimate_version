@@ -135,4 +135,128 @@ class ButtonModel with ChangeNotifier {
     );
     notifyListeners();
   }
+
+  // Métodos nuevos para CRUD
+
+  // Inicializar la creación de un nuevo botón
+  void initializeCreation(String defaultText, Document document) {
+    _factoryButtons.clear();
+
+    for (int i = 0; i < 3; i++) {
+      addButton(buttonFactory.createButton(
+        ButtonType.values[i], // Tipo de botón
+        _defaultText,
+        document, // Documento Quill predeterminado
+      ));
+    }
+  
+
+    // ));
+    _selectedIndex = 0;
+    notifyListeners();
+  }
+
+  // Método para cargar más botones
+  void loadMoreButtons() {
+    int currentCount = _factoryButtons.length;
+    // Asumiendo que hay más tipos de botones para cargar
+    for (int i = currentCount;
+        i < currentCount + 3 && i < ButtonType.values.length;
+        i++) {
+      addButton(buttonFactory.createButton(
+        ButtonType.values[i], // Tipo de botón
+        _defaultText,
+        QuillController.basic().document, // Documento Quill predeterminado
+      ));
+    }
+    notifyListeners();
+  }
+
+  // Actualizar los atributos de un botón
+  void updateButtonAttributes(Map<String, dynamic> newValues) {
+    if (_selectedIndex >= 0 && _selectedIndex < _factoryButtons.length) {
+      ButtonData updatedButton = _factoryButtons[_selectedIndex].copyWith(
+        text: newValues['text'],
+        isBold: newValues['isBold'],
+        isItalic: newValues['isItalic'],
+        isUnderline: newValues['isUnderline'],
+        isBorder: newValues['isBorder'],
+      );
+      _factoryButtons[_selectedIndex] = updatedButton;
+      notifyListeners();
+    }
+  }
+
+  // Guardar los cambios en un botón editado
+  void saveEditedButton(String text, Document document) {
+    if (_selectedIndex >= 0 && _selectedIndex < _savedButtons.length) {
+      ButtonData updatedButton = _savedButtons[_selectedIndex].copyWith(
+        text: text,
+        document: document,
+      );
+      _savedButtons[_selectedIndex] = updatedButton;
+      notifyListeners();
+    }
+  }
+
+  // Crear un nuevo botón y añadirlo a la lista
+  void createNewButton(String text, Document document) {
+    final buttonModel = this;
+    final selectedButton =
+        buttonModel.factoryButtons[buttonModel.selectedIndex];
+
+    ButtonData newButton = buttonFactory.createButton(
+      selectedButton.type,
+      text,
+      document,
+    );
+    _savedButtons.add(newButton);
+    notifyListeners();
+  }
+
+  // Método para inicializar la edición de un botón existente
+  void initializeEdit(ButtonData buttonData) {
+    _factoryButtons.clear();
+    _factoryButtons.add(buttonData);
+    _selectedIndex = _savedButtons.indexWhere((b) => b.id == buttonData.id);
+    notifyListeners();
+  }
+
+  // Método para clonar los parámetros de un botón a otro
+  void cloneButtonParameters(int sourceIndex, int targetIndex) {
+    if (sourceIndex >= 0 &&
+        sourceIndex < _factoryButtons.length &&
+        targetIndex >= 0 &&
+        targetIndex < _factoryButtons.length) {
+      ButtonData sourceButton = _factoryButtons[sourceIndex];
+      ButtonData targetButton = _factoryButtons[targetIndex].copyWith(
+        text: sourceButton.text,
+        isBold: sourceButton.isBold,
+        isItalic: sourceButton.isItalic,
+        isUnderline: sourceButton.isUnderline,
+        isBorder: sourceButton.isBorder,
+        document: sourceButton.document,
+      );
+      _factoryButtons[targetIndex] = targetButton;
+      notifyListeners();
+    }
+  }
+
+  // Método para cambiar el tipo de un botón durante la edición
+  void changeButtonType(int index, ButtonType newType) {
+    if (index >= 0 && index < _factoryButtons.length) {
+      ButtonData currentButton = _factoryButtons[index];
+      ButtonData updatedButton = buttonFactory.createButton(
+        newType,
+        currentButton.text,
+        currentButton.document,
+        // isBold: currentButton.isBold,
+        // isItalic: currentButton.isItalic,
+        // isUnderline: currentButton.isUnderline,
+        // isBorder: currentButton.isBorder,
+      );
+      _factoryButtons[index] = updatedButton;
+      notifyListeners();
+    }
+  }
 }

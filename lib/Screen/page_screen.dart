@@ -36,7 +36,6 @@ class ButtonPageState extends State<ButtonPage> {
       Provider.of<ColorNotifier>(context, listen: false),
       Provider.of<TextStyleNotifier>(context, listen: false),
     );
-    // Determinar si estamos editando un botón existente
     isEditing = widget.buttonData != null;
     if (isEditing) {
       _buttonTextController.text = widget.buttonData!.text;
@@ -57,18 +56,11 @@ class ButtonPageState extends State<ButtonPage> {
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-      if (!isEditing) {
-        buttonModel.initializeButtons(
-          buttonFactory,
-          _buttonTextController,
-          _controller,
-        );
+      if (isEditing) {
+        buttonModel.initializeEdit(widget.buttonData!);
       } else {
-        int index = buttonModel.savedButtons
-            .indexWhere((button) => button.id == widget.buttonData!.id);
-        if (index != -1) {
-          buttonModel.selectButton(index);
-        }
+        buttonModel.initializeCreation(
+            _buttonTextController.text, _controller.document);
       }
     });
   }
@@ -81,71 +73,23 @@ class ButtonPageState extends State<ButtonPage> {
   }
 
   void updateButtonAttributes(Map<String, dynamic> newValues) {
-    setState(() {
-      final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-      final selectedButton =
-          buttonModel.factoryButtons[buttonModel.selectedIndex];
-      final updatedButton =
-          buttonFactory.updateButton(selectedButton, newValues);
-      buttonModel.updateButton(buttonModel.selectedIndex, updatedButton);
-    });
+    final buttonModel = Provider.of<ButtonModel>(context, listen: false);
+    buttonModel.updateButtonAttributes(newValues);
   }
 
   void saveButton() {
     final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-    final selectedButton =
-        buttonModel.factoryButtons[buttonModel.selectedIndex];
     if (isEditing) {
-      // Actualizar el botón existente
-      buttonModel.updateButton(
-          buttonModel.selectedIndex,
-          buttonFactory.updateButton(widget.buttonData!, {
-            'text': _buttonTextController.text,
-            // Asegúrate de incluir todos los atributos que se pueden editar
-          }));
+      buttonModel.saveEditedButton(
+          _buttonTextController.text, _controller.document);
     } else {
-      // Crear un nuevo botón
-      final newButton = buttonFactory.createButton(
-          selectedButton.type, _buttonTextController.text, _controller.document
-
-          // Parámetros para crear un nuevo botón
-          );
-      buttonModel.saveButton(newButton);
+      buttonModel.createNewButton(
+        _buttonTextController.text,
+        _controller.document,
+      );
     }
     Navigator.of(context)
         .pop(); // Regresar a la página anterior después de guardar
-  }
-
-  // Método para editar los atributos del botón y actualizar el JSON
-  void editButtonAttributes(Map<String, dynamic> newAttributes) {
-    final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-    ButtonData currentButton =
-        buttonModel.factoryButtons[buttonModel.selectedIndex];
-
-    // Actualizar los atributos del botón
-    ButtonData updatedButton = currentButton.copyWith(
-      text: newAttributes['text'],
-      isBold: newAttributes['isBold'],
-      isItalic: newAttributes['isItalic'],
-      isUnderline: newAttributes['isUnderline'],
-      isBorder: newAttributes['isBorder'],
-      // Asegúrate de incluir todos los atributos que se pueden editar
-    );
-
-    // Actualizar el botón en el modelo
-    buttonModel.updateButton(buttonModel.selectedIndex, updatedButton);
-
-    // Serializar el botón actualizado a JSON
-    Map<String, dynamic> json = updatedButton.toJson();
-
-    // Aquí podrías guardar el JSON en una base de datos o en el estado de la aplicación
-  }
-
-  // Método para inicializar los atributos del botón desde JSON
-  void initializeButtonFromJson(Map<String, dynamic> json) {
-    ButtonData buttonFromJson = ButtonData.fromJson(json);
-    final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-    buttonModel.addButton(buttonFromJson);
   }
 
   @override

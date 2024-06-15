@@ -24,32 +24,35 @@ class ButtonPreview extends StatelessWidget {
     return Consumer<ButtonModel>(
       builder: (context, buttonModel, child) {
         return ScrollSnapList(
+          
           dynamicItemOpacity: 0.5,
           onItemFocus: (index) {
             final selectedButton = buttonModel.factoryButtons[index];
-            // Clonar texto del botón y actualizar controlador de texto
-            Provider.of<ButtonModel>(context, listen: false).cloneText(
-              index,
-              controller.text,
-              isBold: textStyleNotifier.isBold,
-              isItalic: textStyleNotifier.isItalic,
-              isUnderline: textStyleNotifier.isUnderline,
-              isBorder: textStyleNotifier.isBorder,
-              document: Document.fromJson(selectedButton.document
-                  .toDelta()
-                  .toJson()), // Asegurar que cada botón tenga su propio documento
-            );
-            buttonModel.selectButton(index);
+            // Actualizar el controlador de texto y el documento Quill
             controller.text = selectedButton.text;
-
-            // Si se está editando, actualizar el documento Quill
-            if (buttonData != null && quillController != null) {
+            if (quillController != null) {
               quillController!.document = selectedButton.document;
+              buttonModel.cloneText(
+                buttonModel.selectedIndex, controller.text,
+                  );
+            }
+            // Seleccionar el botón en el modelo
+            buttonModel.selectButton(index);
+            // Si se está editando, clonar los parámetros al botón seleccionado
+            if (buttonData != null) {
+              buttonModel.cloneButtonParameters(
+                  buttonModel.selectedIndex, index);
             }
           },
           itemSize: 150,
+          onReachEnd: () {
+            // Cargar más botones si es necesario
+            buttonModel.loadMoreButtons();
+          },
+
           dynamicItemSize: true,
           itemCount: buttonModel.factoryButtons.length,
+
           itemBuilder: (context, index) {
             ButtonData buttonData = buttonModel.factoryButtons[index];
             return SizedBox(

@@ -46,7 +46,7 @@ class ElevatedButtonData extends ButtonData {
               )
             : null,
       ),
-        onPressed: () {
+      onPressed: () {
         showCustomBottomSheet(
           context: context,
           controller: quillController,

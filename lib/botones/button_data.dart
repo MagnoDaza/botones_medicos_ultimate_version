@@ -30,18 +30,7 @@ abstract class ButtonData {
     required this.isBorder,
   });
 
-  // Mostrar una hoja inferior personalizada
-  void onPressed(BuildContext context) {
-    QuillController controller = QuillController(
-      document: document,
-      selection: const TextSelection.collapsed(offset: 0),
-    );
-    showCustomBottomSheet(
-      context: context,
-      controller: controller,
-      builder: (BuildContext context) {},
-    );
-  }
+ 
 
   // Construir el widget del botón
   Widget build(BuildContext context);

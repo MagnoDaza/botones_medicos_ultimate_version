@@ -1,4 +1,3 @@
-import 'package:botones_medicos_ultimate_version/botones/widget/rainbow_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
@@ -24,83 +23,136 @@ class ButtonPage extends StatefulWidget {
 class ButtonPageState extends State<ButtonPage> {
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _buttonTextController = TextEditingController();
-  final QuillController _controller = QuillController.basic();
+  late QuillController _controller;
   late ButtonFactory buttonFactory;
   String message = '';
   bool isReadOnly = false;
+  bool isEditing = false; // Nuevo flag para edición
 
   @override
   void initState() {
     super.initState();
-    _controller.readOnly = isReadOnly;
-    _buttonTextController.text = 'Servicio';
+    buttonFactory = ButtonFactory(
+      Provider.of<ColorNotifier>(context, listen: false),
+      Provider.of<TextStyleNotifier>(context, listen: false),
+    );
+    // Determinar si estamos editando un botón existente
+    isEditing = widget.buttonData != null;
+    if (isEditing) {
+      _buttonTextController.text = widget.buttonData!.text;
+      _controller = QuillController(
+        document: widget.buttonData!.document,
+        selection: const TextSelection.collapsed(offset: 0),
+      );
+    } else {
+      _buttonTextController.text = 'Servicio';
+      _controller = QuillController.basic();
+    }
     _focusNode.addListener(() {
-      if (_focusNode.hasFocus) {
+      if (_focusNode.hasFocus && !isEditing) {
         setState(() {
           _buttonTextController.text = '';
         });
       }
     });
-
-    // Initialize the button factory
-    buttonFactory = ButtonFactory(
-      Provider.of<ColorNotifier>(context, listen: false),
-      Provider.of<TextStyleNotifier>(context, listen: false),
-    );
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-      buttonModel.initializeButtons(
-        buttonFactory,
-        _buttonTextController,
-        _controller,
-      );
+      if (!isEditing) {
+        buttonModel.initializeButtons(
+          buttonFactory,
+          _buttonTextController,
+          _controller,
+        );
+      } else {
+        int index = buttonModel.savedButtons
+            .indexWhere((button) => button.id == widget.buttonData!.id);
+        if (index != -1) {
+          buttonModel.selectButton(index);
+        }
+      }
     });
   }
 
   @override
   void dispose() {
-    // Dispose the FocusNode and TextEditingController when the widget is removed from the widget tree.
     _focusNode.dispose();
     _buttonTextController.dispose();
     super.dispose();
   }
 
   void updateButtonAttributes(Map<String, dynamic> newValues) {
-    // Update the state to reflect changes in button attributes.
     setState(() {
       final buttonModel = Provider.of<ButtonModel>(context, listen: false);
       final selectedButton =
           buttonModel.factoryButtons[buttonModel.selectedIndex];
       final updatedButton =
           buttonFactory.updateButton(selectedButton, newValues);
-
       buttonModel.updateButton(buttonModel.selectedIndex, updatedButton);
     });
   }
 
   void saveButton() {
-    // Save the currently selected button and display a message.
     final buttonModel = Provider.of<ButtonModel>(context, listen: false);
     final selectedButton =
         buttonModel.factoryButtons[buttonModel.selectedIndex];
+    if (isEditing) {
+      // Actualizar el botón existente
+      buttonModel.updateButton(
+          buttonModel.selectedIndex,
+          buttonFactory.updateButton(widget.buttonData!, {
+            'text': _buttonTextController.text,
+            // Asegúrate de incluir todos los atributos que se pueden editar
+          }));
+    } else {
+      // Crear un nuevo botón
+      final newButton = buttonFactory.createButton(
+          selectedButton.type, _buttonTextController.text, _controller.document
 
-    buttonModel.saveButton(selectedButton);
+          // Parámetros para crear un nuevo botón
+          );
+      buttonModel.saveButton(newButton);
+    }
+    Navigator.of(context)
+        .pop(); // Regresar a la página anterior después de guardar
+  }
 
-    setState(() {
-      message =
-          'Se ha creado un nuevo botón con el texto ${_buttonTextController.text}';
-      _buttonTextController.text = '';
-      final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-      buttonModel.resetButton();
-    });
+  // Método para editar los atributos del botón y actualizar el JSON
+  void editButtonAttributes(Map<String, dynamic> newAttributes) {
+    final buttonModel = Provider.of<ButtonModel>(context, listen: false);
+    ButtonData currentButton =
+        buttonModel.factoryButtons[buttonModel.selectedIndex];
+
+    // Actualizar los atributos del botón
+    ButtonData updatedButton = currentButton.copyWith(
+      text: newAttributes['text'],
+      isBold: newAttributes['isBold'],
+      isItalic: newAttributes['isItalic'],
+      isUnderline: newAttributes['isUnderline'],
+      isBorder: newAttributes['isBorder'],
+      // Asegúrate de incluir todos los atributos que se pueden editar
+    );
+
+    // Actualizar el botón en el modelo
+    buttonModel.updateButton(buttonModel.selectedIndex, updatedButton);
+
+    // Serializar el botón actualizado a JSON
+    Map<String, dynamic> json = updatedButton.toJson();
+
+    // Aquí podrías guardar el JSON en una base de datos o en el estado de la aplicación
+  }
+
+  // Método para inicializar los atributos del botón desde JSON
+  void initializeButtonFromJson(Map<String, dynamic> json) {
+    ButtonData buttonFromJson = ButtonData.fromJson(json);
+    final buttonModel = Provider.of<ButtonModel>(context, listen: false);
+    buttonModel.addButton(buttonFromJson);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Crear Botón'),
+        title: Text(isEditing ? 'Editar Botón' : 'Crear Botón'),
         actions: [
           IconButton(
             icon: const Icon(Icons.brightness_6),
@@ -108,8 +160,6 @@ class ButtonPageState extends State<ButtonPage> {
               Provider.of<ThemeNotifier>(context, listen: false).toggleTheme();
             },
           ),
-
-          //ADD BUTTON FOR SAVE BUTTON
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: () {
@@ -128,6 +178,11 @@ class ButtonPageState extends State<ButtonPage> {
                 child: ButtonPreview(
                   controller: _buttonTextController,
                   textStyleNotifier: Provider.of<TextStyleNotifier>(context),
+                  buttonData:
+                      widget.buttonData, // Pasar el buttonData si está editando
+                  quillController: isEditing
+                      ? _controller
+                      : null, // Pasar el quillController si está editando
                 ),
               ),
               TextFormField(
@@ -152,28 +207,28 @@ class ButtonPageState extends State<ButtonPage> {
                       ),
                       const SizedBox(height: 10),
                       ListTile(
-                        leading: RainbowIcon(iconData: Icons.description),
+                        leading: const Icon(Icons.description),
                         title: const Text('Contenido'),
                         trailing: ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.of(context)
-                                .push(
+                          onPressed: () async {
+                            final result = await Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) =>
                                     QuillPage(controller: _controller),
                               ),
-                            )
-                                .then((result) {
-                              if (result != null) {
-                                setState(() {
-                                  _controller.document =
-                                      Document.fromJson(result);
-                                });
-                              }
-                            });
+                            );
+                            if (result != null) {
+                              setState(() {
+                                _controller = QuillController(
+                                  document: Document.fromJson(result),
+                                  selection:
+                                      const TextSelection.collapsed(offset: 0),
+                                );
+                              });
+                            }
                           },
                           label: const Text('Nuevo'),
-                          // icon: const Icon(Icons.description)
+                          icon: const Icon(Icons.description),
                         ),
                       ),
                       ButtonOptions(
@@ -181,46 +236,6 @@ class ButtonPageState extends State<ButtonPage> {
                             Provider.of<TextStyleNotifier>(context),
                         buttonTextController: _buttonTextController,
                       ),
-
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //   children: [
-                      //     Row(
-                      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //       children: [
-                      //         RainbowIcon(iconData: Icons.text_fields),
-                      //         const SizedBox(height: 8),
-                      //         const Text(
-                      //           'Contenido del boton',
-                      //           textAlign: TextAlign.left,
-                      //         ),
-                      //       ],
-                      //     ),
-                      //     ElevatedButton.icon(
-                      //       onPressed: () {
-                      //         Navigator.of(context)
-                      //             .push(
-                      //           MaterialPageRoute(
-                      //             builder: (context) =>
-                      //                 QuillPage(controller: _controller),
-                      //           ),
-                      //         )
-                      //             .then((result) {
-                      //           if (result != null) {
-                      //             setState(() {
-                      //               _controller.document =
-                      //                   Document.fromJson(result);
-                      //             });
-                      //           }
-                      //         });
-                      //       },
-                      //       label: const Text('Nuevo'),
-                      //       icon: const Icon(Icons.text_fields),
-                      //     ),
-                      //   ],
-                      // ),
-                      //texto del documento del quill como texto plano
-
                       ElevatedButton(
                         child: const Text('Guardar'),
                         onPressed: () {

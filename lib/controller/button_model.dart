@@ -89,6 +89,7 @@ class ButtonModel with ChangeNotifier {
   }
 
   // Clonar el texto del botón con nuevos estilos
+  // Clonar el texto del botón con nuevos estilos
   void cloneText(
     int index,
     String buttonText, {
@@ -98,27 +99,23 @@ class ButtonModel with ChangeNotifier {
     bool? isBorder,
     Document? document,
   }) {
-    _factoryButtons[_selectedIndex] =
-        _factoryButtons[_selectedIndex].cloneWithText(
-      newText: _defaultText,
-      newIsBold: false,
-      newIsItalic: false,
-      newIsUnderline: false,
-      newIsBorder: false,
-      //clona los datos del documento actual
-      document: document ?? _factoryButtons[_selectedIndex].document,
-    );
+    _factoryButtons[_selectedIndex] = _factoryButtons[_selectedIndex]
+        .cloneWithText(
+            newText: _defaultText,
+            newIsBold: false,
+            newIsItalic: false,
+            newIsUnderline: false,
+            newIsBorder: false,
+            document: Document());
     _selectedIndex = index;
-    _factoryButtons[_selectedIndex] =
-        _factoryButtons[_selectedIndex].cloneWithText(
-      newText: buttonText,
-      newIsBold: false,
-      newIsItalic: false,
-      newIsUnderline: false,
-      newIsBorder: false,
-      //clona los datos del documento actual
-      document: document ?? _factoryButtons[_selectedIndex].document,
-    );
+    _factoryButtons[_selectedIndex] = _factoryButtons[_selectedIndex]
+        .cloneWithText(
+            newText: buttonText,
+            newIsBold: isBold ?? false,
+            newIsItalic: isItalic ?? false,
+            newIsUnderline: isUnderline ?? false,
+            newIsBorder: isBorder ?? false,
+            document: document ?? Document());
     notifyListeners();
   }
 

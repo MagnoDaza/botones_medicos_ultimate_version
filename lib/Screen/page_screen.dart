@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import '../botones/boton/button_factory.dart';
+import '../botones/button_data.dart';
 import '../botones/quill/quill_page.dart';
 import '../controller/button_model.dart';
 import '../controller/color_notifier.dart';
@@ -12,7 +13,9 @@ import '../preview_button.dart';
 import '../widget/button_options.dart';
 
 class ButtonPage extends StatefulWidget {
-  const ButtonPage({super.key});
+  final ButtonData? buttonData; // ButtonData opcional para edición
+
+  const ButtonPage({super.key, this.buttonData});
 
   @override
   ButtonPageState createState() => ButtonPageState();

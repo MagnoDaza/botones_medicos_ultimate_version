@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import '../button_data.dart';
+import '../button_sheet.dart';
 
 class AdaptiveButtonData extends ButtonData {
   AdaptiveButtonData({
@@ -26,6 +27,12 @@ class AdaptiveButtonData extends ButtonData {
   @override
   Widget build(BuildContext context) {
     final textColor = Theme.of(context).textTheme.bodyMedium?.color;
+
+    final Document document = this.document;
+    final quillController = QuillController(
+      document: document,
+      selection: const TextSelection.collapsed(offset: 0),
+    );
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shape: isBorder
@@ -34,7 +41,13 @@ class AdaptiveButtonData extends ButtonData {
               )
             : null,
       ),
-      onPressed: () => onPressed(context),
+      onPressed: () {
+        showCustomBottomSheet(
+          context: context,
+          controller: quillController,
+          builder: (BuildContext context) {},
+        );
+      },
       child: Text(
         text,
         style: TextStyle(

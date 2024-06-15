@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import '../button_data.dart';
+import '../button_sheet.dart';
 
 class ElevatedButtonData extends ButtonData {
   final Color color;
@@ -40,7 +41,17 @@ class ElevatedButtonData extends ButtonData {
               )
             : null,
       ),
-      onPressed: () => onPressed(context),
+      onPressed: () {
+        QuillController controller = QuillController(
+          document: document,
+          selection: const TextSelection.collapsed(offset: 0),
+        );
+        showCustomBottomSheet(
+          context: context,
+          controller: controller,
+          builder: (BuildContext context) {},
+        );
+      },
       child: Text(
         text,
         style: TextStyle(

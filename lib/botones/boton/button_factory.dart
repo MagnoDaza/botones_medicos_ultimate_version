@@ -18,6 +18,7 @@ class ButtonFactory {
     ButtonType type,
     String text,
     Document document,
+    
   ) {
     String buttonId = const Uuid().v4();
     Color backgroundColor = colorNotifier.getBackgroundColor(buttonId);

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'Screen/page_screen.dart';
 import 'controller/button_model.dart';
 import 'controller/theme_notifier.dart';
-import 'create_button.dart';
 import 'widget/button_grid.dart';
 
 class HomePage extends StatelessWidget {
@@ -30,14 +29,22 @@ class HomePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Crear botón:"),
-                CreateButton(),
-              ],
+            ListTile(
+              title: const Text("Crear Botón"),
+              trailing: ElevatedButton.icon(
+                label: const Text('Nuevo'),
+                icon: const Icon(Icons.add),
+                onPressed: () {
+                  // Provider.of<ButtonModel>(context, listen: false)
+                  //     .createNewButton();
+                                    Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ButtonPage( )),
+                  );
+                },
+              ),
             ),
-            const SizedBox(height: 20), // Espacio entre elementos
+            const SizedBox(height: 20),
             const Align(
               alignment: Alignment.centerLeft,
               child: Padding(
@@ -52,7 +59,6 @@ class HomePage extends StatelessWidget {
               ),
             ),
             Consumer<ButtonModel>(
-              // Asumiendo que ButtonModel tiene la lista de botones
               builder: (context, buttonModel, child) {
                 return ListView.builder(
                   shrinkWrap: true,
@@ -60,20 +66,26 @@ class HomePage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final button = buttonModel.savedButtons[index];
                     return ListTile(
-                      title: Text(button.text),
+                      title: Text(
+                          '${button.text} (${button.type.toString().split('.').last})'), // Mostrar tipo de botón junto al nombre
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
                             icon: const Icon(Icons.edit),
                             onPressed: () {
-                              // Lógica para editar el botón
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ButtonPage(buttonData: button),
+                                ),
+                              );
                             },
                           ),
                           IconButton(
                             icon: const Icon(Icons.delete),
                             onPressed: () {
-                              // Lógica para eliminar el botón
                               buttonModel.removeButton(index);
                             },
                           ),

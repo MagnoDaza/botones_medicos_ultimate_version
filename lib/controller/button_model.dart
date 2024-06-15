@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import '../botones/boton/button_factory.dart';
 import '../botones/button_data.dart';
+import '../repository/button_repository.dart';
 
 // Modelo para gestión de botones
 class ButtonModel with ChangeNotifier {
@@ -14,8 +15,9 @@ class ButtonModel with ChangeNotifier {
   final Document _emptyDocument = Document();
 
   final ButtonFactory buttonFactory;
+  final ButtonRepository buttonRepository;
 
-  ButtonModel(this.buttonFactory);
+  ButtonModel(this.buttonFactory, this.buttonRepository);
 
   List<ButtonData> get factoryButtons => _factoryButtons;
   int get selectedIndex => _selectedIndex;
@@ -34,6 +36,13 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
+  // Cargar botones desde la base de datos
+  Future<void> loadSavedButtons() async {
+    _savedButtons.clear();
+    _savedButtons.addAll(await buttonRepository.loadButtons());
+    notifyListeners();
+  }
+
   // Seleccionar un botón
   void selectButton(int index) {
     if (index >= 0 && index < _factoryButtons.length) {
@@ -42,6 +51,8 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
+  // // Actualizar un botón en una posición específica
+
   // Actualizar un botón en una posición específica
   void updateButton(int index, ButtonData newButtonData) {
     if (index >= 0 && index < _factoryButtons.length) {
@@ -49,6 +60,8 @@ class ButtonModel with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // // Eliminar un botón en una posición específica
 
   // Eliminar un botón en una posición específica
   void removeButton(int index) {
@@ -70,16 +83,19 @@ class ButtonModel with ChangeNotifier {
       selectButton(0);
     }
   }
+  // Setter para selectedIndex
+  set selectedIndex(int value) {
+    _selectedIndex = value;
+  }
+  // //  // Crear un nuevo botón y reiniciar el botón seleccionado
 
   // Crear un nuevo botón y reiniciar el botón seleccionado
   void resetButton() {
     final buttonModel = this;
     final selectedButton =
         buttonModel.factoryButtons[buttonModel.selectedIndex];
-    final resetButton = buttonFactory.createButton(
-        selectedButton.type, // Tipo predeterminado, puede modificarse
-        _defaultText,
-        _emptyDocument // Nuevo documento vacío
+    final resetButton = buttonFactory.createButton(ButtonType.elevated,
+        _defaultText, _emptyDocument // Nuevo documento vacío
         );
 
     updateButton(_selectedIndex, resetButton);
@@ -105,19 +121,18 @@ class ButtonModel with ChangeNotifier {
       newIsItalic: false,
       newIsUnderline: false,
       newIsBorder: false,
-      //clona los datos del documento actual
-      document: document ?? _factoryButtons[_selectedIndex].document,
+      document: Document(), // Nuevo documento vacío
     );
     _selectedIndex = index;
     _factoryButtons[_selectedIndex] =
         _factoryButtons[_selectedIndex].cloneWithText(
       newText: buttonText,
-      newIsBold: false,
-      newIsItalic: false,
-      newIsUnderline: false,
-      newIsBorder: false,
-      //clona los datos del documento actual
-      document: document ?? _factoryButtons[_selectedIndex].document,
+      newIsBold: isBold ?? false,
+      newIsItalic: isItalic ?? false,
+      newIsUnderline: isUnderline ?? false,
+      newIsBorder: isBorder ?? false,
+      document: document ??
+          Document(), // Asegurar que cada botón tenga su propio documento
     );
     notifyListeners();
   }

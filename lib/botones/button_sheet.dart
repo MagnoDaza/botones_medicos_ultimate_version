@@ -5,7 +5,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 Future<void> showCustomBottomSheet({
   required BuildContext context,
   required QuillController controller,
-  required Null Function(BuildContext context) builder,
+    required Null Function(BuildContext context) builder,
 }) async {
   final readOnlyController = QuillController(
     document: controller.document,

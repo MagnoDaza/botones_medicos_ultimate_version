@@ -1,30 +1,89 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:botones_medicos_ultimate_version/botones/boton/elevated_button_data.dart';
+import 'package:botones_medicos_ultimate_version/botones/button_data.dart';
+import 'package:botones_medicos_ultimate_version/repository/button_repository_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart';
 
-import 'package:botones_medicos_ultimate_version/main.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  TestWidgetsFlutterBinding.ensureInitialized();
+  late ButtonRepositoryImplement buttonRepository;
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  setUpAll(() {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  setUp(() async {
+    buttonRepository = ButtonRepositoryImplement();
+    await buttonRepository.database;
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  test('saveButton and loadButtons', () async {
+    final button = ElevatedButtonData(
+      id: '1',
+      type: ButtonType.elevated,
+      text: 'Test Button',
+      document: Document(),
+      color: const Color(0xFFFFFFFF),
+      textColor: const Color(0xFF000000),
+      isBold: true,
+      isItalic: false,
+      isUnderline: true,
+      isBorder: false,
+    );
+
+    await buttonRepository.saveButton(button);
+
+    final loadedButtons = await buttonRepository.loadButtons(limit: 10, offset: 0);
+    expect(loadedButtons.length, 1);
+    expect(loadedButtons.first.text, 'Test Button');
+  });
+
+  test('updateButton', () async {
+    final button = ElevatedButtonData(
+      id: '1',
+      type: ButtonType.elevated,
+      text: 'Test Button',
+      document: Document(),
+      color: const Color(0xFFFFFFFF),
+      textColor: const Color(0xFF000000),
+      isBold: true,
+      isItalic: false,
+      isUnderline: true,
+      isBorder: false,
+    );
+
+    await buttonRepository.saveButton(button);
+
+    final updatedButton = button.copyWith(text: 'Updated Button');
+    await buttonRepository.updateButton(updatedButton);
+
+    final loadedButtons = await buttonRepository.loadButtons(limit: 10, offset: 0);
+    expect(loadedButtons.first.text, 'Updated Button');
+  });
+
+  test('deleteButton', () async {
+    final button = ElevatedButtonData(
+      id: '1',
+      type: ButtonType.elevated,
+      text: 'Test Button',
+      document: Document(),
+      color: const Color(0xFFFFFFFF),
+      textColor: const Color(0xFF000000),
+      isBold: true,
+      isItalic: false,
+      isUnderline: true,
+      isBorder: false,
+    );
+
+    await buttonRepository.saveButton(button);
+    await buttonRepository.deleteButton(button.id);
+
+    final loadedButtons = await buttonRepository.loadButtons(limit: 10, offset: 0);
+    expect(loadedButtons.isEmpty, true);
   });
 }

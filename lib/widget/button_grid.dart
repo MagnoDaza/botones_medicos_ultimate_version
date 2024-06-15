@@ -18,7 +18,6 @@ class ButtonGrid extends StatelessWidget {
             ),
           );
         }
-
         return Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.black, width: 2.0),
@@ -27,7 +26,8 @@ class ButtonGrid extends StatelessWidget {
           height: 133,
           child: MasonryGridView.builder(
             crossAxisSpacing: 1,
-            itemCount: buttonModel.savedButtons.length, // Muestra todos los botones guardados
+            itemCount: buttonModel.savedButtons.length,
+            // Muestra todos los botones guardados
             itemBuilder: (BuildContext context, int index) => Container(
               padding: const EdgeInsets.all(0),
               margin: const EdgeInsets.all(0),

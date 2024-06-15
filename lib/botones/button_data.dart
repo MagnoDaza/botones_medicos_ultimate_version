@@ -3,7 +3,6 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'boton/adaptive_button.dart';
 import 'boton/elevated_button_data.dart';
 import 'boton/outlined_button_data.dart';
-import 'button_sheet.dart';
 
 // Enum para tipos de botones
 enum ButtonType { elevated, outlined, adaptive }
@@ -31,17 +30,6 @@ abstract class ButtonData {
   });
 
   // Mostrar una hoja inferior personalizada
-  void onPressed(BuildContext context) {
-    QuillController controller = QuillController(
-      document: document,
-      selection: const TextSelection.collapsed(offset: 0),
-    );
-    showCustomBottomSheet(
-      context: context,
-      controller: controller,
-      builder: (BuildContext context) {},
-    );
-  }
 
   // Construir el widget del botón
   Widget build(BuildContext context);

@@ -8,6 +8,7 @@ import 'controller/color_notifier.dart';
 import 'controller/text_style_notifier.dart';
 import 'controller/theme_notifier.dart';
 import 'home_page.dart';
+import 'repository/button_repository_impl.dart';
 
 void main() {
   runApp(
@@ -18,6 +19,9 @@ void main() {
         ChangeNotifierProvider(create: (context) => ButtonNameNotifier()),
         ChangeNotifierProvider(create: (context) => ThemeNotifier()),
         ChangeNotifierProvider(create: (context) => ExpansionPanelController()),
+
+        Provider(create: (context) => ButtonRepositoryImplement()),
+
         // Asegúrate de crear ButtonFactory antes de ButtonModel si es necesario
         ChangeNotifierProvider(
           create: (context) => ButtonModel(
@@ -25,6 +29,7 @@ void main() {
               Provider.of<ColorNotifier>(context, listen: false),
               Provider.of<TextStyleNotifier>(context, listen: false),
             ),
+            Provider.of<ButtonRepositoryImplement>(context, listen: false),
           ),
         ),
       ],

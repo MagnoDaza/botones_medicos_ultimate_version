@@ -6,6 +6,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class QuillPage extends StatefulWidget {
+  
   final QuillController controller;
 
   const QuillPage({super.key, required this.controller});

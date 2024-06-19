@@ -1,4 +1,6 @@
+import 'package:botones_medicos_ultimate_version/botones/button_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import 'botones/boton/button_factory.dart';
 import 'botones/widget/expansion_panel/controller_expansion_panel.dart';
@@ -45,7 +47,8 @@ class MyApp extends StatelessWidget {
         theme: theme.isLightTheme
             ? ThemeData.light(useMaterial3: true)
             : ThemeData.dark(useMaterial3: true),
-        home: const HomePage(),
+        home: HomePage(
+        ),
       ),
     );
   }

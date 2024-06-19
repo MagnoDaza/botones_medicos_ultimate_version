@@ -36,6 +36,8 @@ class ButtonPageState extends State<ButtonPage> {
       Provider.of<ColorNotifier>(context, listen: false),
       Provider.of<TextStyleNotifier>(context, listen: false),
     );
+
+    // Determinar si estamos editando un botón existente
     isEditing = widget.buttonData != null;
     if (isEditing) {
       _buttonTextController.text = widget.buttonData!.text;
@@ -47,6 +49,7 @@ class ButtonPageState extends State<ButtonPage> {
       _buttonTextController.text = 'Servicio';
       _controller = QuillController.basic();
     }
+
     _focusNode.addListener(() {
       if (_focusNode.hasFocus && !isEditing) {
         setState(() {
@@ -54,13 +57,21 @@ class ButtonPageState extends State<ButtonPage> {
         });
       }
     });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-      if (isEditing) {
-        buttonModel.initializeEdit(widget.buttonData!);
+      if (!isEditing) {
+        buttonModel.initializeButtons(
+          buttonFactory,
+          _buttonTextController,
+          _controller,
+        );
       } else {
-        buttonModel.initializeCreation(
-            _buttonTextController.text, _controller.document);
+        int index = buttonModel.savedButtons
+            .indexWhere((button) => button.id == widget.buttonData!.id);
+        if (index != -1) {
+          buttonModel.selectButton(index);
+        }
       }
     });
   }
@@ -73,21 +84,31 @@ class ButtonPageState extends State<ButtonPage> {
   }
 
   void updateButtonAttributes(Map<String, dynamic> newValues) {
-    final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-    buttonModel.updateButtonAttributes(newValues);
+    setState(() {
+      final buttonModel = Provider.of<ButtonModel>(context, listen: false);
+      final selectedButton =
+          buttonModel.factoryButtons[buttonModel.selectedIndex];
+      final updatedButton =
+          buttonFactory.updateButton(selectedButton, newValues);
+      buttonModel.updateButton(buttonModel.selectedIndex, updatedButton);
+    });
   }
 
   void saveButton() {
     final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-    if (isEditing) {
-      buttonModel.saveEditedButton(
-          _buttonTextController.text, _controller.document);
-    } else {
-      buttonModel.createNewButton(
-        _buttonTextController.text,
-        _controller.document,
-      );
-    }
+    final selectedButton =
+        buttonModel.factoryButtons[buttonModel.selectedIndex];
+    buttonModel.saveButton(selectedButton);
+
+    setState(() {
+      message =
+          'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
+      if (!isEditing) {
+        _buttonTextController.text = '';
+        buttonModel.resetButton();
+      }
+    });
+
     Navigator.of(context)
         .pop(); // Regresar a la página anterior después de guardar
   }

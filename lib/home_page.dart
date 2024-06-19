@@ -1,3 +1,4 @@
+import 'package:botones_medicos_ultimate_version/botones/button_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Screen/page_screen.dart';
@@ -6,7 +7,9 @@ import 'controller/theme_notifier.dart';
 import 'widget/button_grid.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  HomePage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +40,9 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   // Provider.of<ButtonModel>(context, listen: false)
                   //     .createNewButton();
-                                    Navigator.push(
+                  Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ButtonPage( )),
+                    MaterialPageRoute(builder: (context) => const ButtonPage()),
                   );
                 },
               ),

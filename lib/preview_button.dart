@@ -23,36 +23,47 @@ class ButtonPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ButtonModel>(
       builder: (context, buttonModel, child) {
-        return ScrollSnapList(
-          
-          dynamicItemOpacity: 0.5,
-          onItemFocus: (index) {
-            final selectedButton = buttonModel.factoryButtons[index];
-            // Actualizar el controlador de texto y el documento Quill
+        if (buttonData != null) {
+          // Si estamos editando, asegurarnos de cargar todos los datos del botón
+          final index = buttonModel.savedButtons.indexOf(buttonData!);
+          if (index != -1) {
+            final selectedButton = buttonModel.savedButtons[index];
             controller.text = selectedButton.text;
             if (quillController != null) {
               quillController!.document = selectedButton.document;
-              buttonModel.cloneText(
-                buttonModel.selectedIndex, controller.text,
-                  );
             }
-            // Seleccionar el botón en el modelo
+            textStyleNotifier.isBold = selectedButton.isBold;
+            textStyleNotifier.isItalic = selectedButton.isItalic;
+            textStyleNotifier.isUnderline = selectedButton.isUnderline;
+            textStyleNotifier.isBorder = selectedButton.isBorder;
+          }
+        }
+
+        return ScrollSnapList(
+          dynamicItemOpacity: 0.5,
+          onItemFocus: (index) {
+            final selectedButton = buttonModel.factoryButtons[index];
+            // Clonar texto del botón y actualizar controlador de texto
+            buttonModel.cloneText(
+              index,
+              controller.text,
+              isBold: selectedButton.isBold,
+              isItalic: selectedButton.isItalic,
+              isUnderline: selectedButton.isUnderline,
+              isBorder: selectedButton.isBorder,
+              document: selectedButton.document,
+            );
             buttonModel.selectButton(index);
-            // Si se está editando, clonar los parámetros al botón seleccionado
-            if (buttonData != null) {
-              buttonModel.cloneButtonParameters(
-                  buttonModel.selectedIndex, index);
+            controller.text = selectedButton.text;
+
+            // Actualizar el documento Quill
+            if (quillController != null) {
+              quillController!.document = selectedButton.document;
             }
           },
           itemSize: 150,
-          onReachEnd: () {
-            // Cargar más botones si es necesario
-            buttonModel.loadMoreButtons();
-          },
-
           dynamicItemSize: true,
           itemCount: buttonModel.factoryButtons.length,
-
           itemBuilder: (context, index) {
             ButtonData buttonData = buttonModel.factoryButtons[index];
             return SizedBox(

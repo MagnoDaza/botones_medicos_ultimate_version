@@ -44,7 +44,7 @@ class ButtonOptionsState extends State<ButtonOptions> {
         if (lastButtonType != buttonData.type) {
           lastButtonType = buttonData.type;
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.read<TextStyleNotifier>().reset();
+            // context.read<TextStyleNotifier>().reset();
           });
         }
 

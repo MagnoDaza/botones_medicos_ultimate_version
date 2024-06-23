@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:selectable_box/selectable_box.dart';
 import '../controller/button_model.dart';
 
 class GridPage extends StatefulWidget {
   final ButtonModel buttonModel;
 
-  GridPage({required this.buttonModel});
+  const GridPage({required this.buttonModel});
 
   @override
   _GridPageState createState() => _GridPageState();
@@ -51,6 +50,7 @@ class _GridPageState extends State<GridPage> {
                 });
               },
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   buttonData.build(context), // Previsualización del botón
                   const SizedBox(height: 10),

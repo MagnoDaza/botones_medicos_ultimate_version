@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selectable_box/selectable_box.dart';
-import '../../controller/button_model.dart';
+import '../controller/button_model.dart';
 
 class GridPage extends StatefulWidget {
   final ButtonModel buttonModel;
@@ -43,6 +43,7 @@ class _GridPageState extends State<GridPage> {
           itemBuilder: (context, index) {
             final buttonData = widget.buttonModel.factoryButtons[index];
             return SelectableBox(
+              height: 180,
               isSelected: _selectedIndex == index,
               onTap: () {
                 setState(() {

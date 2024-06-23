@@ -59,15 +59,20 @@ class ButtonModel with ChangeNotifier {
   void initializeButtons(ButtonFactory buttonFactory,
       TextEditingController textController, QuillController controller) {
     if (!_buttonsInitialized) {
-      for (ButtonType type in ButtonType.values) {
-        addButton(buttonFactory.createButton(
-          type,
-          textController.text,
-          Document(),
-        ));
-      }
-      _buttonsInitialized = true;
-      selectButton(0);
+      // Se asegura que este código solo se ejecute después de la construcción inicial del widget
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_factoryButtons.isEmpty) {
+          for (ButtonType type in ButtonType.values) {
+            addButton(buttonFactory.createButton(
+              type,
+              textController.text,
+              Document(),
+            ));
+          }
+          _buttonsInitialized = true;
+          selectButton(0);
+        }
+      });
     }
   }
 

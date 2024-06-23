@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import '../botones/boton/button_factory.dart';
+import '../botones/boton/button_grid_page.dart';
 import '../botones/button_data.dart';
 import '../botones/quill/quill_page.dart';
 import '../controller/button_model.dart';
@@ -115,6 +116,10 @@ class ButtonPageState extends State<ButtonPage> {
 
   @override
   Widget build(BuildContext context) {
+    final buttonModel = Provider.of<ButtonModel>(context);
+    final selectedButton =
+        buttonModel.factoryButtons[buttonModel.selectedIndex];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Editar Botón' : 'Crear Botón'),
@@ -143,11 +148,8 @@ class ButtonPageState extends State<ButtonPage> {
                 child: ButtonPreview(
                   controller: _buttonTextController,
                   textStyleNotifier: Provider.of<TextStyleNotifier>(context),
-                  buttonData:
-                      widget.buttonData, // Pasar el buttonData si está editando
-                  quillController: isEditing
-                      ? _controller
-                      : null, // Pasar el quillController si está editando
+                  buttonData: widget.buttonData,
+                  quillController: isEditing ? _controller : null,
                 ),
               ),
               TextFormField(
@@ -162,6 +164,52 @@ class ButtonPageState extends State<ButtonPage> {
                   updateButtonAttributes({'text': text});
                 },
               ),
+              const SizedBox(height: 10),
+              ListTile(
+                title: const Text('Selecciona un botón'),
+                trailing: ElevatedButton(
+                  onPressed: () async {
+                    // Navegar a GridPage para seleccionar un botón
+                    final selectedIndex = await Navigator.push<int>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            GridPage(buttonModel: buttonModel),
+                      ),
+                    );
+                    if (selectedIndex != null) {
+                      buttonModel.selectButton(selectedIndex);
+                      _buttonTextController.text =
+                          buttonModel.factoryButtons[selectedIndex].text;
+                    }
+                  },
+                  child: Text(selectedButton.type.toString().split('.').last),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.description),
+                title: const Text('Contenido'),
+                trailing: ElevatedButton.icon(
+                  onPressed: () async {
+                    final result = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            QuillPage(controller: _controller),
+                      ),
+                    );
+                    if (result != null) {
+                      setState(() {
+                        _controller = QuillController(
+                          document: Document.fromJson(result),
+                          selection: const TextSelection.collapsed(offset: 0),
+                        );
+                      });
+                    }
+                  },
+                  label: const Text('Nuevo'),
+                  icon: const Icon(Icons.description),
+                ),
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -171,31 +219,6 @@ class ButtonPageState extends State<ButtonPage> {
                         style: TextStyle(fontSize: 20),
                       ),
                       const SizedBox(height: 10),
-                      ListTile(
-                        leading: const Icon(Icons.description),
-                        title: const Text('Contenido'),
-                        trailing: ElevatedButton.icon(
-                          onPressed: () async {
-                            final result = await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    QuillPage(controller: _controller),
-                              ),
-                            );
-                            if (result != null) {
-                              setState(() {
-                                _controller = QuillController(
-                                  document: Document.fromJson(result),
-                                  selection:
-                                      const TextSelection.collapsed(offset: 0),
-                                );
-                              });
-                            }
-                          },
-                          label: const Text('Nuevo'),
-                          icon: const Icon(Icons.description),
-                        ),
-                      ),
                       ButtonOptions(
                         textStyleNotifier:
                             Provider.of<TextStyleNotifier>(context),

@@ -27,7 +27,6 @@ class ButtonPageState extends State<ButtonPage> {
   late QuillController _controller;
   late ButtonFactory buttonFactory;
   String message = '';
-  bool isReadOnly = false;
   bool isEditing = false; // Nuevo flag para edición
 
   @override
@@ -51,11 +50,10 @@ class ButtonPageState extends State<ButtonPage> {
       _controller = QuillController.basic();
     }
 
+    // Configurar el listener para el FocusNode
     _focusNode.addListener(() {
       if (_focusNode.hasFocus && !isEditing) {
-        setState(() {
-          _buttonTextController.text = '';
-        });
+        _buttonTextController.clear();
       }
     });
 
@@ -85,6 +83,7 @@ class ButtonPageState extends State<ButtonPage> {
   }
 
   void updateButtonAttributes(Map<String, dynamic> newValues) {
+    // Diferir la actualización del estado
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final buttonModel = Provider.of<ButtonModel>(context, listen: false);
       if (buttonModel.factoryButtons.isNotEmpty) {
@@ -111,7 +110,8 @@ class ButtonPageState extends State<ButtonPage> {
           buttonModel.resetButton();
         }
       });
-      Navigator.of(context).pop(); // Regresar a la página anterior después de guardar
+      Navigator.of(context)
+          .pop(); // Regresar a la página anterior después de guardar
     } else {
       setState(() {
         message = 'No hay botones disponibles para guardar.';
@@ -138,9 +138,7 @@ class ButtonPageState extends State<ButtonPage> {
           ),
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: () {
-              saveButton();
-            },
+            onPressed: saveButton,
           ),
         ],
       ),
@@ -154,8 +152,7 @@ class ButtonPageState extends State<ButtonPage> {
                   height: 160,
                   child: ButtonPreview(
                     controller: _buttonTextController,
-                    textStyleNotifier:
-                        Provider.of<TextStyleNotifier>(context),
+                    textStyleNotifier: Provider.of<TextStyleNotifier>(context),
                     buttonData: widget.buttonData,
                     quillController: isEditing ? _controller : null,
                   ),
@@ -169,7 +166,10 @@ class ButtonPageState extends State<ButtonPage> {
                 ),
                 controller: _buttonTextController,
                 onChanged: (text) {
-                  updateButtonAttributes({'text': text});
+                  // Diferir la actualización del estado
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    updateButtonAttributes({'text': text});
+                  });
                 },
               ),
               const SizedBox(height: 10),
@@ -187,22 +187,25 @@ class ButtonPageState extends State<ButtonPage> {
                         ),
                       );
                       if (selectedIndex != null) {
-                        buttonModel.selectButton(selectedIndex);
-                        _buttonTextController.text = buttonModel
-                            .factoryButtons[selectedIndex].text;
+                        setState(() {
+                          buttonModel.selectButton(selectedIndex);
+                          _buttonTextController.text =
+                              buttonModel.factoryButtons[selectedIndex].text;
+                        });
                       }
                     },
                     child: Text(selectedButton.type.toString().split('.').last),
                   ),
                 ),
-               ListTile(
-                leading: Icon(Icons.description),
-                title: Text('Contenido'),
+              ListTile(
+                leading: const Icon(Icons.description),
+                title: const Text('Contenido'),
                 trailing: ElevatedButton.icon(
                   onPressed: () async {
                     final result = await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => QuillPage(controller: _controller),
+                        builder: (context) =>
+                            QuillPage(controller: _controller),
                       ),
                     );
                     if (result != null) {
@@ -214,8 +217,8 @@ class ButtonPageState extends State<ButtonPage> {
                       });
                     }
                   },
-                  label: Text('Nuevo'),
-                  icon: Icon(Icons.description),
+                  label: const Text('Nuevo'),
+                  icon: const Icon(Icons.description),
                 ),
               ),
               Expanded(

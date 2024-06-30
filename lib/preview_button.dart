@@ -22,18 +22,27 @@ class ButtonPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ButtonModel>(
       builder: (context, buttonModel, child) {
-        final selectedButton = buttonModel.factoryButtons[buttonModel.selectedIndex];
-        
-        // Actualizar el controlador de texto y Quill
-        controller.text = selectedButton.text;
-        if (quillController != null) {
-          quillController!.document = selectedButton.document;
+        final selectedButton = buttonModel.factoryButtons.isNotEmpty
+            ? buttonModel.factoryButtons[buttonModel.selectedIndex]
+            : null;
+
+        if (selectedButton == null) {
+          return const Center(
+              child: Text('No se ha seleccionado ningún botón.'));
         }
-        textStyleNotifier.isBold = selectedButton.isBold;
-        textStyleNotifier.isItalic = selectedButton.isItalic;
-        textStyleNotifier.isUnderline = selectedButton.isUnderline;
-        textStyleNotifier.isBorder = selectedButton.isBorder;
-        
+
+        // Actualizar el controlador de texto y Quill
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          controller.text = selectedButton.text;
+          if (quillController != null) {
+            quillController!.document = selectedButton.document;
+          }
+          textStyleNotifier.isBold = selectedButton.isBold;
+          textStyleNotifier.isItalic = selectedButton.isItalic;
+          textStyleNotifier.isUnderline = selectedButton.isUnderline;
+          textStyleNotifier.isBorder = selectedButton.isBorder;
+        });
+
         // Mostrar solo la previsualización del botón seleccionado
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -1,14 +1,13 @@
-import 'package:botones_medicos_ultimate_version/botones/widget/rainbow_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../botones/boton/elevated_button_data.dart';
 import '../botones/button_data.dart';
 import '../botones/widget/expansion_panel/custom_expansion_panel.dart';
+import '../botones/widget/rainbow_icon.dart';
 import '../controller/button_model.dart';
 import '../controller/color_notifier.dart';
 import '../controller/text_style_notifier.dart';
-// import '../rowbuttoncolor/button_row_fondo.dart';
-// import '../rowbuttoncolor/color_button_text.dart';
+
 import '../rowbuttoncolor/custom_color_row.dart';
 
 class ButtonOptions extends StatefulWidget {
@@ -39,8 +38,7 @@ class ButtonOptionsState extends State<ButtonOptions> {
         ButtonData buttonData =
             buttonModel.factoryButtons[buttonModel.selectedIndex];
 
-        // Reset TextStyleNotifier to default values when button type changes new button type and old button
-
+        // Reset TextStyleNotifier to default values when button type changes
         if (lastButtonType != buttonData.type) {
           lastButtonType = buttonData.type;
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -56,43 +54,44 @@ class ButtonOptionsState extends State<ButtonOptions> {
               children: [
                 CustomExpansionPanel(items: [
                   PanelItem(
-                      leading: RainbowIcon(
-                        iconData: Icons.format_color_fill,
+                    leading: RainbowIcon(
+                      iconData: Icons.format_color_fill,
+                    ),
+                    headerValue: 'Color de fondo',
+                    expandedValue: [
+                      CustomColorButtonRow(
+                        initialColor: elevatedButtonData.color,
+                        updateButtonColor: (Color newColor) {
+                          buttonModel.updateButton(
+                            buttonModel.selectedIndex,
+                            elevatedButtonData.copyWith(color: newColor),
+                          );
+                          Provider.of<ColorNotifier>(context, listen: false)
+                              .setBackgroundColor(buttonData.id, newColor);
+                        },
+                        colorChoices: [
+                          ColorChoice(
+                              color: elevatedButtonData.color, name: 'Actual'),
+                          // Añadir más opciones de color según sea necesario
+                        ],
                       ),
-                      headerValue: 'Color de fondo',
-                      expandedValue: [
-                        CustomColorButtonRow(
-                          initialColor: const Color(0xFF4F4F4F),
-                          updateButtonColor: (Color newColor) {
-                            buttonModel.updateButton(
-                              buttonModel.selectedIndex,
-                              elevatedButtonData.copyWith(color: newColor),
-                            );
-                            Provider.of<ColorNotifier>(context, listen: false)
-                                .setBackgroundColor(buttonData.id, newColor);
-                          },
-                          colorChoices: [
-                            ColorChoice(
-                                color: const Color(0xFF4F4F4F), name: 'Gris'),
-                            ColorChoice(
-                                color: const Color(0xFF2196F3), name: 'Azul'),
-                          ],
-                        ),
-                      ]),
+                    ],
+                  ),
                   PanelItem(
                     leading: RainbowIcon(iconData: Icons.format_color_text),
                     headerValue: "Color de texto",
                     expandedValue: [
                       CustomColorButtonRow(
-                          initialColor: Colors.white,
-                          updateButtonColor: (Color newColor) {
-                            buttonModel.updateButton(
-                              buttonModel.selectedIndex,
-                              elevatedButtonData.copyWith(textColor: newColor),
-                            );
-                            Provider.of<ColorNotifier>(context, listen: false)
-                                .setTextColor(buttonData.id, newColor);
-                          }),
+                        initialColor: elevatedButtonData.textColor,
+                        updateButtonColor: (Color newColor) {
+                          buttonModel.updateButton(
+                            buttonModel.selectedIndex,
+                            elevatedButtonData.copyWith(textColor: newColor),
+                          );
+                          Provider.of<ColorNotifier>(context, listen: false)
+                              .setTextColor(buttonData.id, newColor);
+                        },
+                      ),
                     ],
                   ),
                   PanelItem(
@@ -104,30 +103,6 @@ class ButtonOptionsState extends State<ButtonOptions> {
                     ],
                   ),
                 ]),
-
-                // ColorButtonRowFondo(
-                //   initialColor: elevatedButtonData.color,
-                //   updateButtonColor: (Color newColor) {
-                //     buttonModel.updateButton(
-                //       buttonModel.selectedIndex,
-                //       elevatedButtonData.copyWith(color: newColor),
-                //     );
-                //     Provider.of<ColorNotifier>(context, listen: false)
-                //         .setBackgroundColor(buttonData.id, newColor);
-                //   },
-                // // ),
-
-                // TextColorButtonRow(
-                //   initialColor: elevatedButtonData.textColor,
-                //   updateButtonTextColor: (Color newColor) {
-                //     buttonModel.updateButton(
-                //       buttonModel.selectedIndex,
-                //       elevatedButtonData.copyWith(textColor: newColor),
-                //     );
-                //     Provider.of<ColorNotifier>(context, listen: false)
-                //         .setTextColor(buttonData.id, newColor);
-                //   },
-                // ),
               ],
             );
           case ButtonType.outlined:
@@ -135,23 +110,22 @@ class ButtonOptionsState extends State<ButtonOptions> {
               children: [
                 CustomExpansionPanel(items: [
                   PanelItem(
-                      leading: const Icon(Icons.format_italic),
-                      headerValue: "Estilos de texto",
-                      expandedValue: [
-                        TextStyleOptions(
-                            textStyleNotifier: widget.textStyleNotifier),
-                      ])
+                    leading: const Icon(Icons.format_italic),
+                    headerValue: "Estilos de texto",
+                    expandedValue: [
+                      TextStyleOptions(
+                          textStyleNotifier: widget.textStyleNotifier),
+                    ],
+                  )
                 ]),
               ],
             );
-          // Implementar opciones para OutlinedButton
           case ButtonType.adaptive:
             return Column(
               children: [
                 customStylesExpansionPanelWidget(widget.textStyleNotifier),
               ],
             );
-          // Implementar opciones para AdaptiveButton
           default:
             return Text("Tipo de botón no soportado: ${buttonData.type}");
         }
@@ -163,10 +137,8 @@ class ButtonOptionsState extends State<ButtonOptions> {
 class TextStyleOptions extends StatefulWidget {
   final TextStyleNotifier textStyleNotifier;
 
-  const TextStyleOptions({
-    Key? key,
-    required this.textStyleNotifier,
-  }) : super(key: key);
+  const TextStyleOptions({Key? key, required this.textStyleNotifier})
+      : super(key: key);
 
   @override
   _TextStyleOptionsState createState() => _TextStyleOptionsState();
@@ -257,9 +229,3 @@ Widget customStylesExpansionPanelWidget(TextStyleNotifier textStyleNotifier) {
     ],
   );
 }
-
-//create a function to add a all button options to the button the same at buttonoption
-
-  
-
-

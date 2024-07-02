@@ -68,14 +68,46 @@ class ButtonFactory {
     }
   }
 
-  ButtonData updateButton(ButtonData button, Map<String, dynamic> newValues) {
-    return button.copyWith(
-      text: newValues['text'],
-      document: newValues['document'],
-      isBold: newValues['isBold'],
-      isItalic: newValues['isItalic'],
-      isUnderline: newValues['isUnderline'],
-      isBorder: newValues['isBorder'],
-    );
+ButtonData updateButton(
+  ButtonData originalButton,
+  Map<String, dynamic> newValues,
+) {
+  switch (originalButton.type) {
+    case ButtonType.elevated:
+      return (originalButton as ElevatedButtonData).copyWith(
+        text: newValues['text'] ?? originalButton.text,
+        document: newValues['document'] ?? originalButton.document,
+        color: newValues['color'] ?? originalButton.color,
+        textColor: newValues['textColor'] ?? originalButton.textColor,
+        isBold: newValues['isBold'] ?? originalButton.isBold,
+        isItalic: newValues['isItalic'] ?? originalButton.isItalic,
+        isUnderline: newValues['isUnderline'] ?? originalButton.isUnderline,
+        isBorder: newValues['isBorder'] ?? originalButton.isBorder,
+        // Otros parámetros específicos
+      );
+    case ButtonType.outlined:
+      return (originalButton as OutlinedButtonData).copyWith(
+        text: newValues['text'] ?? originalButton.text,
+        document: newValues['document'] ?? originalButton.document,
+        isBold: newValues['isBold'] ?? originalButton.isBold,
+        isItalic: newValues['isItalic'] ?? originalButton.isItalic,
+        isUnderline: newValues['isUnderline'] ?? originalButton.isUnderline,
+        isBorder: newValues['isBorder'] ?? originalButton.isBorder,
+        // Otros parámetros específicos
+      );
+    case ButtonType.adaptive:
+      return (originalButton as AdaptiveButtonData).copyWith(
+        text: newValues['text'] ?? originalButton.text,
+        document: newValues['document'] ?? originalButton.document,
+        isBold: newValues['isBold'] ?? originalButton.isBold,
+        isItalic: newValues['isItalic'] ?? originalButton.isItalic,
+        isUnderline: newValues['isUnderline'] ?? originalButton.isUnderline,
+        isBorder: newValues['isBorder'] ?? originalButton.isBorder,
+        // Otros parámetros específicos
+      );
+    default:
+      throw Exception('Tipo de botón no soportado: ${originalButton.type}');
   }
+}
+
 }

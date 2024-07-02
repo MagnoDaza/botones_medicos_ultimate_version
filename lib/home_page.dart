@@ -38,11 +38,12 @@ class HomePage extends StatelessWidget {
                 label: const Text('Nuevo'),
                 icon: const Icon(Icons.add),
                 onPressed: () {
-                  // Provider.of<ButtonModel>(context, listen: false)
-                  //     .createNewButton();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ButtonPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const ButtonPage(
+                            // isEditing: false,
+                            )),
                   );
                 },
               ),
@@ -80,8 +81,9 @@ class HomePage extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      ButtonPage(buttonData: button),
+                                  builder: (context) => ButtonPage(
+                                      // isEditing: true,
+                                      buttonData: button),
                                 ),
                               );
                             },

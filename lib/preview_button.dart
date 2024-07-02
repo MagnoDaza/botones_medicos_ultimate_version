@@ -26,31 +26,35 @@ class ButtonPreview extends StatelessWidget {
             ? buttonModel.factoryButtons[buttonModel.selectedIndex]
             : null;
 
-        if (selectedButton == null) {
-          return const Center(
-              child: Text('No se ha seleccionado ningún botón.'));
+        if (selectedButton == null && buttonData == null) {
+          return const Center(child: Text('No se ha seleccionado ningún botón.'));
         }
 
-        // Actualizar el controlador de texto y Quill
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          controller.text = selectedButton.text;
-          if (quillController != null) {
-            quillController!.document = selectedButton.document;
-          }
-          textStyleNotifier.isBold = selectedButton.isBold;
-          textStyleNotifier.isItalic = selectedButton.isItalic;
-          textStyleNotifier.isUnderline = selectedButton.isUnderline;
-          textStyleNotifier.isBorder = selectedButton.isBorder;
-        });
+        // Determinar qué datos usar: los del botón existente o los nuevos
+        final buttonToUse = selectedButton ?? buttonData!;
 
-        // Mostrar solo la previsualización del botón seleccionado
+        // Actualizar el controlador de texto y Quill solo si buttonData está presente
+        if (buttonData != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            controller.text = buttonData!.text;
+            if (quillController != null) {
+              quillController!.document = buttonData!.document;
+            }
+            textStyleNotifier.isBold = buttonData!.isBold;
+            textStyleNotifier.isItalic = buttonData!.isItalic;
+            textStyleNotifier.isUnderline = buttonData!.isUnderline;
+            textStyleNotifier.isBorder = buttonData!.isBorder;
+          });
+        }
+
+        // Mostrar solo la previsualización del botón seleccionado o cargado
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            selectedButton.build(context),
+            buttonToUse.build(context),
             const SizedBox(height: 10),
             Text(
-              selectedButton.type.toString().split('.').last,
+              buttonToUse.type.toString().split('.').last,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,

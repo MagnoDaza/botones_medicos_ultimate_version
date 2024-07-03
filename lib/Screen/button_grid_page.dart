@@ -15,6 +15,12 @@ class _GridPageState extends State<GridPage> {
   int? _selectedIndex;
 
   @override
+  void initState() {
+    super.initState();
+    widget.buttonModel.initializeButtons();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

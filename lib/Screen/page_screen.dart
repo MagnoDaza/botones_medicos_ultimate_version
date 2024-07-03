@@ -27,8 +27,8 @@ class ButtonPageState extends State<ButtonPage> {
   late QuillController _controller;
   late ButtonFactory buttonFactory;
   String message = '';
-  bool isReadOnly = false;
   bool isEditing = false; // Nuevo flag para edición
+  ButtonType? selectedButtonType;
 
   @override
   void initState() {
@@ -46,6 +46,7 @@ class ButtonPageState extends State<ButtonPage> {
         document: widget.buttonData!.document,
         selection: const TextSelection.collapsed(offset: 0),
       );
+      selectedButtonType = widget.buttonData!.type;
     } else {
       _buttonTextController.text = 'Servicio';
       _controller = QuillController.basic();
@@ -61,15 +62,8 @@ class ButtonPageState extends State<ButtonPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-      if (!isEditing) {
-        buttonModel.initializeButtons(
-          buttonFactory,
-          _buttonTextController,
-          _controller,
-        );
-      } else {
-        int index = buttonModel.savedButtons
-            .indexWhere((button) => button.id == widget.buttonData!.id);
+      if (isEditing) {
+        int index = buttonModel.savedButtons.indexWhere((button) => button.id == widget.buttonData!.id);
         if (index != -1) {
           buttonModel.selectButton(index);
         }
@@ -88,10 +82,8 @@ class ButtonPageState extends State<ButtonPage> {
     Future.microtask(() {
       final buttonModel = Provider.of<ButtonModel>(context, listen: false);
       if (buttonModel.factoryButtons.isNotEmpty) {
-        final selectedButton =
-            buttonModel.factoryButtons[buttonModel.selectedIndex];
-        final updatedButton =
-            buttonFactory.updateButton(selectedButton, newValues);
+        final selectedButton = buttonModel.factoryButtons[buttonModel.selectedIndex];
+        final updatedButton = buttonFactory.updateButton(selectedButton, newValues);
         buttonModel.updateButton(buttonModel.selectedIndex, updatedButton);
       }
     });
@@ -100,12 +92,10 @@ class ButtonPageState extends State<ButtonPage> {
   void saveButton() {
     final buttonModel = Provider.of<ButtonModel>(context, listen: false);
     if (buttonModel.factoryButtons.isNotEmpty) {
-      final selectedButton =
-          buttonModel.factoryButtons[buttonModel.selectedIndex];
+      final selectedButton = buttonModel.factoryButtons[buttonModel.selectedIndex];
       buttonModel.saveButton(selectedButton);
       setState(() {
-        message =
-            'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
+        message = 'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
         if (!isEditing) {
           _buttonTextController.text = '';
           buttonModel.resetButton();
@@ -119,12 +109,27 @@ class ButtonPageState extends State<ButtonPage> {
     }
   }
 
+  Future<void> _selectButtonType() async {
+    final selectedIndex = await Navigator.push<int>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GridPage(buttonModel: Provider.of<ButtonModel>(context, listen: false)),
+      ),
+    );
+    if (selectedIndex != null) {
+      setState(() {
+        final buttonModel = Provider.of<ButtonModel>(context, listen: false);
+        selectedButtonType = buttonModel.factoryButtons[selectedIndex].type;
+        buttonModel.selectButton(selectedIndex);
+        _buttonTextController.text = buttonModel.factoryButtons[selectedIndex].text;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final buttonModel = Provider.of<ButtonModel>(context);
-    final selectedButton = buttonModel.factoryButtons.isNotEmpty
-        ? buttonModel.factoryButtons[buttonModel.selectedIndex]
-        : null;
+    final selectedButton = buttonModel.factoryButtons.isNotEmpty ? buttonModel.factoryButtons[buttonModel.selectedIndex] : null;
 
     return Scaffold(
       appBar: AppBar(
@@ -149,16 +154,26 @@ class ButtonPageState extends State<ButtonPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: <Widget>[
-              if (selectedButton != null)
+              if (selectedButtonType != null)
                 SizedBox(
                   height: 160,
-                  child: ButtonPreview(
+                  child: PreviewButton(
                     controller: _buttonTextController,
-                    textStyleNotifier:
-                        Provider.of<TextStyleNotifier>(context),
-                    buttonData: widget.buttonData,
+                    textStyleNotifier: Provider.of<TextStyleNotifier>(context),
+                    buttonData: selectedButton,
                     quillController: isEditing ? _controller : null,
+                    buttonFactory: buttonFactory,
                   ),
+                )
+              else
+                Column(
+                  children: [
+                    Text('Selecciona un tipo de botón'),
+                    ElevatedButton(
+                      onPressed: _selectButtonType,
+                      child: Text('Seleccionar tipo de botón'),
+                    ),
+                  ],
                 ),
               TextFormField(
                 focusNode: _focusNode,
@@ -176,31 +191,15 @@ class ButtonPageState extends State<ButtonPage> {
                 },
               ),
               const SizedBox(height: 10),
-              if (selectedButton != null)
+              if (selectedButtonType != null)
                 ListTile(
                   title: const Text('Selecciona un botón'),
                   trailing: ElevatedButton(
-                    onPressed: () async {
-                      // Navegar a GridPage para seleccionar un botón
-                      final selectedIndex = await Navigator.push<int>(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              GridPage(buttonModel: buttonModel),
-                        ),
-                      );
-                      if (selectedIndex != null) {
-                        setState(() {
-                          buttonModel.selectButton(selectedIndex);
-                          _buttonTextController.text = buttonModel
-                              .factoryButtons[selectedIndex].text;
-                        });
-                      }
-                    },
-                    child: Text(selectedButton.type.toString().split('.').last),
+                    onPressed: _selectButtonType,
+                    child: Text(selectedButton?.type.toString().split('.').last ?? 'Seleccionar tipo de botón'),
                   ),
                 ),
-               ListTile(
+              ListTile(
                 leading: Icon(Icons.description),
                 title: Text('Contenido'),
                 trailing: ElevatedButton.icon(
@@ -233,8 +232,7 @@ class ButtonPageState extends State<ButtonPage> {
                       ),
                       const SizedBox(height: 10),
                       ButtonOptions(
-                        textStyleNotifier:
-                            Provider.of<TextStyleNotifier>(context),
+                        textStyleNotifier: Provider.of<TextStyleNotifier>(context),
                         buttonTextController: _buttonTextController,
                       ),
                       ElevatedButton(
@@ -242,8 +240,7 @@ class ButtonPageState extends State<ButtonPage> {
                         onPressed: () {
                           if (_buttonTextController.text.isEmpty) {
                             setState(() {
-                              message =
-                                  'Por favor, proporciona un texto para el botón.';
+                              message = 'Por favor, proporciona un texto para el botón.';
                             });
                           } else {
                             saveButton();

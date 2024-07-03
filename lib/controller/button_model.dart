@@ -49,10 +49,10 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
-  void initializeButtons(ButtonFactory buttonFactory, TextEditingController textController, QuillController controller) {
+  void initializeButtons() {
     if (!_buttonsInitialized) {
       for (ButtonType type in ButtonType.values) {
-        addButton(buttonFactory.createButton(type, textController.text, controller.document));
+        addButton(buttonFactory.createButton(type, _defaultText, Document()));
       }
       _buttonsInitialized = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -61,9 +61,9 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
-  void createNewButton() {
+  void createNewButton(ButtonType type) {
     final newButton = buttonFactory.createButton(
-      ButtonType.elevated, // Tipo predeterminado, puede modificarse
+      type,
       _defaultText,
       Document(), // Nuevo documento vacío
     );
@@ -83,8 +83,7 @@ class ButtonModel with ChangeNotifier {
   }
 
   void cloneText(int index, String buttonText, {bool? isBold, bool? isItalic, bool? isUnderline, bool? isBorder, Document? document}) {
-    _factoryButtons[_selectedIndex] = _factoryButtons[_selectedIndex]
-        .cloneWithText(
+    _factoryButtons[_selectedIndex] = _factoryButtons[_selectedIndex].cloneWithText(
       newText: _defaultText,
       newIsBold: false,
       newIsItalic: false,
@@ -93,8 +92,7 @@ class ButtonModel with ChangeNotifier {
       document: Document(),
     );
     _selectedIndex = index;
-    _factoryButtons[_selectedIndex] = _factoryButtons[_selectedIndex]
-        .cloneWithText(
+    _factoryButtons[_selectedIndex] = _factoryButtons[_selectedIndex].cloneWithText(
       newText: buttonText,
       newIsBold: isBold ?? false,
       newIsItalic: isItalic ?? false,

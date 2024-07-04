@@ -7,7 +7,7 @@ class ButtonModel with ChangeNotifier {
   final List<ButtonData> _factoryButtons = [];
   final List<ButtonData> _savedButtons = [];
   final String _defaultText = 'Servicio';
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
   bool _buttonsInitialized = false;
   final ButtonFactory buttonFactory;
 
@@ -23,8 +23,20 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
+  // void saveButton(ButtonData buttonData) {
+  //   _savedButtons.add(buttonData);
+  //   notifyListeners();
+  // }
+
+// //
   void saveButton(ButtonData buttonData) {
-    _savedButtons.add(buttonData);
+    final index =
+        _savedButtons.indexWhere((button) => button.id == buttonData.id);
+    if (index != -1) {
+      _savedButtons[index] = buttonData;
+    } else {
+      _savedButtons.add(buttonData);
+    }
     notifyListeners();
   }
 
@@ -73,6 +85,8 @@ class ButtonModel with ChangeNotifier {
   }
 
   void resetButton() {
+    final ButtonModel = this;
+
     final resetButton = buttonFactory.createButton(
       ButtonType.elevated, // Tipo predeterminado, puede modificarse
       _defaultText,
@@ -82,8 +96,14 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void cloneText(int index, String buttonText, {bool? isBold, bool? isItalic, bool? isUnderline, bool? isBorder, Document? document}) {
-    _factoryButtons[_selectedIndex] = _factoryButtons[_selectedIndex].cloneWithText(
+  void cloneText(int index, String buttonText,
+      {bool? isBold,
+      bool? isItalic,
+      bool? isUnderline,
+      bool? isBorder,
+      Document? document}) {
+    _factoryButtons[_selectedIndex] =
+        _factoryButtons[_selectedIndex].cloneWithText(
       newText: _defaultText,
       newIsBold: false,
       newIsItalic: false,
@@ -92,7 +112,8 @@ class ButtonModel with ChangeNotifier {
       document: Document(),
     );
     _selectedIndex = index;
-    _factoryButtons[_selectedIndex] = _factoryButtons[_selectedIndex].cloneWithText(
+    _factoryButtons[_selectedIndex] =
+        _factoryButtons[_selectedIndex].cloneWithText(
       newText: buttonText,
       newIsBold: isBold ?? false,
       newIsItalic: isItalic ?? false,
@@ -103,7 +124,8 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateButtonTextStyle(bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
+  void updateButtonTextStyle(
+      bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
     var button = factoryButtons[selectedIndex];
     factoryButtons[selectedIndex] = button.copyWith(
       isBold: isBold,

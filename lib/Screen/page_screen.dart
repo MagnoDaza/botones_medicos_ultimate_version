@@ -98,7 +98,7 @@ class ButtonPageState extends State<ButtonPage> {
         message = 'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
         if (!isEditing) {
           _buttonTextController.text = '';
-          buttonModel.resetButton();
+          // buttonModel.resetButton();
         }
       });
       Navigator.of(context).pop(); // Regresar a la página anterior después de guardar

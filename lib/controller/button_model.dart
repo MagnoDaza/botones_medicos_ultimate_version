@@ -80,7 +80,7 @@ class ButtonModel with ChangeNotifier {
       Document(), // Nuevo documento vacío
     );
     addButton(newButton);
-    _selectedIndex = _factoryButtons.length - 1;
+    // _selectedIndex = _factoryButtons.length - 1;
     notifyListeners();
   }
 
@@ -136,14 +136,14 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void createNewButtonFromSelected() {
-    final selectedButton = factoryButtons[selectedIndex];
-    final newButton = buttonFactory.createButton(
-      selectedButton.type, // Basado en el tipo del botón seleccionado
-      selectedButton.text, // Texto del botón seleccionado
-      selectedButton.document, // Documento del botón seleccionado
-    );
-    addButton(newButton);
-    selectButton(factoryButtons.length - 1); // Selecciona el nuevo botón
-  }
+  // void createNewButtonFromSelected() {
+  //   final selectedButton = factoryButtons[selectedIndex];
+  //   final newButton = buttonFactory.createButton(
+  //     selectedButton.type, // Basado en el tipo del botón seleccionado
+  //     selectedButton.text, // Texto del botón seleccionado
+  //     selectedButton.document, // Documento del botón seleccionado
+  //   );
+  //   addButton(newButton);
+  //   selectButton(factoryButtons.length - 1); // Selecciona el nuevo botón
+  // }
 }

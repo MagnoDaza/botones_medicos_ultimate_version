@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:selectable_box/selectable_box.dart';
 import '../controller/button_model.dart';
 
@@ -17,7 +18,9 @@ class _GridPageState extends State<GridPage> {
   @override
   void initState() {
     super.initState();
-    widget.buttonModel.initializeButtons();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.buttonModel.initializeButtons();
+    });
   }
 
   @override
@@ -36,39 +39,43 @@ class _GridPageState extends State<GridPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // Dos columnas
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-          ),
-          itemCount: widget.buttonModel.factoryButtons.length,
-          itemBuilder: (context, index) {
-            final buttonData = widget.buttonModel.factoryButtons[index];
-            return SelectableBox(
-              height: 180,
-              isSelected: _selectedIndex == index,
-              onTap: () {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buttonData.build(context), // Previsualización del botón
-                  const SizedBox(height: 10),
-                  Text(
-                    buttonData.type.toString().split('.').last,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
+      body: Consumer<ButtonModel>(
+        builder: (context, buttonModel, child) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // Dos columnas
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
               ),
-            );
-          },
-        ),
+              itemCount: buttonModel.factoryButtons.length,
+              itemBuilder: (context, index) {
+                final buttonData = buttonModel.factoryButtons[index];
+                return SelectableBox(
+                  height: 180,
+                  isSelected: _selectedIndex == index,
+                  onTap: () {
+                    setState(() {
+                      _selectedIndex = index;
+                    });
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      buttonData.build(context), // Previsualización del botón
+                      const SizedBox(height: 10),
+                      Text(
+                        buttonData.type.toString().split('.').last,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }

@@ -7,7 +7,7 @@ class ButtonModel with ChangeNotifier {
   final List<ButtonData> _factoryButtons = [];
   final List<ButtonData> _savedButtons = [];
   final String _defaultText = 'Servicio';
-  int _selectedIndex = 2;
+  int _selectedIndex = 0;
   bool _buttonsInitialized = false;
   final ButtonFactory buttonFactory;
 
@@ -23,12 +23,6 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // void saveButton(ButtonData buttonData) {
-  //   _savedButtons.add(buttonData);
-  //   notifyListeners();
-  // }
-
-// //
   void saveButton(ButtonData buttonData) {
     final index =
         _savedButtons.indexWhere((button) => button.id == buttonData.id);
@@ -63,9 +57,11 @@ class ButtonModel with ChangeNotifier {
 
   void initializeButtons() {
     if (!_buttonsInitialized) {
+      final List<ButtonData> buttons = [];
       for (ButtonType type in ButtonType.values) {
-        addButton(buttonFactory.createButton(type, _defaultText, Document()));
+        buttons.add(buttonFactory.createButton(type, _defaultText, Document()));
       }
+      _factoryButtons.addAll(buttons);
       _buttonsInitialized = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         selectButton(0);
@@ -80,13 +76,11 @@ class ButtonModel with ChangeNotifier {
       Document(), // Nuevo documento vacío
     );
     addButton(newButton);
-    // _selectedIndex = _factoryButtons.length - 1;
+    _selectedIndex = _factoryButtons.length - 1;
     notifyListeners();
   }
 
   void resetButton() {
-    final ButtonModel = this;
-
     final resetButton = buttonFactory.createButton(
       ButtonType.elevated, // Tipo predeterminado, puede modificarse
       _defaultText,

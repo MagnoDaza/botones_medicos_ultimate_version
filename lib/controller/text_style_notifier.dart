@@ -71,4 +71,15 @@ class TextStyleNotifier with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  //void reset de estilos
+
+  void resetTextStyle() {
+    _isBold = false;
+    _isItalic = false;
+    _isUnderline = false;
+    _isBorder = false;
+    notifyListeners();
+  }
+
 }

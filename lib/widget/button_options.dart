@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../Screen/page_screen.dart';
 import '../botones/boton/elevated_button_data.dart';
 import '../botones/widget/expansion_panel/custom_expansion_panel.dart';
 import '../botones/widget/rainbow_icon.dart';
@@ -13,11 +12,13 @@ import '../rowbuttoncolor/custom_color_row.dart';
 class ButtonOptions extends StatefulWidget {
   final TextEditingController buttonTextController;
   final TextStyleNotifier textStyleNotifier;
+  final ButtonType? selectedButtonType;
 
   const ButtonOptions({
     super.key,
     required this.buttonTextController,
     required this.textStyleNotifier,
+    this.selectedButtonType,
   });
 
   @override
@@ -25,17 +26,11 @@ class ButtonOptions extends StatefulWidget {
 }
 
 class ButtonOptionsState extends State<ButtonOptions> {
-  // ButtonType? lastButtonType;
-
   @override
   Widget build(BuildContext context) {
     return Consumer<ButtonModel>(
       builder: (context, buttonModel, child) {
-        final selectedButtonType = context
-            .findAncestorStateOfType<ButtonPageState>()
-            ?.selectedButtonType;
-
-        if (selectedButtonType == null) {
+        if (widget.selectedButtonType == null) {
           return const Center(child: Text("Selecciona un tipo de botón"));
         }
 
@@ -45,6 +40,14 @@ class ButtonOptionsState extends State<ButtonOptions> {
 
         ButtonData buttonData =
             buttonModel.factoryButtons[buttonModel.selectedIndex];
+
+        // Reset TextStyleNotifier to default values when button type changes
+        if (widget.selectedButtonType != buttonData.type) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            widget.textStyleNotifier
+                .resetTextStyle(); // Asumiendo que hay un método reset en TextStyleNotifier
+          });
+        }
 
         switch (buttonData.type) {
           case ButtonType.elevated:
@@ -58,7 +61,7 @@ class ButtonOptionsState extends State<ButtonOptions> {
                     headerValue: 'Color de fondo',
                     expandedValue: [
                       CustomColorButtonRow(
-                        initialColor: const Color(0xFF4F4F4F),
+                        initialColor: elevatedButtonData.color,
                         updateButtonColor: (Color newColor) {
                           buttonModel.updateButton(
                             buttonModel.selectedIndex,
@@ -81,7 +84,7 @@ class ButtonOptionsState extends State<ButtonOptions> {
                     headerValue: "Color de texto",
                     expandedValue: [
                       CustomColorButtonRow(
-                        initialColor: Colors.white,
+                        initialColor: elevatedButtonData.textColor,
                         updateButtonColor: (Color newColor) {
                           buttonModel.updateButton(
                             buttonModel.selectedIndex,

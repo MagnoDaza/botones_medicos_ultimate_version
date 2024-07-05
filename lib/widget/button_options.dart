@@ -33,108 +33,87 @@ class ButtonOptionsState extends State<ButtonOptions> {
         if (widget.selectedButtonType == null) {
           return const Center(child: Text("Selecciona un tipo de botón"));
         }
-
-        if (buttonModel.factoryButtons.isEmpty) {
+        if (buttonModel.temporaryButton == null) {
           return const Center(child: Text("Escribe un nombre para empezar"));
         }
-
-        ButtonData buttonData =
-            buttonModel.factoryButtons[buttonModel.selectedIndex];
+        ButtonData buttonData = buttonModel.temporaryButton!;
 
         // Reset TextStyleNotifier to default values when button type changes
         if (widget.selectedButtonType != buttonData.type) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            widget.textStyleNotifier
-                .resetTextStyle(); // Asumiendo que hay un método reset en TextStyleNotifier
+            widget.textStyleNotifier.resetTextStyle();
           });
         }
 
         switch (buttonData.type) {
           case ButtonType.elevated:
-            ElevatedButtonData elevatedButtonData =
-                buttonData as ElevatedButtonData;
+            ElevatedButtonData elevatedButtonData = buttonData as ElevatedButtonData;
             return Column(
               children: [
-                CustomExpansionPanel(items: [
-                  PanelItem(
-                    leading: RainbowIcon(iconData: Icons.format_color_fill),
-                    headerValue: 'Color de fondo',
-                    expandedValue: [
-                      CustomColorButtonRow(
-                        initialColor: elevatedButtonData.color,
-                        updateButtonColor: (Color newColor) {
-                          buttonModel.updateButton(
-                            buttonModel.selectedIndex,
-                            elevatedButtonData.copyWith(color: newColor),
-                          );
-                          Provider.of<ColorNotifier>(context, listen: false)
-                              .setBackgroundColor(buttonData.id, newColor);
-                        },
-                        colorChoices: [
-                          ColorChoice(
-                              color: const Color(0xFF4F4F4F), name: 'Gris'),
-                          ColorChoice(
-                              color: const Color(0xFF2196F3), name: 'Azul'),
-                        ],
-                      ),
-                    ],
-                  ),
-                  PanelItem(
-                    leading: RainbowIcon(iconData: Icons.format_color_text),
-                    headerValue: "Color de texto",
-                    expandedValue: [
-                      CustomColorButtonRow(
-                        initialColor: elevatedButtonData.textColor,
-                        updateButtonColor: (Color newColor) {
-                          buttonModel.updateButton(
-                            buttonModel.selectedIndex,
-                            elevatedButtonData.copyWith(textColor: newColor),
-                          );
-                          Provider.of<ColorNotifier>(context, listen: false)
-                              .setTextColor(buttonData.id, newColor);
-                        },
-                      ),
-                    ],
-                  ),
-                  PanelItem(
-                    leading: const Icon(Icons.format_italic),
-                    headerValue: "Estilos de texto",
-                    expandedValue: [
-                      TextStyleOptions(
-                          textStyleNotifier: widget.textStyleNotifier),
-                    ],
-                  ),
-                ]),
+                CustomExpansionPanel(
+                  items: [
+                    PanelItem(
+                      leading: RainbowIcon(iconData: Icons.format_color_fill),
+                      headerValue: 'Color de fondo',
+                      expandedValue: [
+                        CustomColorButtonRow(
+                          initialColor: elevatedButtonData.color,
+                          updateButtonColor: (Color newColor) {
+                            buttonModel.updateButton(
+                              buttonData.copyWith(color: newColor),
+                            );
+                            Provider.of<ColorNotifier>(context, listen: false)
+                                .setBackgroundColor(buttonData.id, newColor);
+                          },
+                          colorChoices: [
+                            ColorChoice(color: const Color(0xFF4F4F4F), name: 'Gris'),
+                            ColorChoice(color: const Color(0xFF2196F3), name: 'Azul'),
+                          ],
+                        ),
+                      ],
+                    ),
+                    PanelItem(
+                      leading: RainbowIcon(iconData: Icons.format_color_text),
+                      headerValue: "Color de texto",
+                      expandedValue: [
+                        CustomColorButtonRow(
+                          initialColor: elevatedButtonData.textColor,
+                          updateButtonColor: (Color newColor) {
+                            buttonModel.updateButton(
+                              buttonData.copyWith(textColor: newColor),
+                            );
+                            Provider.of<ColorNotifier>(context, listen: false)
+                                .setTextColor(buttonData.id, newColor);
+                          },
+                        ),
+                      ],
+                    ),
+                    PanelItem(
+                      leading: const Icon(Icons.format_italic),
+                      headerValue: "Estilos de texto",
+                      expandedValue: [
+                        TextStyleOptions(textStyleNotifier: widget.textStyleNotifier),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             );
           case ButtonType.outlined:
-            return Column(
-              children: [
-                CustomExpansionPanel(items: [
-                  PanelItem(
-                    leading: const Icon(Icons.format_italic),
-                    headerValue: "Estilos de texto",
-                    expandedValue: [
-                      TextStyleOptions(
-                          textStyleNotifier: widget.textStyleNotifier),
-                    ],
-                  )
-                ]),
-              ],
-            );
           case ButtonType.adaptive:
             return Column(
               children: [
-                CustomExpansionPanel(items: [
-                  PanelItem(
-                    leading: const Icon(Icons.format_italic),
-                    headerValue: "Estilos de texto",
-                    expandedValue: [
-                      TextStyleOptions(
-                          textStyleNotifier: widget.textStyleNotifier),
-                    ],
-                  )
-                ]),
+                CustomExpansionPanel(
+                  items: [
+                    PanelItem(
+                      leading: const Icon(Icons.format_italic),
+                      headerValue: "Estilos de texto",
+                      expandedValue: [
+                        TextStyleOptions(textStyleNotifier: widget.textStyleNotifier),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             );
           default:
@@ -144,6 +123,7 @@ class ButtonOptionsState extends State<ButtonOptions> {
     );
   }
 }
+
 
 class TextStyleOptions extends StatefulWidget {
   final TextStyleNotifier textStyleNotifier;

@@ -41,8 +41,7 @@ class ButtonPageState extends State<ButtonPage> {
       selectedButtonType = widget.buttonData!.type;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-        final textStyleNotifier =
-            Provider.of<TextStyleNotifier>(context, listen: false);
+        final textStyleNotifier = Provider.of<TextStyleNotifier>(context, listen: false);
         int index = buttonModel.savedButtons
             .indexWhere((button) => button.id == widget.buttonData!.id);
         if (index != -1) {
@@ -58,7 +57,6 @@ class ButtonPageState extends State<ButtonPage> {
       _buttonTextController.text = 'Servicio';
       _controller = QuillController.basic();
     }
-
     _focusNode.addListener(() {
       if (_focusNode.hasFocus && !isEditing) {
         setState(() {
@@ -76,42 +74,33 @@ class ButtonPageState extends State<ButtonPage> {
   }
 
   void updateButtonAttributes(Map<String, dynamic> newValues) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-      if (buttonModel.factoryButtons.isNotEmpty) {
-        final selectedButton =
-            buttonModel.factoryButtons[buttonModel.selectedIndex];
-        final updatedButton = ButtonBuilder()
-            .fromButtonData(selectedButton)
-            .setText(newValues['text'] ?? selectedButton.text)
-            .setBold(newValues['isBold'] ?? selectedButton.isBold)
-            .setItalic(newValues['isItalic'] ?? selectedButton.isItalic)
-            .setUnderline(
-                newValues['isUnderline'] ?? selectedButton.isUnderline)
-            .setBorder(newValues['isBorder'] ?? selectedButton.isBorder)
-            .setDocument(newValues['document'] ?? selectedButton.document)
-            .build();
-        buttonModel.updateButton(buttonModel.selectedIndex, updatedButton);
-      }
-    });
+    final buttonModel = Provider.of<ButtonModel>(context, listen: false);
+    if (buttonModel.temporaryButton != null) {
+      final selectedButton = buttonModel.temporaryButton!;
+      final updatedButton = selectedButton.copyWith(
+        text: newValues['text'] ?? selectedButton.text,
+        isBold: newValues['isBold'] ?? selectedButton.isBold,
+        isItalic: newValues['isItalic'] ?? selectedButton.isItalic,
+        isUnderline: newValues['isUnderline'] ?? selectedButton.isUnderline,
+        isBorder: newValues['isBorder'] ?? selectedButton.isBorder,
+        document: newValues['document'] ?? selectedButton.document,
+      );
+      buttonModel.updateButton(updatedButton);
+    }
   }
 
   void saveButton() {
     final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-    if (buttonModel.factoryButtons.isNotEmpty) {
-      final selectedButton =
-          buttonModel.factoryButtons[buttonModel.selectedIndex];
+    if (buttonModel.temporaryButton != null) {
       buttonModel.saveButton();
       setState(() {
-        message =
-            'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
+        message = 'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
         if (!isEditing) {
           _buttonTextController.text = '';
           selectedButtonType = null;
         }
       });
-      Navigator.of(context)
-          .pop(); // Regresar a la página anterior después de guardar
+      Navigator.of(context).pop(); // Regresar a la página anterior después de guardar
     } else {
       setState(() {
         message = 'No hay botones disponibles para guardar.';
@@ -129,12 +118,12 @@ class ButtonPageState extends State<ButtonPage> {
       ),
     );
     if (selectedIndex != null) {
+      final buttonModel = Provider.of<ButtonModel>(context, listen: false);
+      final selectedButton = buttonModel.factoryButtons[selectedIndex];
       setState(() {
-        final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-        selectedButtonType = buttonModel.factoryButtons[selectedIndex].type;
+        selectedButtonType = selectedButton.type;
         buttonModel.selectButton(selectedIndex);
-        _buttonTextController.text =
-            buttonModel.factoryButtons[selectedIndex].text;
+        _buttonTextController.text = selectedButton.text;
       });
     }
   }
@@ -142,10 +131,7 @@ class ButtonPageState extends State<ButtonPage> {
   @override
   Widget build(BuildContext context) {
     final buttonModel = Provider.of<ButtonModel>(context);
-    final selectedButton = buttonModel.factoryButtons.isNotEmpty
-        ? buttonModel.factoryButtons[buttonModel.selectedIndex]
-        : null;
-
+    final selectedButton = buttonModel.temporaryButton;
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Editar Botón' : 'Crear Botón'),
@@ -158,9 +144,7 @@ class ButtonPageState extends State<ButtonPage> {
           ),
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: () {
-              saveButton();
-            },
+            onPressed: saveButton,
           ),
         ],
       ),
@@ -199,9 +183,7 @@ class ButtonPageState extends State<ButtonPage> {
                 controller: _buttonTextController,
                 onChanged: (text) {
                   // Verificar el estado para evitar interferencias
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    updateButtonAttributes({'text': text});
-                  });
+                  updateButtonAttributes({'text': text});
                 },
               ),
               const SizedBox(height: 10),
@@ -211,8 +193,7 @@ class ButtonPageState extends State<ButtonPage> {
                   trailing: ElevatedButton(
                     onPressed: _selectButtonType,
                     child: Text(
-                      selectedButton?.type.toString().split('.').last ??
-                          'Seleccionar tipo de botón',
+                      selectedButton?.type.toString().split('.').last ?? 'Seleccionar tipo de botón',
                     ),
                   ),
                 ),
@@ -223,8 +204,7 @@ class ButtonPageState extends State<ButtonPage> {
                   onPressed: () async {
                     final result = await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) =>
-                            QuillPage(controller: _controller),
+                        builder: (context) => QuillPage(controller: _controller),
                       ),
                     );
                     if (result != null) {
@@ -233,8 +213,7 @@ class ButtonPageState extends State<ButtonPage> {
                           document: Document.fromJson(result),
                           selection: const TextSelection.collapsed(offset: 0),
                         );
-                        updateButtonAttributes(
-                            {'document': _controller.document});
+                        updateButtonAttributes({'document': _controller.document});
                       });
                     }
                   },
@@ -252,8 +231,7 @@ class ButtonPageState extends State<ButtonPage> {
                       ),
                       const SizedBox(height: 10),
                       ButtonOptions(
-                        textStyleNotifier:
-                            Provider.of<TextStyleNotifier>(context),
+                        textStyleNotifier: Provider.of<TextStyleNotifier>(context),
                         buttonTextController: _buttonTextController,
                         selectedButtonType: selectedButtonType,
                       ),
@@ -262,8 +240,7 @@ class ButtonPageState extends State<ButtonPage> {
                         onPressed: () {
                           if (_buttonTextController.text.isEmpty) {
                             setState(() {
-                              message =
-                                  'Por favor, proporciona un texto para el botón.';
+                              message = 'Por favor, proporciona un texto para el botón.';
                             });
                           } else {
                             saveButton();

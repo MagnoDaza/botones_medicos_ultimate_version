@@ -7,13 +7,15 @@ class ButtonModel with ChangeNotifier {
   final List<ButtonData> _factoryButtons = [];
   final List<ButtonData> _savedButtons = [];
   final String _defaultText = 'Servicio';
-  int _selectedIndex = 0;
+  int _selectedIndex = -1;
   bool _buttonsInitialized = false;
+  ButtonData? _temporaryButton; // Nueva instancia temporal para edición
 
-  List<ButtonData> get factoryButtons => _factoryButtons;
+  List<ButtonData> get factoryButtons => List.unmodifiable(_factoryButtons);
   int get selectedIndex => _selectedIndex;
-  List<ButtonData> get savedButtons => _savedButtons;
+  List<ButtonData> get savedButtons => List.unmodifiable(_savedButtons);
   bool get buttonsInitialized => _buttonsInitialized;
+  ButtonData? get temporaryButton => _temporaryButton; // Obtener la instancia temporal
 
   /// Añadir botón temporal a la lista de plantillas
   void addButton(ButtonData buttonData) {
@@ -23,34 +25,31 @@ class ButtonModel with ChangeNotifier {
 
   /// Guardar el botón y moverlo a la lista de botones guardados
   void saveButton() {
-    if (_selectedIndex < 0 || _selectedIndex >= _factoryButtons.length) {
-      return; // No hay botón seleccionado para guardar
-    }
-    final buttonData = _factoryButtons[_selectedIndex];
-    final index = _savedButtons.indexWhere((button) => button.id == buttonData.id);
+    if (_temporaryButton == null) return; // No hay botón temporal para guardar
+
+    final index = _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
     if (index != -1) {
-      _savedButtons[index] = buttonData;
+      _savedButtons[index] = _temporaryButton!;
     } else {
-      _savedButtons.add(buttonData);
+      _savedButtons.add(_temporaryButton!);
     }
-    // Remover el botón temporal después de guardarlo
-    _factoryButtons.removeAt(_selectedIndex);
-    _selectedIndex = _factoryButtons.isNotEmpty ? 0 : -1;
+    _temporaryButton = null; // Limpiar el botón temporal después de guardarlo
     notifyListeners();
   }
 
-  /// Seleccionar botón de la lista temporal
+  /// Seleccionar botón de la lista temporal y crear instancia temporal
   void selectButton(int index) {
     if (index >= 0 && index < _factoryButtons.length) {
       _selectedIndex = index;
+      _temporaryButton = _factoryButtons[index].copyWith(); // Crear una instancia temporal
       notifyListeners();
     }
   }
 
   /// Actualizar botón temporal
-  void updateButton(int index, ButtonData newButtonData) {
-    if (index >= 0 && index < _factoryButtons.length) {
-      _factoryButtons[index] = newButtonData;
+  void updateButton(ButtonData newButtonData) {
+    if (_temporaryButton != null) {
+      _temporaryButton = newButtonData; // Actualizar la instancia temporal
       notifyListeners();
     }
   }
@@ -77,7 +76,9 @@ class ButtonModel with ChangeNotifier {
       _factoryButtons.addAll(buttons);
       _buttonsInitialized = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        selectButton(0);
+        if (_factoryButtons.isNotEmpty) {
+          selectButton(0); // Seleccionar el primer botón como predeterminado
+        }
       });
     }
   }
@@ -89,58 +90,47 @@ class ButtonModel with ChangeNotifier {
         .setText(_defaultText)
         .setDocument(Document())
         .build();
-    addButton(newButton);
-    _selectedIndex = _factoryButtons.length - 1;
+    _temporaryButton = newButton;
     notifyListeners();
   }
 
   /// Restablecer botón temporal seleccionado
   void resetButton() {
-    final selectedButton = _factoryButtons[_selectedIndex];
-    final resetButton = ButtonBuilder()
-        .setType(selectedButton.type)
-        .setText(_defaultText)
-        .setDocument(Document())
-        .build();
-    updateButton(_selectedIndex, resetButton);
-    notifyListeners();
+    if (_temporaryButton != null) {
+      _temporaryButton = ButtonBuilder()
+          .setType(_temporaryButton!.type)
+          .setText(_defaultText)
+          .setDocument(Document())
+          .build();
+      notifyListeners();
+    }
   }
 
   /// Clonar texto en el botón temporal
-  void cloneText(int index, String buttonText,
-      {bool? isBold, bool? isItalic, bool? isUnderline, bool? isBorder, Document? document}) {
-    _factoryButtons[_selectedIndex] = _factoryButtons[_selectedIndex].cloneWithText(
-      newText: _defaultText,
-      newIsBold: false,
-      newIsItalic: false,
-      newIsUnderline: false,
-      newIsBorder: false,
-      document: Document(),
-    );
-    _selectedIndex = index;
-    _factoryButtons[_selectedIndex] = _factoryButtons[_selectedIndex].cloneWithText(
-      newText: buttonText,
-      newIsBold: isBold ?? false,
-      newIsItalic: isItalic ?? false,
-      newIsUnderline: isUnderline ?? false,
-      newIsBorder: isBorder ?? false,
-      document: document ?? Document(),
-    );
-    notifyListeners();
+  void cloneText(String buttonText, {bool? isBold, bool? isItalic, bool? isUnderline, bool? isBorder, Document? document}) {
+    if (_temporaryButton != null) {
+      _temporaryButton = _temporaryButton!.copyWith(
+        text: buttonText,
+        isBold: isBold ?? false,
+        isItalic: isItalic ?? false,
+        isUnderline: isUnderline ?? false,
+        isBorder: isBorder ?? false,
+        document: document ?? Document(),
+      );
+      notifyListeners();
+    }
   }
 
   /// Actualizar estilo de texto del botón temporal
   void updateButtonTextStyle(bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
-    if (_selectedIndex < 0 || _selectedIndex >= _factoryButtons.length) {
-      return; // No hay botón seleccionado para actualizar
+    if (_temporaryButton != null) {
+      _temporaryButton = _temporaryButton!.copyWith(
+        isBold: isBold,
+        isItalic: isItalic,
+        isUnderline: isUnderline,
+        isBorder: isBorder,
+      );
+      notifyListeners();
     }
-    var button = factoryButtons[selectedIndex];
-    factoryButtons[selectedIndex] = button.copyWith(
-      isBold: isBold,
-      isItalic: isItalic,
-      isUnderline: isUnderline,
-      isBorder: isBorder,
-    );
-    notifyListeners();
   }
 }

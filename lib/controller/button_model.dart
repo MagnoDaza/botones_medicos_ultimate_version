@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import '../botones/button_data.dart';
-import '../botones/boton/button_factory.dart';
-import '../botones/patron_builder/builderfactory.dart';
+import '../botones/patron_builder/button_builder.dart';
 
 class ButtonModel with ChangeNotifier {
   final List<ButtonData> _factoryButtons = [];
@@ -10,9 +9,6 @@ class ButtonModel with ChangeNotifier {
   final String _defaultText = 'Servicio';
   int _selectedIndex = 0;
   bool _buttonsInitialized = false;
-  final ButtonFactory buttonFactory;
-
-  ButtonModel(this.buttonFactory);
 
   List<ButtonData> get factoryButtons => _factoryButtons;
   int get selectedIndex => _selectedIndex;
@@ -25,8 +21,7 @@ class ButtonModel with ChangeNotifier {
   }
 
   void saveButton(ButtonData buttonData) {
-    final index =
-        _savedButtons.indexWhere((button) => button.id == buttonData.id);
+    final index = _savedButtons.indexWhere((button) => button.id == buttonData.id);
     if (index != -1) {
       _savedButtons[index] = buttonData;
     } else {
@@ -60,7 +55,12 @@ class ButtonModel with ChangeNotifier {
     if (!_buttonsInitialized) {
       final List<ButtonData> buttons = [];
       for (ButtonType type in ButtonType.values) {
-        buttons.add(buttonFactory.createButton(type, _defaultText, Document()));
+        final button = ButtonBuilder()
+            .setType(type)
+            .setText(_defaultText)
+            .setDocument(Document())
+            .build();
+        buttons.add(button);
       }
       _factoryButtons.addAll(buttons);
       _buttonsInitialized = true;
@@ -71,91 +71,64 @@ class ButtonModel with ChangeNotifier {
   }
 
   void createNewButton(ButtonType type) {
-    final newButton = buttonFactory.createButton(
-      type,
-      _defaultText,
-      Document(), // Nuevo documento vacío
-    );
+    final newButton = ButtonBuilder()
+        .setType(type)
+        .setText(_defaultText)
+        .setDocument(Document())
+        .build();
     addButton(newButton);
     _selectedIndex = _factoryButtons.length - 1;
     notifyListeners();
   }
 
-  // void resetButton() {
-  //   final resetButton = buttonFactory.createButton(
-  //     ButtonType.elevated, // Tipo predeterminado, puede modificarse
-  //     _defaultText,
-  //     Document(), // Nuevo documento vacío
-  //   );
-  //   _factoryButtons[_selectedIndex] = resetButton;
-  //   notifyListeners();
-  // }
-
-  // Crear un nuevo botón y reiniciar el botón seleccionado
   void resetButton() {
-    final buttonModel = this;
-    final selectedButton =
-        buttonModel.factoryButtons[buttonModel.selectedIndex];
-    final resetButton = buttonFactory.createButton(
-      selectedButton.type, // Tipo predeterminado, puede modificarse
-      _defaultText,
-      Document(), // Nuevo documento vacío
-    );
-
+    final selectedButton = _factoryButtons[_selectedIndex];
+    final resetButton = ButtonBuilder()
+        .setType(selectedButton.type)
+        .setText(_defaultText)
+        .setDocument(Document())
+        .build();
     updateButton(_selectedIndex, resetButton);
-    //refresca el boton seleccionado
-    selectButton(_selectedIndex);
     notifyListeners();
   }
 
   void cloneText(int index, String buttonText,
-      {bool? isBold,
-      bool? isItalic,
-      bool? isUnderline,
-      bool? isBorder,
-      Document? document}) {
-    _factoryButtons[_selectedIndex] =
-        _factoryButtons[_selectedIndex].cloneWithText(
-      newText: _defaultText,
-      newIsBold: false,
-      newIsItalic: false,
-      newIsUnderline: false,
-      newIsBorder: false,
-      document: Document(),
-    );
+      {bool? isBold, bool? isItalic, bool? isUnderline, bool? isBorder, Document? document}) {
+    final selectedButton = _factoryButtons[_selectedIndex];
+    final clonedButton = ButtonBuilder()
+        .fromButtonData(selectedButton)
+        .setText(_defaultText)
+        .setBold(false)
+        .setItalic(false)
+        .setUnderline(false)
+        .setBorder(false)
+        .setDocument(Document())
+        .build();
+    _factoryButtons[_selectedIndex] = clonedButton;
     _selectedIndex = index;
-    _factoryButtons[_selectedIndex] =
-        _factoryButtons[_selectedIndex].cloneWithText(
-      newText: buttonText,
-      newIsBold: isBold ?? false,
-      newIsItalic: isItalic ?? false,
-      newIsUnderline: isUnderline ?? false,
-      newIsBorder: isBorder ?? false,
-      document: document ?? Document(),
-    );
+    final newButton = ButtonBuilder()
+        .fromButtonData(clonedButton)
+        .setText(buttonText)
+        .setBold(isBold ?? false)
+        .setItalic(isItalic ?? false)
+        .setUnderline(isUnderline ?? false)
+        .setBorder(isBorder ?? false)
+        .setDocument(document ?? Document())
+        .build();
+    _factoryButtons[_selectedIndex] = newButton;
     notifyListeners();
   }
 
-  void updateButtonTextStyle(
-      bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
-    var button = factoryButtons[selectedIndex];
-    factoryButtons[selectedIndex] = button.copyWith(
-      isBold: isBold,
-      isItalic: isItalic,
-      isUnderline: isUnderline,
-      isBorder: isBorder,
-    );
+  void updateButtonTextStyle(bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
+    var button = _factoryButtons[_selectedIndex];
+    button = ButtonBuilder()
+        .fromButtonData(button)
+        .setBold(isBold)
+        .setItalic(isItalic)
+        .setUnderline(isUnderline)
+        .setBorder(isBorder)
+        .build();
+    _factoryButtons[_selectedIndex] = button;
     notifyListeners();
   }
-
-  // void createNewButtonFromSelected() {
-  //   final selectedButton = factoryButtons[selectedIndex];
-  //   final newButton = buttonFactory.createButton(
-  //     selectedButton.type, // Basado en el tipo del botón seleccionado
-  //     selectedButton.text, // Texto del botón seleccionado
-  //     selectedButton.document, // Documento del botón seleccionado
-  //   );
-  //   addButton(newButton);
-  //   selectButton(factoryButtons.length - 1); // Selecciona el nuevo botón
-  // }
 }

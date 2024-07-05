@@ -1,9 +1,7 @@
 import 'package:botones_medicos_ultimate_version/botones/button_data.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
-import 'botones/boton/button_factory.dart';
-import 'botones/patron_builder/builderfactory.dart';
+import 'botones/patron_builder/button_builder.dart';
 import 'botones/widget/expansion_panel/controller_expansion_panel.dart';
 import 'controller/button_model.dart';
 import 'controller/button_name_notifier.dart';
@@ -21,15 +19,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => ButtonNameNotifier()),
         ChangeNotifierProvider(create: (context) => ThemeNotifier()),
         ChangeNotifierProvider(create: (context) => ExpansionPanelController()),
-        // Asegúrate de crear ButtonFactory antes de ButtonModel si es necesario
-        ChangeNotifierProvider(
-          create: (context) => ButtonModel(
-            ButtonFactory(
-              Provider.of<ColorNotifier>(context, listen: false),
-              Provider.of<TextStyleNotifier>(context, listen: false),
-            ),
-          ),
-        ),
+        ChangeNotifierProvider(create: (context) => ButtonModel()),
       ],
       child: const MyApp(),
     ),
@@ -48,8 +38,7 @@ class MyApp extends StatelessWidget {
         theme: theme.isLightTheme
             ? ThemeData.light(useMaterial3: true)
             : ThemeData.dark(useMaterial3: true),
-        home: HomePage(
-        ),
+        home: HomePage(),
       ),
     );
   }

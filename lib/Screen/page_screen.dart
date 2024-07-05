@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
-import '../botones/boton/button_factory.dart';
 import '../botones/button_data.dart';
-import '../botones/patron_builder/builderfactory.dart';
+import '../botones/patron_builder/button_builder.dart';
 import '../botones/quill/quill_page.dart';
 import '../controller/button_model.dart';
 import '../controller/color_notifier.dart';
@@ -26,7 +25,6 @@ class ButtonPageState extends State<ButtonPage> {
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _buttonTextController = TextEditingController();
   late QuillController _controller;
-  late ButtonFactory buttonFactory;
   String message = '';
   bool isEditing = false; // Nuevo flag para edición
   ButtonType? selectedButtonType;
@@ -34,10 +32,6 @@ class ButtonPageState extends State<ButtonPage> {
   @override
   void initState() {
     super.initState();
-    buttonFactory = ButtonFactory(
-      Provider.of<ColorNotifier>(context, listen: false),
-      Provider.of<TextStyleNotifier>(context, listen: false),
-    );
 
     // Determinar si estamos editando un botón existente
     isEditing = widget.buttonData != null;
@@ -48,18 +42,15 @@ class ButtonPageState extends State<ButtonPage> {
         selection: const TextSelection.collapsed(offset: 0),
       );
       selectedButtonType = widget.buttonData!.type;
-
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
         final textStyleNotifier =
             Provider.of<TextStyleNotifier>(context, listen: false);
-
         int index = buttonModel.savedButtons
             .indexWhere((button) => button.id == widget.buttonData!.id);
         if (index != -1) {
           buttonModel.selectButton(index);
           final selectedButton = buttonModel.savedButtons[index];
-
           textStyleNotifier.isBold = selectedButton.isBold;
           textStyleNotifier.isItalic = selectedButton.isItalic;
           textStyleNotifier.isUnderline = selectedButton.isUnderline;
@@ -70,7 +61,6 @@ class ButtonPageState extends State<ButtonPage> {
       _buttonTextController.text = 'Servicio';
       _controller = QuillController.basic();
     }
-
     _focusNode.addListener(() {
       if (_focusNode.hasFocus && !isEditing) {
         setState(() {
@@ -93,8 +83,16 @@ class ButtonPageState extends State<ButtonPage> {
       if (buttonModel.factoryButtons.isNotEmpty) {
         final selectedButton =
             buttonModel.factoryButtons[buttonModel.selectedIndex];
-        final updatedButton =
-            buttonFactory.updateButton(selectedButton, newValues);
+        final updatedButton = ButtonBuilder()
+            .fromButtonData(selectedButton)
+            .setText(newValues['text'] ?? selectedButton.text)
+            .setBold(newValues['isBold'] ?? selectedButton.isBold)
+            .setItalic(newValues['isItalic'] ?? selectedButton.isItalic)
+            .setUnderline(
+                newValues['isUnderline'] ?? selectedButton.isUnderline)
+            .setBorder(newValues['isBorder'] ?? selectedButton.isBorder)
+            .setDocument(newValues['document'] ?? selectedButton.document)
+            .build();
         buttonModel.updateButton(buttonModel.selectedIndex, updatedButton);
       }
     });
@@ -214,13 +212,14 @@ class ButtonPageState extends State<ButtonPage> {
                   trailing: ElevatedButton(
                     onPressed: _selectButtonType,
                     child: Text(
-                        selectedButton?.type.toString().split('.').last ??
-                            'Seleccionar tipo de botón'),
+                      selectedButton?.type.toString().split('.').last ??
+                          'Seleccionar tipo de botón',
+                    ),
                   ),
                 ),
               ListTile(
-                leading: Icon(Icons.description),
-                title: Text('Contenido'),
+                leading: const Icon(Icons.description),
+                title: const Text('Contenido'),
                 trailing: ElevatedButton.icon(
                   onPressed: () async {
                     final result = await Navigator.of(context).push(
@@ -238,8 +237,8 @@ class ButtonPageState extends State<ButtonPage> {
                       });
                     }
                   },
-                  label: Text('Nuevo'),
-                  icon: Icon(Icons.description),
+                  label: const Text('Nuevo'),
+                  icon: const Icon(Icons.description),
                 ),
               ),
               Expanded(

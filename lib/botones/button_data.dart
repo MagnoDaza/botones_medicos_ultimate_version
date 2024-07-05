@@ -29,8 +29,6 @@ abstract class ButtonData {
     required this.isBorder,
   });
 
- 
-
   // Construir el widget del botón
   Widget build(BuildContext context);
 
@@ -79,8 +77,7 @@ abstract class ButtonData {
 
   // Método para crear una instancia desde JSON
   static ButtonData fromJson(Map<String, dynamic> json) {
-    ButtonType type =
-        ButtonType.values.firstWhere((e) => e.toString() == json['type']);
+    ButtonType type = ButtonType.values.firstWhere((e) => e.toString() == json['type']);
     switch (type) {
       case ButtonType.elevated:
         return ElevatedButtonData.fromJson(json);

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import 'botones/boton/button_factory.dart';
+import 'botones/patron_builder/builderfactory.dart';
 import 'botones/widget/expansion_panel/controller_expansion_panel.dart';
 import 'controller/button_model.dart';
 import 'controller/button_name_notifier.dart';

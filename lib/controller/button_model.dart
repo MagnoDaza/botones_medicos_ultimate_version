@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import '../botones/button_data.dart';
 import '../botones/boton/button_factory.dart';
+import '../botones/patron_builder/builderfactory.dart';
 
 class ButtonModel with ChangeNotifier {
   final List<ButtonData> _factoryButtons = [];
@@ -80,13 +81,30 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
+  // void resetButton() {
+  //   final resetButton = buttonFactory.createButton(
+  //     ButtonType.elevated, // Tipo predeterminado, puede modificarse
+  //     _defaultText,
+  //     Document(), // Nuevo documento vacío
+  //   );
+  //   _factoryButtons[_selectedIndex] = resetButton;
+  //   notifyListeners();
+  // }
+
+  // Crear un nuevo botón y reiniciar el botón seleccionado
   void resetButton() {
+    final buttonModel = this;
+    final selectedButton =
+        buttonModel.factoryButtons[buttonModel.selectedIndex];
     final resetButton = buttonFactory.createButton(
-      ButtonType.elevated, // Tipo predeterminado, puede modificarse
+      selectedButton.type, // Tipo predeterminado, puede modificarse
       _defaultText,
       Document(), // Nuevo documento vacío
     );
-    _factoryButtons[_selectedIndex] = resetButton;
+
+    updateButton(_selectedIndex, resetButton);
+    //refresca el boton seleccionado
+    selectButton(_selectedIndex);
     notifyListeners();
   }
 

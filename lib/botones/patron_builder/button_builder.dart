@@ -19,6 +19,35 @@ class ButtonBuilder {
   bool? isUnderline;
   bool? isBorder;
 
+  // Constructor privado
+  ButtonBuilder._internal();
+
+  // Instancia singleton
+  static final ButtonBuilder _instance = ButtonBuilder._internal();
+
+  // Método factory para obtener la instancia
+  factory ButtonBuilder() {
+    return _instance;
+  }
+
+  // Inicializa el builder a partir de ButtonData existente
+  ButtonBuilder fromButtonData(ButtonData buttonData) {
+    id = buttonData.id;
+    type = buttonData.type;
+    text = buttonData.text;
+    document = buttonData.document;
+    if (buttonData is ElevatedButtonData) {
+      color = buttonData.color;
+      textColor = buttonData.textColor;
+    }
+    isBold = buttonData.isBold;
+    isItalic = buttonData.isItalic;
+    isUnderline = buttonData.isUnderline;
+    isBorder = buttonData.isBorder;
+    return this;
+  }
+
+  // Métodos setters
   ButtonBuilder setId(String id) {
     this.id = id;
     return this;
@@ -69,7 +98,13 @@ class ButtonBuilder {
     return this;
   }
 
-  ButtonData build() {
+  // Construye o actualiza el botón
+  ButtonData build({ButtonData? buttonData}) {
+    // Si se proporciona buttonData, usarlo como plantilla
+    if (buttonData != null) {
+      fromButtonData(buttonData);
+    }
+
     String buttonId = id ?? const Uuid().v4();
     ButtonType buttonType = type!;
     String buttonText = text!;
@@ -82,12 +117,12 @@ class ButtonBuilder {
           type: buttonType,
           text: buttonText,
           document: buttonDocument,
-          color: color!,
-          textColor: textColor!,
-          isBold: isBold!,
-          isItalic: isItalic!,
-          isUnderline: isUnderline!,
-          isBorder: isBorder!,
+          color: color ?? Colors.blue, // Valores por defecto si son null
+          textColor: textColor ?? Colors.white,
+          isBold: isBold ?? false,
+          isItalic: isItalic ?? false,
+          isUnderline: isUnderline ?? false,
+          isBorder: isBorder ?? false,
         );
       case ButtonType.outlined:
         return OutlinedButtonData(
@@ -95,10 +130,10 @@ class ButtonBuilder {
           type: buttonType,
           text: buttonText,
           document: buttonDocument,
-          isBold: isBold!,
-          isItalic: isItalic!,
-          isUnderline: isUnderline!,
-          isBorder: isBorder!,
+          isBold: isBold ?? false,
+          isItalic: isItalic ?? false,
+          isUnderline: isUnderline ?? false,
+          isBorder: isBorder ?? false,
         );
       case ButtonType.adaptive:
         return AdaptiveButtonData(
@@ -106,10 +141,10 @@ class ButtonBuilder {
           type: buttonType,
           text: buttonText,
           document: buttonDocument,
-          isBold: isBold!,
-          isItalic: isItalic!,
-          isUnderline: isUnderline!,
-          isBorder: isBorder!,
+          isBold: isBold ?? false,
+          isItalic: isItalic ?? false,
+          isUnderline: isUnderline ?? false,
+          isBorder: isBorder ?? false,
         );
       default:
         throw Exception('Tipo de botón no soportado: $buttonType');

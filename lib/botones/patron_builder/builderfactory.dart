@@ -13,7 +13,8 @@ class ButtonFactory {
 
   ButtonFactory(this.colorNotifier, this.textStyleNotifier);
 
-  ButtonData createButton(ButtonType type, String text, Document document, {Color? color, Color? textColor, bool? isBold, bool? isItalic, bool? isUnderline, bool? isBorder}) {
+  ButtonData createButton(ButtonType type, String text, Document document, {Color? color, Color? textColor,
+   bool? isBold, bool? isItalic, bool? isUnderline, bool? isBorder}) {
     String buttonId = const Uuid().v4();
     return ButtonBuilder()
       .setId(buttonId)

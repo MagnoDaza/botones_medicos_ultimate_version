@@ -3,6 +3,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import '../botones/boton/button_factory.dart';
 import '../botones/button_data.dart';
+import '../botones/patron_builder/builderfactory.dart';
 import '../botones/quill/quill_page.dart';
 import '../controller/button_model.dart';
 import '../controller/color_notifier.dart';
@@ -48,21 +49,23 @@ class ButtonPageState extends State<ButtonPage> {
       );
       selectedButtonType = widget.buttonData!.type;
 
-      final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-      final textStyleNotifier =
-          Provider.of<TextStyleNotifier>(context, listen: false);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final buttonModel = Provider.of<ButtonModel>(context, listen: false);
+        final textStyleNotifier =
+            Provider.of<TextStyleNotifier>(context, listen: false);
 
-      int index = buttonModel.savedButtons
-          .indexWhere((button) => button.id == widget.buttonData!.id);
-      if (index != -1) {
-        buttonModel.selectButton(index);
-        final selectedButton = buttonModel.savedButtons[index];
+        int index = buttonModel.savedButtons
+            .indexWhere((button) => button.id == widget.buttonData!.id);
+        if (index != -1) {
+          buttonModel.selectButton(index);
+          final selectedButton = buttonModel.savedButtons[index];
 
-        textStyleNotifier.isBold = selectedButton.isBold;
-        textStyleNotifier.isItalic = selectedButton.isItalic;
-        textStyleNotifier.isUnderline = selectedButton.isUnderline;
-        textStyleNotifier.isBorder = selectedButton.isBorder;
-      }
+          textStyleNotifier.isBold = selectedButton.isBold;
+          textStyleNotifier.isItalic = selectedButton.isItalic;
+          textStyleNotifier.isUnderline = selectedButton.isUnderline;
+          textStyleNotifier.isBorder = selectedButton.isBorder;
+        }
+      });
     } else {
       _buttonTextController.text = 'Servicio';
       _controller = QuillController.basic();
@@ -85,7 +88,7 @@ class ButtonPageState extends State<ButtonPage> {
   }
 
   void updateButtonAttributes(Map<String, dynamic> newValues) {
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final buttonModel = Provider.of<ButtonModel>(context, listen: false);
       if (buttonModel.factoryButtons.isNotEmpty) {
         final selectedButton =
@@ -177,7 +180,6 @@ class ButtonPageState extends State<ButtonPage> {
                     textStyleNotifier: Provider.of<TextStyleNotifier>(context),
                     buttonData: selectedButton,
                     quillController: isEditing ? _controller : null,
-                    buttonFactory: buttonFactory,
                   ),
                 )
               else
@@ -200,7 +202,7 @@ class ButtonPageState extends State<ButtonPage> {
                 controller: _buttonTextController,
                 onChanged: (text) {
                   // Verificar el estado para evitar interferencias
-                  Future.microtask(() {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
                     updateButtonAttributes({'text': text});
                   });
                 },

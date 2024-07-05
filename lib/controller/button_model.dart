@@ -15,24 +15,31 @@ class ButtonModel with ChangeNotifier {
   List<ButtonData> get savedButtons => _savedButtons;
   bool get buttonsInitialized => _buttonsInitialized;
 
+  /// Añadir botón temporal a la lista de plantillas
   void addButton(ButtonData buttonData) {
     _factoryButtons.add(buttonData);
-    _selectedIndex = _factoryButtons.length - 1;
     notifyListeners();
   }
 
-  void saveButton(ButtonData buttonData) {
+  /// Guardar el botón y moverlo a la lista de botones guardados
+  void saveButton() {
+    if (_selectedIndex < 0 || _selectedIndex >= _factoryButtons.length) {
+      return; // No hay botón seleccionado para guardar
+    }
+    final buttonData = _factoryButtons[_selectedIndex];
     final index = _savedButtons.indexWhere((button) => button.id == buttonData.id);
     if (index != -1) {
       _savedButtons[index] = buttonData;
     } else {
       _savedButtons.add(buttonData);
     }
-    // Eliminar de _factoryButtons después de guardar
-    _factoryButtons.removeWhere((button) => button.id == buttonData.id);
+    // Remover el botón temporal después de guardarlo
+    _factoryButtons.removeAt(_selectedIndex);
+    _selectedIndex = _factoryButtons.isNotEmpty ? 0 : -1;
     notifyListeners();
   }
 
+  /// Seleccionar botón de la lista temporal
   void selectButton(int index) {
     if (index >= 0 && index < _factoryButtons.length) {
       _selectedIndex = index;
@@ -40,6 +47,7 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
+  /// Actualizar botón temporal
   void updateButton(int index, ButtonData newButtonData) {
     if (index >= 0 && index < _factoryButtons.length) {
       _factoryButtons[index] = newButtonData;
@@ -47,6 +55,7 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
+  /// Remover botón de la lista guardada
   void removeButton(int index) {
     if (index >= 0 && index < _savedButtons.length) {
       _savedButtons.removeAt(index);
@@ -54,13 +63,7 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
-  void discardButton(int index) {
-    if (index >= 0 && index < _factoryButtons.length) {
-      _factoryButtons.removeAt(index);
-      notifyListeners();
-    }
-  }
-
+  /// Inicializar botones de plantilla
   void initializeButtons() {
     if (!_buttonsInitialized) {
       final List<ButtonData> buttons = [];
@@ -79,6 +82,7 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
+  /// Crear nuevo botón temporal
   void createNewButton(ButtonType type) {
     final newButton = ButtonBuilder()
         .setType(type)
@@ -86,9 +90,11 @@ class ButtonModel with ChangeNotifier {
         .setDocument(Document())
         .build();
     addButton(newButton);
+    _selectedIndex = _factoryButtons.length - 1;
     notifyListeners();
   }
 
+  /// Restablecer botón temporal seleccionado
   void resetButton() {
     final selectedButton = _factoryButtons[_selectedIndex];
     final resetButton = ButtonBuilder()
@@ -100,6 +106,7 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Clonar texto en el botón temporal
   void cloneText(int index, String buttonText,
       {bool? isBold, bool? isItalic, bool? isUnderline, bool? isBorder, Document? document}) {
     _factoryButtons[_selectedIndex] = _factoryButtons[_selectedIndex].cloneWithText(
@@ -122,7 +129,11 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Actualizar estilo de texto del botón temporal
   void updateButtonTextStyle(bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
+    if (_selectedIndex < 0 || _selectedIndex >= _factoryButtons.length) {
+      return; // No hay botón seleccionado para actualizar
+    }
     var button = factoryButtons[selectedIndex];
     factoryButtons[selectedIndex] = button.copyWith(
       isBold: isBold,

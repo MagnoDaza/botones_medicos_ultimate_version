@@ -5,7 +5,6 @@ import '../botones/button_data.dart';
 import '../botones/patron_builder/button_builder.dart';
 import '../botones/quill/quill_page.dart';
 import '../controller/button_model.dart';
-import '../controller/color_notifier.dart';
 import '../controller/text_style_notifier.dart';
 import '../controller/theme_notifier.dart';
 import '../preview_button.dart';
@@ -26,20 +25,19 @@ class ButtonPageState extends State<ButtonPage> {
   final TextEditingController _buttonTextController = TextEditingController();
   late QuillController _controller;
   String message = '';
-  bool isEditing = false; // Nuevo flag para edición
+  bool isEditing = false;
   ButtonType? selectedButtonType;
 
   @override
   void initState() {
     super.initState();
-
-    // Determinar si estamos editando un botón existente
     isEditing = widget.buttonData != null;
     if (isEditing) {
       _buttonTextController.text = widget.buttonData!.text;
       _controller = QuillController(
-          document: widget.buttonData!.document,
-          selection: const TextSelection.collapsed(offset: 0));
+        document: widget.buttonData!.document,
+        selection: const TextSelection.collapsed(offset: 0),
+      );
       selectedButtonType = widget.buttonData!.type;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
@@ -60,6 +58,7 @@ class ButtonPageState extends State<ButtonPage> {
       _buttonTextController.text = 'Servicio';
       _controller = QuillController.basic();
     }
+
     _focusNode.addListener(() {
       if (_focusNode.hasFocus && !isEditing) {
         setState(() {
@@ -102,7 +101,7 @@ class ButtonPageState extends State<ButtonPage> {
     if (buttonModel.factoryButtons.isNotEmpty) {
       final selectedButton =
           buttonModel.factoryButtons[buttonModel.selectedIndex];
-      buttonModel.saveButton(selectedButton); // Actualiza o guarda el botón
+      buttonModel.saveButton();
       setState(() {
         message =
             'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
@@ -125,7 +124,8 @@ class ButtonPageState extends State<ButtonPage> {
       context,
       MaterialPageRoute(
         builder: (context) => GridPage(
-            buttonModel: Provider.of<ButtonModel>(context, listen: false)),
+          buttonModel: Provider.of<ButtonModel>(context, listen: false),
+        ),
       ),
     );
     if (selectedIndex != null) {
@@ -182,10 +182,10 @@ class ButtonPageState extends State<ButtonPage> {
               else
                 Column(
                   children: [
-                    Text('Selecciona un tipo de botón'),
+                    const Text('Selecciona un tipo de botón'),
                     ElevatedButton(
                       onPressed: _selectButtonType,
-                      child: Text('Seleccionar tipo de botón'),
+                      child: const Text('Seleccionar tipo de botón'),
                     ),
                   ],
                 ),
@@ -233,6 +233,8 @@ class ButtonPageState extends State<ButtonPage> {
                           document: Document.fromJson(result),
                           selection: const TextSelection.collapsed(offset: 0),
                         );
+                        updateButtonAttributes(
+                            {'document': _controller.document});
                       });
                     }
                   },

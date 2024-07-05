@@ -38,9 +38,8 @@ class ButtonPageState extends State<ButtonPage> {
     if (isEditing) {
       _buttonTextController.text = widget.buttonData!.text;
       _controller = QuillController(
-        document: widget.buttonData!.document,
-        selection: const TextSelection.collapsed(offset: 0),
-      );
+          document: widget.buttonData!.document,
+          selection: const TextSelection.collapsed(offset: 0));
       selectedButtonType = widget.buttonData!.type;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);

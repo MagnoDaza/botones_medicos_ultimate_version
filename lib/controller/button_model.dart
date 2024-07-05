@@ -17,6 +17,7 @@ class ButtonModel with ChangeNotifier {
 
   void addButton(ButtonData buttonData) {
     _factoryButtons.add(buttonData);
+    _selectedIndex = _factoryButtons.length - 1;
     notifyListeners();
   }
 
@@ -27,6 +28,8 @@ class ButtonModel with ChangeNotifier {
     } else {
       _savedButtons.add(buttonData);
     }
+    // Eliminar de _factoryButtons después de guardar
+    _factoryButtons.removeWhere((button) => button.id == buttonData.id);
     notifyListeners();
   }
 
@@ -51,16 +54,22 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
+  void discardButton(int index) {
+    if (index >= 0 && index < _factoryButtons.length) {
+      _factoryButtons.removeAt(index);
+      notifyListeners();
+    }
+  }
+
   void initializeButtons() {
     if (!_buttonsInitialized) {
       final List<ButtonData> buttons = [];
       for (ButtonType type in ButtonType.values) {
-        final button = ButtonBuilder()
+        buttons.add(ButtonBuilder()
             .setType(type)
             .setText(_defaultText)
             .setDocument(Document())
-            .build();
-        buttons.add(button);
+            .build());
       }
       _factoryButtons.addAll(buttons);
       _buttonsInitialized = true;
@@ -77,7 +86,6 @@ class ButtonModel with ChangeNotifier {
         .setDocument(Document())
         .build();
     addButton(newButton);
-    _selectedIndex = _factoryButtons.length - 1;
     notifyListeners();
   }
 
@@ -94,41 +102,34 @@ class ButtonModel with ChangeNotifier {
 
   void cloneText(int index, String buttonText,
       {bool? isBold, bool? isItalic, bool? isUnderline, bool? isBorder, Document? document}) {
-    final selectedButton = _factoryButtons[_selectedIndex];
-    final clonedButton = ButtonBuilder()
-        .fromButtonData(selectedButton)
-        .setText(_defaultText)
-        .setBold(false)
-        .setItalic(false)
-        .setUnderline(false)
-        .setBorder(false)
-        .setDocument(Document())
-        .build();
-    _factoryButtons[_selectedIndex] = clonedButton;
+    _factoryButtons[_selectedIndex] = _factoryButtons[_selectedIndex].cloneWithText(
+      newText: _defaultText,
+      newIsBold: false,
+      newIsItalic: false,
+      newIsUnderline: false,
+      newIsBorder: false,
+      document: Document(),
+    );
     _selectedIndex = index;
-    final newButton = ButtonBuilder()
-        .fromButtonData(clonedButton)
-        .setText(buttonText)
-        .setBold(isBold ?? false)
-        .setItalic(isItalic ?? false)
-        .setUnderline(isUnderline ?? false)
-        .setBorder(isBorder ?? false)
-        .setDocument(document ?? Document())
-        .build();
-    _factoryButtons[_selectedIndex] = newButton;
+    _factoryButtons[_selectedIndex] = _factoryButtons[_selectedIndex].cloneWithText(
+      newText: buttonText,
+      newIsBold: isBold ?? false,
+      newIsItalic: isItalic ?? false,
+      newIsUnderline: isUnderline ?? false,
+      newIsBorder: isBorder ?? false,
+      document: document ?? Document(),
+    );
     notifyListeners();
   }
 
   void updateButtonTextStyle(bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
-    var button = _factoryButtons[_selectedIndex];
-    button = ButtonBuilder()
-        .fromButtonData(button)
-        .setBold(isBold)
-        .setItalic(isItalic)
-        .setUnderline(isUnderline)
-        .setBorder(isBorder)
-        .build();
-    _factoryButtons[_selectedIndex] = button;
+    var button = factoryButtons[selectedIndex];
+    factoryButtons[selectedIndex] = button.copyWith(
+      isBold: isBold,
+      isItalic: isItalic,
+      isUnderline: isUnderline,
+      isBorder: isBorder,
+    );
     notifyListeners();
   }
 }

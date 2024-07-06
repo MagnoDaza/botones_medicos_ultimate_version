@@ -25,27 +25,50 @@ class ButtonModel with ChangeNotifier {
   }
 
   /// Guardar el botón y moverlo a la lista de botones guardados
-  void saveButton() {
-    if (_temporaryButton == null) return; // No hay botón temporal para guardar
+  // void saveButton() {
+  //   if (_temporaryButton == null) return; // No hay botón temporal para guardar
 
-    final index =
-        _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+  //   final index =
+  //       _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+  //   if (index != -1) {
+  //     _savedButtons[index] = _temporaryButton!;
+  //   } else {
+  //     _savedButtons.add(_temporaryButton!);
+  //   }
+
+  //   _temporaryButton = null; // Limpiar el botón temporal después de guardarlo
+  //   notifyListeners();
+  // }
+
+   /// Guardar el botón y moverlo a la lista de botones guardados
+  void saveButton() {
+    if (_temporaryButton == null) return;
+    final index = _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
     if (index != -1) {
       _savedButtons[index] = _temporaryButton!;
     } else {
       _savedButtons.add(_temporaryButton!);
     }
-
-    _temporaryButton = null; // Limpiar el botón temporal después de guardarlo
+    _temporaryButton = null;
     notifyListeners();
   }
 
-  /// Seleccionar botón de la lista temporal y crear instancia temporal
+  // /// Seleccionar botón de la lista temporal y crear instancia temporal
+  // void selectButton(int index) {
+  //   if (index >= 0 && index < _factoryButtons.length) {
+  //     _selectedIndex = index;
+  //     _temporaryButton =
+  //         _factoryButtons[index].copyWith(); // Crear una instancia temporal
+  //     notifyListeners();
+  //   }
+  // }
+
+
+   /// Seleccionar botón de la lista temporal y crear instancia temporal
   void selectButton(int index) {
     if (index >= 0 && index < _factoryButtons.length) {
       _selectedIndex = index;
-      _temporaryButton =
-          _factoryButtons[index].copyWith(); // Crear una instancia temporal
+      _temporaryButton = ButtonData.fromJson(_factoryButtons[index].toJson());
       notifyListeners();
     }
   }

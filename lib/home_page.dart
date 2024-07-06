@@ -76,11 +76,16 @@ class HomePage extends StatelessWidget {
                           IconButton(
                             icon: const Icon(Icons.edit),
                             onPressed: () {
+                              // Convierte el botón a JSON y lo imprime
+                              final buttonJson = (button.toJson());
+                              print('Editando botón: $buttonJson');
+
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
                                       ButtonPage(buttonData: button),
+                                  //print los datos del button
                                 ),
                               );
                             },

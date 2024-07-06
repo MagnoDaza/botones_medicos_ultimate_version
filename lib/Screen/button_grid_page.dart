@@ -6,11 +6,11 @@ import '../controller/button_model.dart';
 
 class GridPage extends StatefulWidget {
   final ButtonModel buttonModel;
-  final ButtonType? selectedButtonType; // Botón seleccionado (si está en edición)
+  final ButtonType? selectedButtonType;
 
   const GridPage({
     required this.buttonModel,
-    this.selectedButtonType, // Argumento opcional para el tipo de botón seleccionado
+    this.selectedButtonType,
   });
 
   @override
@@ -23,21 +23,23 @@ class _GridPageState extends State<GridPage> {
   @override
   void initState() {
     super.initState();
-
-    // Inicializar los botones después del primer fotograma
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.buttonModel.initializeButtons();
-
-      // Seleccionar el índice basado en el tipo de botón seleccionado
-      if (widget.selectedButtonType != null) {
-        final index = widget.buttonModel.factoryButtons.indexWhere((button) => button.type == widget.selectedButtonType);
-        if (index != -1) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        }
-      }
+      _setInitialSelection();
     });
+  }
+
+  void _setInitialSelection() {
+    if (widget.selectedButtonType != null) {
+      final index = widget.buttonModel.factoryButtons.indexWhere(
+        (button) => button.type == widget.selectedButtonType,
+      );
+      if (index != -1) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      }
+    }
   }
 
   @override
@@ -52,7 +54,7 @@ class _GridPageState extends State<GridPage> {
                 ? () {
                     Navigator.pop(context, _selectedIndex);
                   }
-                : null, // Solo habilitado si hay un botón seleccionado
+                : null,
           ),
         ],
       ),
@@ -62,7 +64,7 @@ class _GridPageState extends State<GridPage> {
             padding: const EdgeInsets.all(16.0),
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // Dos columnas
+                crossAxisCount: 2,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
@@ -80,7 +82,7 @@ class _GridPageState extends State<GridPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      buttonData.build(context), // Previsualización del botón
+                      buttonData.build(context),
                       const SizedBox(height: 10),
                       Text(
                         buttonData.type.toString().split('.').last,

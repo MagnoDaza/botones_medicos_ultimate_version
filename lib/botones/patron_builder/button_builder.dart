@@ -30,23 +30,35 @@ class ButtonBuilder {
     return _instance;
   }
 
-  // Inicializa el builder a partir de ButtonData existente
+ // Inicializa el builder a partir de ButtonData existente
   ButtonBuilder fromButtonData(ButtonData buttonData) {
     id = buttonData.id;
     type = buttonData.type;
     text = buttonData.text;
     document = buttonData.document;
-    if (buttonData is ElevatedButtonData) {
-      color = buttonData.color;
-      textColor = buttonData.textColor;
-    }
     isBold = buttonData.isBold;
     isItalic = buttonData.isItalic;
     isUnderline = buttonData.isUnderline;
     isBorder = buttonData.isBorder;
+
+    switch (buttonData.type) {
+      case ButtonType.elevated:
+        final elevatedButtonData = buttonData as ElevatedButtonData;
+        color = elevatedButtonData.color;
+        textColor = elevatedButtonData.textColor;
+        break;
+      case ButtonType.outlined:
+        // No hay propiedades específicas adicionales en OutlinedButtonData
+        break;
+      case ButtonType.adaptive:
+        // No hay propiedades específicas adicionales en AdaptiveButtonData
+        break;
+      default:
+        throw Exception('Tipo de botón no soportado: ${buttonData.type}');
+    }
+
     return this;
   }
-
   // Métodos setters
   ButtonBuilder setId(String id) {
     this.id = id;

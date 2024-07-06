@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selectable_box/selectable_box.dart';
 import '../botones/button_data.dart';
+import '../botones/patron_builder/button_builder.dart';
 import '../controller/button_model.dart';
 
 class GridPage extends StatefulWidget {
@@ -20,15 +21,6 @@ class GridPage extends StatefulWidget {
 class _GridPageState extends State<GridPage> {
   int? _selectedIndex;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     widget.buttonModel.initializeButtons();
-  //     _setInitialSelection();
-  //   });
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -41,19 +33,6 @@ class _GridPageState extends State<GridPage> {
         );
       });
     });
-  }
-
-  void _setInitialSelection() {
-    if (widget.selectedButtonType != null) {
-      final index = widget.buttonModel.factoryButtons.indexWhere(
-        (button) => button.type == widget.selectedButtonType,
-      );
-      if (index != -1) {
-        setState(() {
-          _selectedIndex = index;
-        });
-      }
-    }
   }
 
   @override
@@ -91,6 +70,7 @@ class _GridPageState extends State<GridPage> {
                   onTap: () {
                     setState(() {
                       _selectedIndex = index;
+                      buttonModel.setTemporaryButton(ButtonBuilder().fromButtonData(buttonData).build());
                     });
                   },
                   child: Column(

@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../botones/boton/elevated_button_data.dart';
+
+import '../botones/button_data.dart';
+import '../botones/patron_builder/button_builder.dart';
 import '../botones/widget/expansion_panel/custom_expansion_panel.dart';
 import '../botones/widget/rainbow_icon.dart';
-import '../controller/button_model.dart';
 import '../controller/color_notifier.dart';
 import '../controller/text_style_notifier.dart';
-import '../botones/button_data.dart';
 import '../rowbuttoncolor/custom_color_row.dart';
+
+import '../controller/button_model.dart';
+
+
+
 class ButtonOptions extends StatefulWidget {
   final TextEditingController buttonTextController;
   final TextStyleNotifier textStyleNotifier;
@@ -34,17 +39,20 @@ class ButtonOptionsState extends State<ButtonOptions> {
         }
 
         final buttonData = buttonModel.temporaryButton;
-
         if (buttonData == null) {
           return const Center(child: Text("Escribe un nombre para empezar"));
         }
 
-        // Sincronizar el estilo del texto con el ButtonData actual
-        _syncTextStyleWithButtonData(buttonData);
+        // Usar ButtonBuilder para sincronizar el estilo del texto con el ButtonData actual
+        final buttonBuilder = ButtonBuilder().fromButtonData(buttonData);
 
-        switch (buttonData.type) {
+        // Asegurarnos de no llamar setState dentro de la fase de construcción
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _syncTextStyleWithButtonData(buttonBuilder);
+        });
+
+        switch (buttonBuilder.type) {
           case ButtonType.elevated:
-            final ElevatedButtonData elevatedButtonData = buttonData as ElevatedButtonData;
             return Column(
               children: [
                 CustomExpansionPanel(
@@ -54,10 +62,12 @@ class ButtonOptionsState extends State<ButtonOptions> {
                       headerValue: 'Color de fondo',
                       expandedValue: [
                         CustomColorButtonRow(
-                          initialColor: elevatedButtonData.color,
+                          initialColor: buttonBuilder.color!,
                           updateButtonColor: (Color newColor) {
                             buttonModel.updateButton(
-                              buttonData.copyWith(color: newColor),
+                              buttonBuilder
+                                  .setColor(newColor)
+                                  .build(buttonData: buttonData),
                             );
                             Provider.of<ColorNotifier>(context, listen: false)
                                 .setBackgroundColor(buttonData.id, newColor);
@@ -74,10 +84,12 @@ class ButtonOptionsState extends State<ButtonOptions> {
                       headerValue: "Color de texto",
                       expandedValue: [
                         CustomColorButtonRow(
-                          initialColor: elevatedButtonData.textColor,
+                          initialColor: buttonBuilder.textColor!,
                           updateButtonColor: (Color newColor) {
                             buttonModel.updateButton(
-                              buttonData.copyWith(textColor: newColor),
+                              buttonBuilder
+                                  .setTextColor(newColor)
+                                  .build(buttonData: buttonData),
                             );
                             Provider.of<ColorNotifier>(context, listen: false)
                                 .setTextColor(buttonData.id, newColor);
@@ -97,6 +109,21 @@ class ButtonOptionsState extends State<ButtonOptions> {
               ],
             );
           case ButtonType.outlined:
+            return Column(
+              children: [
+                CustomExpansionPanel(
+                  items: [
+                    PanelItem(
+                      leading: const Icon(Icons.format_italic),
+                      headerValue: "Estilos de texto",
+                      expandedValue: [
+                        TextStyleOptions(textStyleNotifier: widget.textStyleNotifier),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            );
           case ButtonType.adaptive:
             return Column(
               children: [
@@ -114,22 +141,19 @@ class ButtonOptionsState extends State<ButtonOptions> {
               ],
             );
           default:
-            return Text("Tipo de botón no soportado: ${buttonData.type}");
+            return Text("Tipo de botón no soportado: ${buttonBuilder.type}");
         }
       },
     );
   }
 
-  // Sincroniza el estilo del texto con el buttonData actual
-  void _syncTextStyleWithButtonData(ButtonData buttonData) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.textStyleNotifier.updateTextStyle(
-        isBold: buttonData.isBold,
-        isItalic: buttonData.isItalic,
-        isUnderline: buttonData.isUnderline,
-        isBorder: buttonData.isBorder,
-      );
-    });
+  void _syncTextStyleWithButtonData(ButtonBuilder buttonBuilder) {
+    widget.buttonTextController.text = buttonBuilder.text ?? '';
+    widget.textStyleNotifier.updateTextStyle(
+      isBold: buttonBuilder.isBold ?? false,
+      isItalic: buttonBuilder.isItalic ?? false,
+      isUnderline: buttonBuilder.isUnderline ?? false,
+    );
   }
 }
 

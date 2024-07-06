@@ -25,25 +25,10 @@ class ButtonModel with ChangeNotifier {
   }
 
   /// Guardar el botón y moverlo a la lista de botones guardados
-  // void saveButton() {
-  //   if (_temporaryButton == null) return; // No hay botón temporal para guardar
-
-  //   final index =
-  //       _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
-  //   if (index != -1) {
-  //     _savedButtons[index] = _temporaryButton!;
-  //   } else {
-  //     _savedButtons.add(_temporaryButton!);
-  //   }
-
-  //   _temporaryButton = null; // Limpiar el botón temporal después de guardarlo
-  //   notifyListeners();
-  // }
-
-   /// Guardar el botón y moverlo a la lista de botones guardados
   void saveButton() {
     if (_temporaryButton == null) return;
-    final index = _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+    final index =
+        _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
     if (index != -1) {
       _savedButtons[index] = _temporaryButton!;
     } else {
@@ -53,46 +38,29 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // /// Seleccionar botón de la lista temporal y crear instancia temporal
-  // void selectButton(int index) {
-  //   if (index >= 0 && index < _factoryButtons.length) {
-  //     _selectedIndex = index;
-  //     _temporaryButton =
-  //         _factoryButtons[index].copyWith(); // Crear una instancia temporal
-  //     notifyListeners();
-  //   }
-  // }
-
-
-   /// Seleccionar botón de la lista temporal y crear instancia temporal
+  /// Seleccionar botón de la lista temporal y crear instancia temporal
   void selectButton(int index) {
     if (index >= 0 && index < _factoryButtons.length) {
       _selectedIndex = index;
-      _temporaryButton = ButtonData.fromJson(_factoryButtons[index].toJson());
+      _temporaryButton =
+          ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
       notifyListeners();
     }
   }
 
   /// Actualizar botón temporal
-  // void updateButton(ButtonData newButtonData) {
-  //   if (_temporaryButton != null) {
-  //     _temporaryButton = newButtonData; // Actualizar la instancia temporal
-  //     notifyListeners();
-  //   }
-  // }
-
   void updateButton(ButtonData updatedButton) {
-  if (_temporaryButton != null && _temporaryButton!.id == updatedButton.id) {
-    _temporaryButton = updatedButton;
+    if (_temporaryButton != null && _temporaryButton!.id == updatedButton.id) {
+      _temporaryButton = updatedButton;
+      notifyListeners();
+    }
+  }
+
+  /// Establecer el botón temporal para edición
+  void setTemporaryButton(ButtonData button) {
+    _temporaryButton = ButtonBuilder().fromButtonData(button).build();
     notifyListeners();
   }
-}
-
-void setTemporaryButton(ButtonData button) {
-  _temporaryButton = button;
-  notifyListeners();
-}
-
 
   /// Remover botón de la lista guardada
   void removeButton(int index) {
@@ -159,12 +127,6 @@ void setTemporaryButton(ButtonData button) {
     }
   }
 
-  /// Establecer el botón temporal para edición
-  // void setTemporaryButton(ButtonData buttonData) {
-  //   _temporaryButton = buttonData.copyWith();
-  //   notifyListeners();
-  // }
-
   /// Restablecer el botón temporal
   void resetTemporaryButton() {
     _temporaryButton = null;
@@ -205,7 +167,6 @@ void setTemporaryButton(ButtonData button) {
       }
       _factoryButtons.addAll(buttons);
       _buttonsInitialized = true;
-
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_factoryButtons.isNotEmpty) {
           selectButton(0); // Seleccionar el primer botón como predeterminado

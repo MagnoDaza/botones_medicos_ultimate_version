@@ -8,7 +8,6 @@ import '../controller/color_notifier.dart';
 import '../controller/text_style_notifier.dart';
 import '../botones/button_data.dart';
 import '../rowbuttoncolor/custom_color_row.dart';
-
 class ButtonOptions extends StatefulWidget {
   final TextEditingController buttonTextController;
   final TextStyleNotifier textStyleNotifier;
@@ -33,21 +32,19 @@ class ButtonOptionsState extends State<ButtonOptions> {
         if (widget.selectedButtonType == null) {
           return const Center(child: Text("Selecciona un tipo de botón"));
         }
-        if (buttonModel.temporaryButton == null) {
+
+        final buttonData = buttonModel.temporaryButton;
+
+        if (buttonData == null) {
           return const Center(child: Text("Escribe un nombre para empezar"));
         }
-        ButtonData buttonData = buttonModel.temporaryButton!;
 
-        // Reset TextStyleNotifier to default values when button type changes
-        if (widget.selectedButtonType != buttonData.type) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            widget.textStyleNotifier.resetTextStyle();
-          });
-        }
+        // Sincronizar el estilo del texto con el ButtonData actual
+        _syncTextStyleWithButtonData(buttonData);
 
         switch (buttonData.type) {
           case ButtonType.elevated:
-            ElevatedButtonData elevatedButtonData = buttonData as ElevatedButtonData;
+            final ElevatedButtonData elevatedButtonData = buttonData as ElevatedButtonData;
             return Column(
               children: [
                 CustomExpansionPanel(
@@ -122,7 +119,22 @@ class ButtonOptionsState extends State<ButtonOptions> {
       },
     );
   }
+
+  // Sincroniza el estilo del texto con el buttonData actual
+  void _syncTextStyleWithButtonData(ButtonData buttonData) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.textStyleNotifier.updateTextStyle(
+        isBold: buttonData.isBold,
+        isItalic: buttonData.isItalic,
+        isUnderline: buttonData.isUnderline,
+        isBorder: buttonData.isBorder,
+      );
+    });
+  }
 }
+
+  
+
 
 
 class TextStyleOptions extends StatefulWidget {

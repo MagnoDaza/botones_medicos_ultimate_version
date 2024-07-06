@@ -20,12 +20,26 @@ class GridPage extends StatefulWidget {
 class _GridPageState extends State<GridPage> {
   int? _selectedIndex;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     widget.buttonModel.initializeButtons();
+  //     _setInitialSelection();
+  //   });
+  // }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.buttonModel.initializeButtons();
-      _setInitialSelection();
+      setState(() {
+        // Establece el índice seleccionado basado en el botón temporal
+        _selectedIndex = widget.buttonModel.factoryButtons.indexWhere(
+          (button) => button.type == widget.buttonModel.temporaryButton?.type,
+        );
+      });
     });
   }
 

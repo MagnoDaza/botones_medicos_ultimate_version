@@ -8,7 +8,7 @@ import 'controller/button_name_notifier.dart';
 import 'controller/color_notifier.dart';
 import 'controller/text_style_notifier.dart';
 import 'controller/theme_notifier.dart';
-import 'home_page.dart';
+import 'Screen/home_page.dart';
 
 void main() {
   runApp(

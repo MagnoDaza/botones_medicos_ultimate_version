@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'Screen/page_screen.dart';
-import 'controller/button_model.dart';
-import 'controller/theme_notifier.dart';
-import 'widget/button_grid.dart';
+import 'page_screen.dart';
+import '../controller/button_model.dart';
+import '../controller/theme_notifier.dart';
+import '../widget/button_grid.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({

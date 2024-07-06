@@ -74,12 +74,25 @@ class ButtonModel with ChangeNotifier {
   }
 
   /// Actualizar botón temporal
-  void updateButton(ButtonData newButtonData) {
-    if (_temporaryButton != null) {
-      _temporaryButton = newButtonData; // Actualizar la instancia temporal
-      notifyListeners();
-    }
+  // void updateButton(ButtonData newButtonData) {
+  //   if (_temporaryButton != null) {
+  //     _temporaryButton = newButtonData; // Actualizar la instancia temporal
+  //     notifyListeners();
+  //   }
+  // }
+
+  void updateButton(ButtonData updatedButton) {
+  if (_temporaryButton != null && _temporaryButton!.id == updatedButton.id) {
+    _temporaryButton = updatedButton;
+    notifyListeners();
   }
+}
+
+void setTemporaryButton(ButtonData button) {
+  _temporaryButton = button;
+  notifyListeners();
+}
+
 
   /// Remover botón de la lista guardada
   void removeButton(int index) {
@@ -147,10 +160,10 @@ class ButtonModel with ChangeNotifier {
   }
 
   /// Establecer el botón temporal para edición
-  void setTemporaryButton(ButtonData buttonData) {
-    _temporaryButton = buttonData.copyWith();
-    notifyListeners();
-  }
+  // void setTemporaryButton(ButtonData buttonData) {
+  //   _temporaryButton = buttonData.copyWith();
+  //   notifyListeners();
+  // }
 
   /// Restablecer el botón temporal
   void resetTemporaryButton() {

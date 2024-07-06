@@ -51,17 +51,14 @@ class TextStyleNotifier with ChangeNotifier {
       _isBold = isBold;
       shouldNotify = true;
     }
-
     if (isItalic != null && _isItalic != isItalic) {
       _isItalic = isItalic;
       shouldNotify = true;
     }
-
     if (isUnderline != null && _isUnderline != isUnderline) {
       _isUnderline = isUnderline;
       shouldNotify = true;
     }
-
     if (isBorder != null && _isBorder != isBorder) {
       _isBorder = isBorder;
       shouldNotify = true;
@@ -72,8 +69,6 @@ class TextStyleNotifier with ChangeNotifier {
     }
   }
 
-  //void reset de estilos
-
   void resetTextStyle() {
     _isBold = false;
     _isItalic = false;
@@ -81,5 +76,4 @@ class TextStyleNotifier with ChangeNotifier {
     _isBorder = false;
     notifyListeners();
   }
-
 }

@@ -15,7 +15,8 @@ class ButtonModel with ChangeNotifier {
   int get selectedIndex => _selectedIndex;
   List<ButtonData> get savedButtons => List.unmodifiable(_savedButtons);
   bool get buttonsInitialized => _buttonsInitialized;
-  ButtonData? get temporaryButton => _temporaryButton; // Obtener la instancia temporal
+  ButtonData? get temporaryButton =>
+      _temporaryButton; // Obtener la instancia temporal
 
   /// Añadir botón temporal a la lista de plantillas
   void addButton(ButtonData buttonData) {
@@ -27,12 +28,14 @@ class ButtonModel with ChangeNotifier {
   void saveButton() {
     if (_temporaryButton == null) return; // No hay botón temporal para guardar
 
-    final index = _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+    final index =
+        _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
     if (index != -1) {
       _savedButtons[index] = _temporaryButton!;
     } else {
       _savedButtons.add(_temporaryButton!);
     }
+
     _temporaryButton = null; // Limpiar el botón temporal después de guardarlo
     notifyListeners();
   }
@@ -41,7 +44,8 @@ class ButtonModel with ChangeNotifier {
   void selectButton(int index) {
     if (index >= 0 && index < _factoryButtons.length) {
       _selectedIndex = index;
-      _temporaryButton = _factoryButtons[index].copyWith(); // Crear una instancia temporal
+      _temporaryButton =
+          _factoryButtons[index].copyWith(); // Crear una instancia temporal
       notifyListeners();
     }
   }
@@ -59,27 +63,6 @@ class ButtonModel with ChangeNotifier {
     if (index >= 0 && index < _savedButtons.length) {
       _savedButtons.removeAt(index);
       notifyListeners();
-    }
-  }
-
-  /// Inicializar botones de plantilla
-  void initializeButtons() {
-    if (!_buttonsInitialized) {
-      final List<ButtonData> buttons = [];
-      for (ButtonType type in ButtonType.values) {
-        buttons.add(ButtonBuilder()
-            .setType(type)
-            .setText(_defaultText)
-            .setDocument(Document())
-            .build());
-      }
-      _factoryButtons.addAll(buttons);
-      _buttonsInitialized = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_factoryButtons.isNotEmpty) {
-          selectButton(0); // Seleccionar el primer botón como predeterminado
-        }
-      });
     }
   }
 
@@ -107,7 +90,12 @@ class ButtonModel with ChangeNotifier {
   }
 
   /// Clonar texto en el botón temporal
-  void cloneText(String buttonText, {bool? isBold, bool? isItalic, bool? isUnderline, bool? isBorder, Document? document}) {
+  void cloneText(String buttonText,
+      {bool? isBold,
+      bool? isItalic,
+      bool? isUnderline,
+      bool? isBorder,
+      Document? document}) {
     if (_temporaryButton != null) {
       _temporaryButton = _temporaryButton!.copyWith(
         text: buttonText,
@@ -122,7 +110,8 @@ class ButtonModel with ChangeNotifier {
   }
 
   /// Actualizar estilo de texto del botón temporal
-  void updateButtonTextStyle(bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
+  void updateButtonTextStyle(
+      bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
     if (_temporaryButton != null) {
       _temporaryButton = _temporaryButton!.copyWith(
         isBold: isBold,
@@ -131,6 +120,61 @@ class ButtonModel with ChangeNotifier {
         isBorder: isBorder,
       );
       notifyListeners();
+    }
+  }
+
+  /// Establecer el botón temporal para edición
+  void setTemporaryButton(ButtonData buttonData) {
+    _temporaryButton = buttonData.copyWith();
+    notifyListeners();
+  }
+
+  /// Restablecer el botón temporal
+  void resetTemporaryButton() {
+    _temporaryButton = null;
+    notifyListeners();
+  }
+
+  /// Actualizar los atributos del botón temporal
+  void updateButtonAttributes({
+    String? text,
+    bool? isBold,
+    bool? isItalic,
+    bool? isUnderline,
+    bool? isBorder,
+    Document? document,
+  }) {
+    if (_temporaryButton != null) {
+      _temporaryButton = _temporaryButton!.copyWith(
+        text: text ?? _temporaryButton!.text,
+        isBold: isBold ?? _temporaryButton!.isBold,
+        isItalic: isItalic ?? _temporaryButton!.isItalic,
+        isUnderline: isUnderline ?? _temporaryButton!.isUnderline,
+        isBorder: isBorder ?? _temporaryButton!.isBorder,
+        document: document ?? _temporaryButton!.document,
+      );
+      notifyListeners();
+    }
+  }
+
+  void initializeButtons() {
+    if (!_buttonsInitialized) {
+      final List<ButtonData> buttons = [];
+      for (ButtonType type in ButtonType.values) {
+        buttons.add(ButtonBuilder()
+            .setType(type)
+            .setText(_defaultText)
+            .setDocument(Document())
+            .build());
+      }
+      _factoryButtons.addAll(buttons);
+      _buttonsInitialized = true;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_factoryButtons.isNotEmpty) {
+          selectButton(0); // Seleccionar el primer botón como predeterminado
+        }
+      });
     }
   }
 }

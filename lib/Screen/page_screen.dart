@@ -39,11 +39,12 @@ class ButtonPageState extends State<ButtonPage> {
         selection: const TextSelection.collapsed(offset: 0),
       );
       selectedButtonType = widget.buttonData!.type;
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
         final textStyleNotifier = Provider.of<TextStyleNotifier>(context, listen: false);
-        int index = buttonModel.savedButtons
-            .indexWhere((button) => button.id == widget.buttonData!.id);
+
+        int index = buttonModel.savedButtons.indexWhere((button) => button.id == widget.buttonData!.id);
         if (index != -1) {
           buttonModel.selectButton(index);
           final selectedButton = buttonModel.savedButtons[index];
@@ -57,6 +58,7 @@ class ButtonPageState extends State<ButtonPage> {
       _buttonTextController.text = 'Servicio';
       _controller = QuillController.basic();
     }
+
     _focusNode.addListener(() {
       if (_focusNode.hasFocus && !isEditing) {
         setState(() {
@@ -74,19 +76,21 @@ class ButtonPageState extends State<ButtonPage> {
   }
 
   void updateButtonAttributes(Map<String, dynamic> newValues) {
-    final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-    if (buttonModel.temporaryButton != null) {
-      final selectedButton = buttonModel.temporaryButton!;
-      final updatedButton = selectedButton.copyWith(
-        text: newValues['text'] ?? selectedButton.text,
-        isBold: newValues['isBold'] ?? selectedButton.isBold,
-        isItalic: newValues['isItalic'] ?? selectedButton.isItalic,
-        isUnderline: newValues['isUnderline'] ?? selectedButton.isUnderline,
-        isBorder: newValues['isBorder'] ?? selectedButton.isBorder,
-        document: newValues['document'] ?? selectedButton.document,
-      );
-      buttonModel.updateButton(updatedButton);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final buttonModel = Provider.of<ButtonModel>(context, listen: false);
+      if (buttonModel.temporaryButton != null) {
+        final updatedButton = ButtonBuilder()
+            .fromButtonData(buttonModel.temporaryButton!)
+            .setText(newValues['text'] ?? buttonModel.temporaryButton!.text)
+            .setBold(newValues['isBold'] ?? buttonModel.temporaryButton!.isBold)
+            .setItalic(newValues['isItalic'] ?? buttonModel.temporaryButton!.isItalic)
+            .setUnderline(newValues['isUnderline'] ?? buttonModel.temporaryButton!.isUnderline)
+            .setBorder(newValues['isBorder'] ?? buttonModel.temporaryButton!.isBorder)
+            .setDocument(newValues['document'] ?? buttonModel.temporaryButton!.document)
+            .build();
+        buttonModel.updateButton(updatedButton);
+      }
+    });
   }
 
   void saveButton() {
@@ -118,12 +122,11 @@ class ButtonPageState extends State<ButtonPage> {
       ),
     );
     if (selectedIndex != null) {
-      final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-      final selectedButton = buttonModel.factoryButtons[selectedIndex];
       setState(() {
-        selectedButtonType = selectedButton.type;
+        final buttonModel = Provider.of<ButtonModel>(context, listen: false);
+        selectedButtonType = buttonModel.factoryButtons[selectedIndex].type;
         buttonModel.selectButton(selectedIndex);
-        _buttonTextController.text = selectedButton.text;
+        _buttonTextController.text = buttonModel.factoryButtons[selectedIndex].text;
       });
     }
   }
@@ -132,6 +135,7 @@ class ButtonPageState extends State<ButtonPage> {
   Widget build(BuildContext context) {
     final buttonModel = Provider.of<ButtonModel>(context);
     final selectedButton = buttonModel.temporaryButton;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Editar Botón' : 'Crear Botón'),
@@ -144,7 +148,9 @@ class ButtonPageState extends State<ButtonPage> {
           ),
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: saveButton,
+            onPressed: () {
+              saveButton();
+            },
           ),
         ],
       ),
@@ -183,7 +189,9 @@ class ButtonPageState extends State<ButtonPage> {
                 controller: _buttonTextController,
                 onChanged: (text) {
                   // Verificar el estado para evitar interferencias
-                  updateButtonAttributes({'text': text});
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    updateButtonAttributes({'text': text});
+                  });
                 },
               ),
               const SizedBox(height: 10),

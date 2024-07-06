@@ -20,15 +20,13 @@ class AdaptiveButtonData extends ButtonData {
           document: document,
           isBold: isBold,
           isItalic: isItalic,
-          isBorder: isBorder,
           isUnderline: isUnderline,
+          isBorder: isBorder,
         );
 
   @override
   Widget build(BuildContext context) {
     final textColor = Theme.of(context).textTheme.bodyMedium?.color;
-
-    final Document document = this.document;
     final quillController = QuillController(
       document: document,
       selection: const TextSelection.collapsed(offset: 0),
@@ -54,8 +52,7 @@ class AdaptiveButtonData extends ButtonData {
           color: textColor,
           fontStyle: isItalic ? FontStyle.italic : FontStyle.normal,
           fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-          decoration:
-              isUnderline ? TextDecoration.underline : TextDecoration.none,
+          decoration: isUnderline ? TextDecoration.underline : TextDecoration.none,
         ),
       ),
     );
@@ -76,8 +73,7 @@ class AdaptiveButtonData extends ButtonData {
       isItalic: newIsItalic,
       isUnderline: newIsUnderline,
       isBorder: newIsBorder,
-      document:
-          Document.fromJson(document.toDelta().toJson()), // Clonar el documento
+      document: Document.fromJson(document.toDelta().toJson()), // Clonar el documento
     );
   }
 
@@ -87,8 +83,6 @@ class AdaptiveButtonData extends ButtonData {
     ButtonType? type,
     String? text,
     Document? document,
-    Color? color,
-    Color? textColor,
     bool? isBold,
     bool? isItalic,
     bool? isUnderline,

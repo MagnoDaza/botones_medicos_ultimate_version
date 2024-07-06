@@ -31,7 +31,6 @@ class ElevatedButtonData extends ButtonData {
 
   @override
   Widget build(BuildContext context) {
-    final Document document = this.document;
     final quillController = QuillController(
       document: document,
       selection: const TextSelection.collapsed(offset: 0),

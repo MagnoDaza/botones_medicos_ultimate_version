@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selectable_box/selectable_box.dart';
+import '../botones/button_data.dart';
 import '../controller/button_model.dart';
 
 class GridPage extends StatefulWidget {
   final ButtonModel buttonModel;
+  final ButtonType? selectedButtonType; // Botón seleccionado (si está en edición)
 
-  const GridPage({required this.buttonModel});
+  const GridPage({
+    required this.buttonModel,
+    this.selectedButtonType, // Argumento opcional para el tipo de botón seleccionado
+  });
 
   @override
   _GridPageState createState() => _GridPageState();
@@ -18,8 +23,20 @@ class _GridPageState extends State<GridPage> {
   @override
   void initState() {
     super.initState();
+
+    // Inicializar los botones después del primer fotograma
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.buttonModel.initializeButtons();
+
+      // Seleccionar el índice basado en el tipo de botón seleccionado
+      if (widget.selectedButtonType != null) {
+        final index = widget.buttonModel.factoryButtons.indexWhere((button) => button.type == widget.selectedButtonType);
+        if (index != -1) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        }
+      }
     });
   }
 

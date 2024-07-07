@@ -15,8 +15,7 @@ class ButtonModel with ChangeNotifier {
   int get selectedIndex => _selectedIndex;
   List<ButtonData> get savedButtons => List.unmodifiable(_savedButtons);
   bool get buttonsInitialized => _buttonsInitialized;
-  ButtonData? get temporaryButton =>
-      _temporaryButton; // Obtener la instancia temporal
+  ButtonData? get temporaryButton => _temporaryButton; // Obtener la instancia temporal
 
   /// Añadir botón temporal a la lista de plantillas
   void addButton(ButtonData buttonData) {
@@ -27,8 +26,7 @@ class ButtonModel with ChangeNotifier {
   /// Guardar el botón y moverlo a la lista de botones guardados
   void saveButton() {
     if (_temporaryButton == null) return;
-    final index =
-        _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+    final index = _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
     if (index != -1) {
       _savedButtons[index] = _temporaryButton!;
     } else {
@@ -42,8 +40,16 @@ class ButtonModel with ChangeNotifier {
   void selectButton(int index) {
     if (index >= 0 && index < _factoryButtons.length) {
       _selectedIndex = index;
-      _temporaryButton =
-          ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
+      _temporaryButton = ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
+      notifyListeners();
+    }
+  }
+
+  /// Seleccionar botón de la lista de botones guardados y crear instancia temporal
+  void selectSavedButton(int index) {
+    if (index >= 0 && index < _savedButtons.length) {
+      _selectedIndex = index;
+      _temporaryButton = ButtonBuilder().fromButtonData(_savedButtons[index]).build();
       notifyListeners();
     }
   }
@@ -95,11 +101,7 @@ class ButtonModel with ChangeNotifier {
 
   /// Clonar texto en el botón temporal
   void cloneText(String buttonText,
-      {bool? isBold,
-      bool? isItalic,
-      bool? isUnderline,
-      bool? isBorder,
-      Document? document}) {
+      {bool? isBold, bool? isItalic, bool? isUnderline, bool? isBorder, Document? document}) {
     if (_temporaryButton != null) {
       _temporaryButton = _temporaryButton!.copyWith(
         text: buttonText,
@@ -114,8 +116,7 @@ class ButtonModel with ChangeNotifier {
   }
 
   /// Actualizar estilo de texto del botón temporal
-  void updateButtonTextStyle(
-      bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
+  void updateButtonTextStyle(bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
     if (_temporaryButton != null) {
       _temporaryButton = _temporaryButton!.copyWith(
         isBold: isBold,

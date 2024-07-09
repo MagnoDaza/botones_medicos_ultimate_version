@@ -154,6 +154,7 @@ class ButtonOptionsState extends State<ButtonOptions> {
       isBold: buttonBuilder.isBold ?? false,
       isItalic: buttonBuilder.isItalic ?? false,
       isUnderline: buttonBuilder.isUnderline ?? false,
+      isBorder: buttonBuilder.isBorder ?? false,
     );
   }
 }

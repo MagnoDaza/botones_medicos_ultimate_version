@@ -48,7 +48,7 @@ class ButtonPageState extends State<ButtonPage> {
         int index = buttonModel.savedButtons
             .indexWhere((button) => button.id == widget.buttonData!.id);
         if (index != -1) {
-          buttonModel.selectButton(index);
+          buttonModel.selectSavedButton(index);
           final selectedButton = buttonModel.savedButtons[index];
           textStyleNotifier.isBold = selectedButton.isBold;
           textStyleNotifier.isItalic = selectedButton.isItalic;

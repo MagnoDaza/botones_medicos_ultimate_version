@@ -68,7 +68,15 @@ class ButtonModel with ChangeNotifier {
   void selectButton(int index) {
     if (index >= 0 && index < _factoryButtons.length) {
       _selectedIndex = index;
-      _temporaryButton = ButtonData.fromJson(_factoryButtons[index].toJson());
+      _temporaryButton = ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
+      notifyListeners();
+    }
+  }
+
+void selectSavedButton(int index) {
+    if (index >= 0 && index < _savedButtons.length) {
+      _selectedIndex = index;
+      _temporaryButton = ButtonBuilder().fromButtonData(_savedButtons[index]).build();
       notifyListeners();
     }
   }
@@ -87,11 +95,11 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 }
-
-void setTemporaryButton(ButtonData button) {
-  _temporaryButton = button;
-  notifyListeners();
-}
+  /// Establecer el botón temporal para edición
+  void setTemporaryButton(ButtonData button) {
+    _temporaryButton = ButtonBuilder().fromButtonData(button).build();
+    notifyListeners();
+  }
 
 
   /// Remover botón de la lista guardada

@@ -21,24 +21,20 @@ class PreviewButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ButtonBuilder builder = ButtonBuilder();
-
     // Si se proporciona un ButtonData existente, inicializa el builder con él
     if (buttonData != null) {
       builder.fromButtonData(buttonData!);
     }
-
     // Actualiza el builder con los nuevos valores
     builder
-      .setText(controller.text)
-      .setBold(textStyleNotifier.isBold)
-      .setItalic(textStyleNotifier.isItalic)
-      .setUnderline(textStyleNotifier.isUnderline)
-      .setBorder(textStyleNotifier.isBorder)
-      .setDocument(quillController?.document ?? buttonData?.document ?? Document());
-
+        .setText(controller.text)
+        .setBold(textStyleNotifier.isBold)
+        .setItalic(textStyleNotifier.isItalic)
+        .setUnderline(textStyleNotifier.isUnderline)
+        .setBorder(textStyleNotifier.isBorder)
+        .setDocument(quillController?.document ?? buttonData?.document ?? Document());
     // Construye el botón actualizado
     ButtonData updatedButton = builder.build();
-
     return Center(
       child: updatedButton.build(context),
     );

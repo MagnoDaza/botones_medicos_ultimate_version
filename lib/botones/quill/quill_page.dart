@@ -1,5 +1,3 @@
-// quill_page.dart
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -37,22 +35,21 @@ class _QuillPageState extends State<QuillPage> {
   }
 
   void _saveDocument() {
-    _documentVersions
-        .add(Document.fromJson(widget.controller.document.toDelta().toJson()));
+    _documentVersions.add(Document.fromJson(widget.controller.document.toDelta().toJson()));
     _notifyContentSaved(); // Llama a la nueva función aquí
-
     print('Documento guardado');
   }
 
   void _notifyContentSaved() {
     Fluttertoast.showToast(
-        msg: "El contenido se ha guardado correctamente.",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.grey,
-        textColor: Colors.white,
-        fontSize: 16.0);
+      msg: "El contenido se ha guardado correctamente.",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.grey,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
   @override
@@ -68,8 +65,7 @@ class _QuillPageState extends State<QuillPage> {
               onPressed: () {
                 // Llama a tu función de guardado aquí
                 _saveDocument();
-
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(widget.controller.document.toDelta().toJson());
               },
             ),
           ),

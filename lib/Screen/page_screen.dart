@@ -9,7 +9,7 @@ import '../controller/text_style_notifier.dart';
 import '../controller/theme_notifier.dart';
 import '../preview_button.dart';
 import '../widget/button_options.dart';
-import 'button_grid_page.dart';
+import 'button_grid_widget.dart';
 
 class ButtonPage extends StatefulWidget {
   final ButtonData? buttonData; // ButtonData opcional para edición
@@ -172,7 +172,6 @@ class ButtonPageState extends State<ButtonPage> {
         actions: [
           IconButton(
             icon: Icon(
-              // Usamos `isLightTheme` para determinar el ícono
               Provider.of<ThemeNotifier>(context).isLightTheme
                   ? Icons.brightness_7 // ícono para el tema claro
                   : Icons.brightness_3, // ícono para el tema oscuro

@@ -33,14 +33,32 @@ class ButtonModel with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void saveButton() {
+  // void saveButton() {
+  //   if (_temporaryButton == null) return;
+  //   final index =
+  //       _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+  //   if (index != -1) {
+  //     _savedButtons[index] = _temporaryButton!;
+  //   } else {
+  //     _savedButtons.add(_temporaryButton!);
+  //   }
+  //   _temporaryButton = null;
+  //   notifyListeners();
+  // }
+
+   void saveNewButton() {
     if (_temporaryButton == null) return;
-    final index =
-        _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+    _temporaryButton = _temporaryButton!.copyWith(id: const Uuid().v4());
+    _savedButtons.add(_temporaryButton!);
+    _temporaryButton = null;
+    notifyListeners();
+  }
+
+  void updateExistingButton() {
+    if (_temporaryButton == null) return;
+    final index = _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
     if (index != -1) {
       _savedButtons[index] = _temporaryButton!;
-    } else {
-      _savedButtons.add(_temporaryButton!);
     }
     _temporaryButton = null;
     notifyListeners();

@@ -30,7 +30,7 @@ class ButtonBuilder {
     return _instance;
   }
 
- // Inicializa el builder a partir de ButtonData existente
+  // Inicializa el builder a partir de ButtonData existente
   ButtonBuilder fromButtonData(ButtonData buttonData) {
     id = buttonData.id;
     type = buttonData.type;
@@ -59,6 +59,7 @@ class ButtonBuilder {
 
     return this;
   }
+
   // Métodos setters
   ButtonBuilder setId(String id) {
     this.id = id;

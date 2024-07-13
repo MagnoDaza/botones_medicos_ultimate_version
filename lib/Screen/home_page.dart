@@ -19,8 +19,14 @@ class HomePage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: IconButton(
-              icon: const Icon(Icons.brightness_6),
+              icon: Icon(
+                // Usamos `isLightTheme` para determinar el ícono
+                Provider.of<ThemeNotifier>(context).isLightTheme
+                    ? Icons.brightness_7 // ícono para el tema claro
+                    : Icons.brightness_3, // ícono para el tema oscuro
+              ),
               onPressed: () {
+                // Cambia el tema
                 Provider.of<ThemeNotifier>(context, listen: false)
                     .toggleTheme();
               },

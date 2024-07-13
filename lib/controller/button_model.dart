@@ -24,11 +24,24 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
+  // void saveButton() {
+  //   if (_temporaryButton == null) return;
+  //   // Generar un nuevo UUID para el botón al guardarlo para asegurarse de que sea único
+  //   _temporaryButton = _temporaryButton!.copyWith(id: const Uuid().v4());
+  //   _savedButtons.add(_temporaryButton!);
+  //   _temporaryButton = null;
+  //   notifyListeners();
+  // }
+
   void saveButton() {
     if (_temporaryButton == null) return;
-    // Generar un nuevo UUID para el botón al guardarlo para asegurarse de que sea único
-    _temporaryButton = _temporaryButton!.copyWith(id: const Uuid().v4());
-    _savedButtons.add(_temporaryButton!);
+    final index =
+        _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+    if (index != -1) {
+      _savedButtons[index] = _temporaryButton!;
+    } else {
+      _savedButtons.add(_temporaryButton!);
+    }
     _temporaryButton = null;
     notifyListeners();
   }

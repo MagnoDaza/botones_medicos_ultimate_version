@@ -42,6 +42,7 @@ abstract class ButtonData {
     required Document document,
   }) {
     return copyWith(
+      id: id,
       text: newText,
       isBold: newIsBold,
       isItalic: newIsItalic,
@@ -58,7 +59,7 @@ abstract class ButtonData {
     bool? isBold,
     bool? isItalic,
     bool? isUnderline,
-    bool? isBorder,
+    bool? isBorder, required String id,
   });
 
   // Método para convertir el objeto a JSON

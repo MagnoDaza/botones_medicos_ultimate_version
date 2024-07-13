@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:uuid/uuid.dart';
 import '../botones/button_data.dart';
 import '../botones/patron_builder/button_builder.dart';
 
@@ -15,7 +16,8 @@ class ButtonModel with ChangeNotifier {
   int get selectedIndex => _selectedIndex;
   List<ButtonData> get savedButtons => List.unmodifiable(_savedButtons);
   bool get buttonsInitialized => _buttonsInitialized;
-  ButtonData? get temporaryButton => _temporaryButton; // Obtener la instancia temporal
+  ButtonData? get temporaryButton =>
+      _temporaryButton; // Obtener la instancia temporal
 
   void addButton(ButtonData buttonData) {
     _factoryButtons.add(buttonData);
@@ -24,12 +26,9 @@ class ButtonModel with ChangeNotifier {
 
   void saveButton() {
     if (_temporaryButton == null) return;
-    final index = _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
-    if (index != -1) {
-      _savedButtons[index] = _temporaryButton!;
-    } else {
-      _savedButtons.add(_temporaryButton!);
-    }
+    // Generar un nuevo UUID para el botón al guardarlo para asegurarse de que sea único
+    _temporaryButton = _temporaryButton!.copyWith(id: const Uuid().v4());
+    _savedButtons.add(_temporaryButton!);
     _temporaryButton = null;
     notifyListeners();
   }
@@ -37,7 +36,8 @@ class ButtonModel with ChangeNotifier {
   void selectButton(int index) {
     if (index >= 0 && index < _factoryButtons.length) {
       _selectedIndex = index;
-      _temporaryButton = ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
+      _temporaryButton =
+          ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
       notifyListeners();
     }
   }
@@ -45,7 +45,8 @@ class ButtonModel with ChangeNotifier {
   void selectSavedButton(int index) {
     if (index >= 0 && index < _savedButtons.length) {
       _selectedIndex = index;
-      _temporaryButton = ButtonBuilder().fromButtonData(_savedButtons[index]).build();
+      _temporaryButton =
+          ButtonBuilder().fromButtonData(_savedButtons[index]).build();
       notifyListeners();
     }
   }
@@ -90,9 +91,15 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
-  void cloneText(String buttonText, {bool? isBold, bool? isItalic, bool? isUnderline, bool? isBorder, Document? document}) {
+  void cloneText(String buttonText,
+      {bool? isBold,
+      bool? isItalic,
+      bool? isUnderline,
+      bool? isBorder,
+      Document? document}) {
     if (_temporaryButton != null) {
       _temporaryButton = _temporaryButton!.copyWith(
+        id: const Uuid().v4(),
         text: buttonText,
         isBold: isBold ?? false,
         isItalic: isItalic ?? false,
@@ -104,9 +111,11 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
-  void updateButtonTextStyle(bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
+  void updateButtonTextStyle(
+      bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
     if (_temporaryButton != null) {
       _temporaryButton = _temporaryButton!.copyWith(
+        id: const Uuid().v4(),
         isBold: isBold,
         isItalic: isItalic,
         isUnderline: isUnderline,
@@ -131,6 +140,7 @@ class ButtonModel with ChangeNotifier {
   }) {
     if (_temporaryButton != null) {
       _temporaryButton = _temporaryButton!.copyWith(
+        id: const Uuid().v4(),
         text: text ?? _temporaryButton!.text,
         isBold: isBold ?? _temporaryButton!.isBold,
         isItalic: isItalic ?? _temporaryButton!.isItalic,

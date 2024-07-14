@@ -6,7 +6,6 @@ import '../widget/color_picker_dialog.dart';
 class ColorChoice {
   final Color color;
   final String name;
-
   ColorChoice({required this.color, required this.name});
 }
 
@@ -33,11 +32,18 @@ class CustomColorButtonRow extends StatefulWidget {
 class _CustomColorButtonRowState extends State<CustomColorButtonRow> {
   late Color currentColor;
   Color customColor = Colors.transparent;
+  List<ColorChoice> displayedChoices = [];
 
   @override
   void initState() {
     super.initState();
     currentColor = widget.initialColor;
+    displayedChoices = List.from(widget.colorChoices);
+    if (!widget.colorChoices
+        .any((choice) => choice.color == widget.initialColor)) {
+      displayedChoices
+          .add(ColorChoice(color: widget.initialColor, name: 'Custom'));
+    }
   }
 
   void _showColorPicker() {
@@ -52,9 +58,14 @@ class _CustomColorButtonRowState extends State<CustomColorButtonRow> {
             if (mounted) {
               setState(() {
                 customColor = color;
+                if (!displayedChoices.any((choice) => choice.color == color)) {
+                  displayedChoices
+                      .add(ColorChoice(color: color, name: 'Custom'));
+                }
+                currentColor = color;
               });
             }
-            widget.updateButtonColor(color); // Update button color immediately
+            widget.updateButtonColor(color);
           },
           colorHistory: [],
           onHistoryChanged: (List<Color> colors) {
@@ -101,7 +112,7 @@ class _CustomColorButtonRowState extends State<CustomColorButtonRow> {
             }
           },
           choiceItems: [
-            ...widget.colorChoices.map((choice) {
+            ...displayedChoices.map((choice) {
               return C2Choice<Color>(value: choice.color, label: choice.name);
             }).toList(),
             const C2Choice<Color>(value: Colors.transparent, label: 'Custom'),

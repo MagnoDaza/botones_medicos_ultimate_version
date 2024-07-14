@@ -52,10 +52,9 @@ class _CustomColorButtonRowState extends State<CustomColorButtonRow> {
             if (mounted) {
               setState(() {
                 customColor = color;
-                currentColor = color;
               });
-              widget.updateButtonColor(color);
             }
+            widget.updateButtonColor(color); // Update button color immediately
           },
           colorHistory: [],
           onHistoryChanged: (List<Color> colors) {
@@ -96,7 +95,7 @@ class _CustomColorButtonRowState extends State<CustomColorButtonRow> {
             } else {
               setState(() {
                 currentColor = val;
-                customColor = Colors.transparent;
+                customColor = Colors.transparent; // Reset customColor
               });
               widget.updateButtonColor(val);
             }

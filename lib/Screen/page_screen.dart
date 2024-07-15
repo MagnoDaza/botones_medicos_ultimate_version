@@ -41,8 +41,10 @@ class ButtonPageState extends State<ButtonPage> {
       selectedButtonType = widget.buttonData!.type;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-        final textStyleNotifier = Provider.of<TextStyleNotifier>(context, listen: false);
-        int index = buttonModel.savedButtons.indexWhere((button) => button.id == widget.buttonData!.id);
+        final textStyleNotifier =
+            Provider.of<TextStyleNotifier>(context, listen: false);
+        int index = buttonModel.savedButtons
+            .indexWhere((button) => button.id == widget.buttonData!.id);
         if (index != -1) {
           buttonModel.selectSavedButton(index);
           final selectedButton = buttonModel.savedButtons[index];
@@ -80,10 +82,14 @@ class ButtonPageState extends State<ButtonPage> {
             .fromButtonData(buttonModel.temporaryButton!)
             .setText(newValues['text'] ?? buttonModel.temporaryButton!.text)
             .setBold(newValues['isBold'] ?? buttonModel.temporaryButton!.isBold)
-            .setItalic(newValues['isItalic'] ?? buttonModel.temporaryButton!.isItalic)
-            .setUnderline(newValues['isUnderline'] ?? buttonModel.temporaryButton!.isUnderline)
-            .setBorder(newValues['isBorder'] ?? buttonModel.temporaryButton!.isBorder)
-            .setDocument(newValues['document'] ?? buttonModel.temporaryButton!.document)
+            .setItalic(
+                newValues['isItalic'] ?? buttonModel.temporaryButton!.isItalic)
+            .setUnderline(newValues['isUnderline'] ??
+                buttonModel.temporaryButton!.isUnderline)
+            .setBorder(
+                newValues['isBorder'] ?? buttonModel.temporaryButton!.isBorder)
+            .setDocument(
+                newValues['document'] ?? buttonModel.temporaryButton!.document)
             .build();
         buttonModel.updateButton(updatedButton);
       }
@@ -99,13 +105,15 @@ class ButtonPageState extends State<ButtonPage> {
         buttonModel.saveNewButton();
       }
       setState(() {
-        message = 'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
+        message =
+            'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
         if (!isEditing) {
           _buttonTextController.text = '';
           selectedButtonType = null;
         }
       });
-      Navigator.of(context).pop(); // Regresar a la página anterior después de guardar
+      Navigator.of(context)
+          .pop(); // Regresar a la página anterior después de guardar
     } else {
       setState(() {
         message = 'No hay botones disponibles para guardar.';
@@ -119,16 +127,17 @@ class ButtonPageState extends State<ButtonPage> {
       MaterialPageRoute(
         builder: (context) => GridPage(
           buttonModel: Provider.of<ButtonModel>(context, listen: false),
-          selectedButtonType: selectedButtonType, // Pasar el tipo de botón seleccionado
+          selectedButtonType: selectedButtonType,
         ),
       ),
     );
     if (selectedIndex != null) {
       setState(() {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-        selectedButtonType = buttonModel.factoryButtons[selectedIndex].type;
-        buttonModel.selectButton(selectedIndex);
-        _buttonTextController.text = buttonModel.factoryButtons[selectedIndex].text;
+        final newType = buttonModel.factoryButtons[selectedIndex].type;
+        buttonModel.moveButtonDataToNewType(newType);
+        selectedButtonType = newType;
+        _buttonTextController.text = buttonModel.temporaryButton?.text ?? '';
       });
     }
   }
@@ -181,7 +190,8 @@ class ButtonPageState extends State<ButtonPage> {
                         height: 160,
                         child: PreviewButton(
                           controller: _buttonTextController,
-                          textStyleNotifier: Provider.of<TextStyleNotifier>(context),
+                          textStyleNotifier:
+                              Provider.of<TextStyleNotifier>(context),
                           buttonData: selectedButton,
                           quillController: _controller,
                         ),
@@ -208,7 +218,8 @@ class ButtonPageState extends State<ButtonPage> {
                           trailing: ElevatedButton(
                             onPressed: _selectButtonType,
                             child: Text(
-                              selectedButton?.type.toString().split('.').last ?? 'Seleccionar tipo de botón',
+                              selectedButton?.type.toString().split('.').last ??
+                                  'Seleccionar tipo de botón',
                             ),
                           ),
                         ),
@@ -219,16 +230,19 @@ class ButtonPageState extends State<ButtonPage> {
                           onPressed: () async {
                             final result = await Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => QuillPage(controller: _controller),
+                                builder: (context) =>
+                                    QuillPage(controller: _controller),
                               ),
                             );
                             if (result != null) {
                               setState(() {
                                 _controller = QuillController(
                                   document: Document.fromJson(result),
-                                  selection: const TextSelection.collapsed(offset: 0),
+                                  selection:
+                                      const TextSelection.collapsed(offset: 0),
                                 );
-                                updateButtonAttributes({'document': _controller.document});
+                                updateButtonAttributes(
+                                    {'document': _controller.document});
                               });
                             }
                           },
@@ -246,7 +260,8 @@ class ButtonPageState extends State<ButtonPage> {
                               ),
                               const SizedBox(height: 10),
                               ButtonOptions(
-                                textStyleNotifier: Provider.of<TextStyleNotifier>(context),
+                                textStyleNotifier:
+                                    Provider.of<TextStyleNotifier>(context),
                                 buttonTextController: _buttonTextController,
                                 selectedButtonType: selectedButtonType,
                               ),
@@ -255,7 +270,8 @@ class ButtonPageState extends State<ButtonPage> {
                                 onPressed: () {
                                   if (_buttonTextController.text.isEmpty) {
                                     setState(() {
-                                      message = 'Por favor, proporciona un texto para el botón.';
+                                      message =
+                                          'Por favor, proporciona un texto para el botón.';
                                     });
                                   } else {
                                     saveButton();

@@ -46,7 +46,7 @@ class ButtonModel with ChangeNotifier {
   //   notifyListeners();
   // }
 
-   void saveNewButton() {
+  void saveNewButton() {
     if (_temporaryButton == null) return;
     _temporaryButton = _temporaryButton!.copyWith(id: const Uuid().v4());
     _savedButtons.add(_temporaryButton!);
@@ -56,7 +56,8 @@ class ButtonModel with ChangeNotifier {
 
   void updateExistingButton() {
     if (_temporaryButton == null) return;
-    final index = _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+    final index =
+        _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
     if (index != -1) {
       _savedButtons[index] = _temporaryButton!;
     }
@@ -195,15 +196,15 @@ class ButtonModel with ChangeNotifier {
       }
       _factoryButtons.addAll(buttons);
       _buttonsInitialized = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_factoryButtons.isNotEmpty) {
-          selectButton(0); // Seleccionar el primer botón como predeterminado
-        }
-      });
+      // WidgetsBinding.instance.addPostFrameCallback((_) {
+      //   if (_factoryButtons.isNotEmpty) {
+      //     selectButton(0); // Seleccionar el primer botón como predeterminado
+      //   }
+      // });
     }
   }
 
-   void moveButtonDataToNewType(ButtonType newType) {
+  void moveButtonDataToNewType(ButtonType newType) {
     if (_temporaryButton != null) {
       _temporaryButton = ButtonBuilder()
           .fromButtonData(_temporaryButton!)

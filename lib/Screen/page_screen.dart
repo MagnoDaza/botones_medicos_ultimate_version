@@ -41,10 +41,8 @@ class ButtonPageState extends State<ButtonPage> {
       selectedButtonType = widget.buttonData!.type;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-        final textStyleNotifier =
-            Provider.of<TextStyleNotifier>(context, listen: false);
-        int index = buttonModel.savedButtons
-            .indexWhere((button) => button.id == widget.buttonData!.id);
+        final textStyleNotifier = Provider.of<TextStyleNotifier>(context, listen: false);
+        int index = buttonModel.savedButtons.indexWhere((button) => button.id == widget.buttonData!.id);
         if (index != -1) {
           buttonModel.selectSavedButton(index);
           final selectedButton = buttonModel.savedButtons[index];
@@ -82,38 +80,15 @@ class ButtonPageState extends State<ButtonPage> {
             .fromButtonData(buttonModel.temporaryButton!)
             .setText(newValues['text'] ?? buttonModel.temporaryButton!.text)
             .setBold(newValues['isBold'] ?? buttonModel.temporaryButton!.isBold)
-            .setItalic(
-                newValues['isItalic'] ?? buttonModel.temporaryButton!.isItalic)
-            .setUnderline(newValues['isUnderline'] ??
-                buttonModel.temporaryButton!.isUnderline)
-            .setBorder(
-                newValues['isBorder'] ?? buttonModel.temporaryButton!.isBorder)
-            .setDocument(
-                newValues['document'] ?? buttonModel.temporaryButton!.document)
+            .setItalic(newValues['isItalic'] ?? buttonModel.temporaryButton!.isItalic)
+            .setUnderline(newValues['isUnderline'] ?? buttonModel.temporaryButton!.isUnderline)
+            .setBorder(newValues['isBorder'] ?? buttonModel.temporaryButton!.isBorder)
+            .setDocument(newValues['document'] ?? buttonModel.temporaryButton!.document)
             .build();
         buttonModel.updateButton(updatedButton);
       }
     });
   }
-
-  // void saveButton() {
-  //   final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-  //   if (buttonModel.temporaryButton != null) {
-  //     buttonModel.saveButton();
-  //     setState(() {
-  //       message = 'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
-  //       if (!isEditing) {
-  //         _buttonTextController.text = '';
-  //         selectedButtonType = null;
-  //       }
-  //     });
-  //     Navigator.of(context).pop(); // Regresar a la página anterior después de guardar
-  //   } else {
-  //     setState(() {
-  //       message = 'No hay botones disponibles para guardar.';
-  //     });
-  //   }
-  // }
 
   void saveButton() {
     final buttonModel = Provider.of<ButtonModel>(context, listen: false);
@@ -124,15 +99,13 @@ class ButtonPageState extends State<ButtonPage> {
         buttonModel.saveNewButton();
       }
       setState(() {
-        message =
-            'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
+        message = 'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
         if (!isEditing) {
           _buttonTextController.text = '';
           selectedButtonType = null;
         }
       });
-      Navigator.of(context)
-          .pop(); // Regresar a la página anterior después de guardar
+      Navigator.of(context).pop(); // Regresar a la página anterior después de guardar
     } else {
       setState(() {
         message = 'No hay botones disponibles para guardar.';
@@ -146,8 +119,7 @@ class ButtonPageState extends State<ButtonPage> {
       MaterialPageRoute(
         builder: (context) => GridPage(
           buttonModel: Provider.of<ButtonModel>(context, listen: false),
-          selectedButtonType:
-              selectedButtonType, // Pasar el tipo de botón seleccionado
+          selectedButtonType: selectedButtonType, // Pasar el tipo de botón seleccionado
         ),
       ),
     );
@@ -156,8 +128,7 @@ class ButtonPageState extends State<ButtonPage> {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
         selectedButtonType = buttonModel.factoryButtons[selectedIndex].type;
         buttonModel.selectButton(selectedIndex);
-        _buttonTextController.text =
-            buttonModel.factoryButtons[selectedIndex].text;
+        _buttonTextController.text = buttonModel.factoryButtons[selectedIndex].text;
       });
     }
   }
@@ -192,115 +163,112 @@ class ButtonPageState extends State<ButtonPage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: <Widget>[
-              if (selectedButtonType != null)
-                SizedBox(
-                  height: 160,
-                  child: PreviewButton(
-                    controller: _buttonTextController,
-                    textStyleNotifier: Provider.of<TextStyleNotifier>(context),
-                    buttonData: selectedButton,
-                    quillController: _controller,
-                  ),
-                )
-              else
-                Column(
-                  children: [
-                    const Text('Selecciona un tipo de botón'),
-                    ElevatedButton(
-                      onPressed: _selectButtonType,
-                      child: const Text('Seleccionar tipo de botón'),
-                    ),
-                  ],
-                ),
-              TextFormField(
-                focusNode: _focusNode,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Texto del botón',
-                  hintText: 'Texto del botón',
-                ),
-                controller: _buttonTextController,
-                onChanged: (text) {
-                  // Verificar el estado para evitar interferencias
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    updateButtonAttributes({'text': text});
-                  });
-                },
-              ),
-              const SizedBox(height: 10),
-              if (selectedButtonType != null)
-                ListTile(
-                  title: const Text('Selecciona un botón'),
-                  trailing: ElevatedButton(
-                    onPressed: _selectButtonType,
-                    child: Text(
-                      selectedButton?.type.toString().split('.').last ??
-                          'Seleccionar tipo de botón',
-                    ),
-                  ),
-                ),
-              ListTile(
-                leading: const Icon(Icons.description),
-                title: const Text('Contenido'),
-                trailing: ElevatedButton.icon(
-                  onPressed: () async {
-                    final result = await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            QuillPage(controller: _controller),
-                      ),
-                    );
-                    if (result != null) {
-                      setState(() {
-                        _controller = QuillController(
-                          document: Document.fromJson(result),
-                          selection: const TextSelection.collapsed(offset: 0),
-                        );
-                        updateButtonAttributes(
-                            {'document': _controller.document});
-                      });
-                    }
-                  },
-                  label: const Text('Nuevo'),
-                  icon: const Icon(Icons.description),
-                ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
+          child: Center(
+            child: selectedButtonType == null
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        'Opciones de los botones',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      const SizedBox(height: 10),
-                      ButtonOptions(
-                        textStyleNotifier:
-                            Provider.of<TextStyleNotifier>(context),
-                        buttonTextController: _buttonTextController,
-                        selectedButtonType: selectedButtonType,
-                      ),
+                      const Text('Selecciona un tipo de botón'),
                       ElevatedButton(
-                        child: const Text('Guardar'),
-                        onPressed: () {
-                          if (_buttonTextController.text.isEmpty) {
-                            setState(() {
-                              message =
-                                  'Por favor, proporciona un texto para el botón.';
-                            });
-                          } else {
-                            saveButton();
-                          }
+                        onPressed: _selectButtonType,
+                        child: const Text('Seleccionar tipo de botón'),
+                      ),
+                    ],
+                  )
+                : Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 160,
+                        child: PreviewButton(
+                          controller: _buttonTextController,
+                          textStyleNotifier: Provider.of<TextStyleNotifier>(context),
+                          buttonData: selectedButton,
+                          quillController: _controller,
+                        ),
+                      ),
+                      TextFormField(
+                        focusNode: _focusNode,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Texto del botón',
+                          hintText: 'Texto del botón',
+                        ),
+                        controller: _buttonTextController,
+                        onChanged: (text) {
+                          // Verificar el estado para evitar interferencias
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            updateButtonAttributes({'text': text});
+                          });
                         },
                       ),
-                      Text(message),
+                      const SizedBox(height: 10),
+                      if (selectedButtonType != null)
+                        ListTile(
+                          title: const Text('Selecciona un botón'),
+                          trailing: ElevatedButton(
+                            onPressed: _selectButtonType,
+                            child: Text(
+                              selectedButton?.type.toString().split('.').last ?? 'Seleccionar tipo de botón',
+                            ),
+                          ),
+                        ),
+                      ListTile(
+                        leading: const Icon(Icons.description),
+                        title: const Text('Contenido'),
+                        trailing: ElevatedButton.icon(
+                          onPressed: () async {
+                            final result = await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => QuillPage(controller: _controller),
+                              ),
+                            );
+                            if (result != null) {
+                              setState(() {
+                                _controller = QuillController(
+                                  document: Document.fromJson(result),
+                                  selection: const TextSelection.collapsed(offset: 0),
+                                );
+                                updateButtonAttributes({'document': _controller.document});
+                              });
+                            }
+                          },
+                          label: const Text('Nuevo'),
+                          icon: const Icon(Icons.description),
+                        ),
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              const Text(
+                                'Opciones de los botones',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              const SizedBox(height: 10),
+                              ButtonOptions(
+                                textStyleNotifier: Provider.of<TextStyleNotifier>(context),
+                                buttonTextController: _buttonTextController,
+                                selectedButtonType: selectedButtonType,
+                              ),
+                              ElevatedButton(
+                                child: const Text('Guardar'),
+                                onPressed: () {
+                                  if (_buttonTextController.text.isEmpty) {
+                                    setState(() {
+                                      message = 'Por favor, proporciona un texto para el botón.';
+                                    });
+                                  } else {
+                                    saveButton();
+                                  }
+                                },
+                              ),
+                              Text(message),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ),
-            ],
           ),
         ),
       ),

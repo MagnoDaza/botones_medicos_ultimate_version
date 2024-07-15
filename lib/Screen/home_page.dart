@@ -1,3 +1,4 @@
+import 'package:botones_medicos_ultimate_version/Screen/order_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'page_screen.dart';
@@ -51,6 +52,19 @@ class HomePage extends StatelessWidget {
                   );
                 },
               ),
+            ),
+            ListTile(title: const Text("Organizar boton"),
+            trailing: ElevatedButton.icon(label: const Text('Organizar'),
+            icon: const Icon(Icons.sort),
+            onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const OrderButtons()),
+                  );
+              
+            },
+
+            )
             ),
             const SizedBox(height: 20),
             const Align(

@@ -202,4 +202,13 @@ class ButtonModel with ChangeNotifier {
       });
     }
   }
+
+   void reorderButtons(int oldIndex, int newIndex) {
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+    final ButtonData button = _savedButtons.removeAt(oldIndex);
+    _savedButtons.insert(newIndex, button);
+    notifyListeners();
+  }
 }

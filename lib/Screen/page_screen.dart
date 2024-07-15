@@ -140,23 +140,24 @@ class ButtonPageState extends State<ButtonPage> {
     }
   }
 
- Future<void> _selectButtonType() async {
+  Future<void> _selectButtonType() async {
     final selectedIndex = await Navigator.push<int>(
       context,
       MaterialPageRoute(
         builder: (context) => GridPage(
           buttonModel: Provider.of<ButtonModel>(context, listen: false),
-          selectedButtonType: selectedButtonType,
+          selectedButtonType:
+              selectedButtonType, // Pasar el tipo de botón seleccionado
         ),
       ),
     );
     if (selectedIndex != null) {
       setState(() {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-        final newType = buttonModel.factoryButtons[selectedIndex].type;
-        buttonModel.moveButtonDataToNewType(newType);
-        selectedButtonType = newType;
-        _buttonTextController.text = buttonModel.temporaryButton?.text ?? '';
+        selectedButtonType = buttonModel.factoryButtons[selectedIndex].type;
+        buttonModel.selectButton(selectedIndex);
+        _buttonTextController.text =
+            buttonModel.factoryButtons[selectedIndex].text;
       });
     }
   }

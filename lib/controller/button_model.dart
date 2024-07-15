@@ -202,14 +202,4 @@ class ButtonModel with ChangeNotifier {
       });
     }
   }
-
-   void moveButtonDataToNewType(ButtonType newType) {
-    if (_temporaryButton != null) {
-      _temporaryButton = ButtonBuilder()
-          .fromButtonData(_temporaryButton!)
-          .setType(newType)
-          .build();
-      notifyListeners();
-    }
-  }
 }

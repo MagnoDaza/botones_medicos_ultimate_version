@@ -142,6 +142,7 @@ class ButtonModel with ChangeNotifier {
 
   void updateButtonAttributes({
     String? text,
+    ButtonType? type,
     bool? isBold,
     bool? isItalic,
     bool? isUnderline,
@@ -150,14 +151,13 @@ class ButtonModel with ChangeNotifier {
   }) {
     if (_temporaryButton != null) {
       _temporaryButton = _temporaryButton!.copyWith(
-        id: const Uuid().v4(),
-        text: text ?? _temporaryButton!.text,
-        isBold: isBold ?? _temporaryButton!.isBold,
-        isItalic: isItalic ?? _temporaryButton!.isItalic,
-        isUnderline: isUnderline ?? _temporaryButton!.isUnderline,
-        isBorder: isBorder ?? _temporaryButton!.isBorder,
-        document: document ?? _temporaryButton!.document,
-      );
+          id: const Uuid().v4(),
+          text: text ?? _temporaryButton!.text,
+          isBold: isBold ?? _temporaryButton!.isBold,
+          isItalic: isItalic ?? _temporaryButton!.isItalic,
+          isUnderline: isUnderline ?? _temporaryButton!.isUnderline,
+          isBorder: isBorder ?? _temporaryButton!.isBorder,
+          document: document ?? _temporaryButton!.document);
       notifyListeners();
     }
   }

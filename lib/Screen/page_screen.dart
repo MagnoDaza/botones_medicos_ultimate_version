@@ -97,29 +97,28 @@ class ButtonPageState extends State<ButtonPage> {
   }
 
   void saveButton() {
-    final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-    if (buttonModel.temporaryButton != null) {
-      if (isEditing) {
-        buttonModel.updateExistingButton();
-      } else {
-        buttonModel.saveNewButton();
-      }
-      setState(() {
-        message =
-            'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
-        if (!isEditing) {
-          _buttonTextController.text = '';
-          selectedButtonType = null;
-        }
-      });
-      Navigator.of(context)
-          .pop(); // Regresar a la página anterior después de guardar
+  final buttonModel = Provider.of<ButtonModel>(context, listen: false);
+  if (buttonModel.temporaryButton != null) {
+    if (isEditing) {
+      buttonModel.updateExistingButton();
     } else {
-      setState(() {
-        message = 'No hay botones disponibles para guardar.';
-      });
+      buttonModel.saveNewButton();
     }
+    setState(() {
+      message = 'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
+      if (!isEditing) {
+        _buttonTextController.text = '';
+        selectedButtonType = null;
+      }
+    });
+    Navigator.of(context).pop();
+  } else {
+    setState(() {
+      message = 'No hay botones disponibles para guardar.';
+    });
   }
+}
+
 
   Future<void> _selectButtonType() async {
     final selectedIndex = await Navigator.push<int>(

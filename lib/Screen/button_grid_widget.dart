@@ -20,41 +20,37 @@ class GridPage extends StatefulWidget {
 class _GridPageState extends State<GridPage> {
   int? _selectedIndex;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     widget.buttonModel.initializeButtons();
-  //     _setInitialSelection();
-  //   });
-  // }
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.buttonModel.initializeButtons();
-      setState(() {
-        // Establece el índice seleccionado basado en el botón temporal
-        _selectedIndex = widget.buttonModel.factoryButtons.indexWhere(
-          (button) => button.type == widget.buttonModel.temporaryButton?.type,
-        );
-      });
+      _setInitialSelection();
     });
   }
 
   void _setInitialSelection() {
-    if (widget.selectedButtonType != null) {
-      final index = widget.buttonModel.factoryButtons.indexWhere(
-        (button) => button.type == widget.selectedButtonType,
-      );
-      if (index != -1) {
-        setState(() {
-          _selectedIndex = index;
-        });
-      }
+  if (widget.selectedButtonType != null) {
+    final index = widget.buttonModel.factoryButtons.indexWhere(
+      (button) => button.type == widget.selectedButtonType,
+    );
+    if (index != -1) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  } else if (widget.buttonModel.temporaryButton != null) {
+    final index = widget.buttonModel.factoryButtons.indexWhere(
+      (button) => button.type == widget.buttonModel.temporaryButton!.type,
+    );
+    if (index != -1) {
+      setState(() {
+        _selectedIndex = index;
+      });
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +87,8 @@ class _GridPageState extends State<GridPage> {
                   onTap: () {
                     setState(() {
                       _selectedIndex = index;
+                      widget.buttonModel.selectButton(
+                          index); // Añadido para seleccionar el botón
                     });
                   },
                   child: Column(

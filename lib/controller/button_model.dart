@@ -24,29 +24,7 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // void saveButton() {
-  //   if (_temporaryButton == null) return;
-  //   // Generar un nuevo UUID para el botón al guardarlo para asegurarse de que sea único
-  //   _temporaryButton = _temporaryButton!.copyWith(id: const Uuid().v4());
-  //   _savedButtons.add(_temporaryButton!);
-  //   _temporaryButton = null;
-  //   notifyListeners();
-  // }
-
-  // void saveButton() {
-  //   if (_temporaryButton == null) return;
-  //   final index =
-  //       _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
-  //   if (index != -1) {
-  //     _savedButtons[index] = _temporaryButton!;
-  //   } else {
-  //     _savedButtons.add(_temporaryButton!);
-  //   }
-  //   _temporaryButton = null;
-  //   notifyListeners();
-  // }
-
-   void saveNewButton() {
+  void saveNewButton() {
     if (_temporaryButton == null) return;
     _temporaryButton = _temporaryButton!.copyWith(id: const Uuid().v4());
     _savedButtons.add(_temporaryButton!);
@@ -56,7 +34,8 @@ class ButtonModel with ChangeNotifier {
 
   void updateExistingButton() {
     if (_temporaryButton == null) return;
-    final index = _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+    final index =
+        _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
     if (index != -1) {
       _savedButtons[index] = _temporaryButton!;
     }
@@ -203,7 +182,7 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
-   void reorderButtons(int oldIndex, int newIndex) {
+  void reorderButtons(int oldIndex, int newIndex) {
     if (newIndex > oldIndex) {
       newIndex -= 1;
     }
@@ -212,18 +191,7 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
-
-   void moveButtonDataToNewType(ButtonType newType) {
-    if (_temporaryButton != null) {
-      _temporaryButton = ButtonBuilder()
-          .fromButtonData(_temporaryButton!)
-          .setType(newType)
-          .build();
-      notifyListeners();
-    }
-  }
-
-   void toggleButtonVisibility(int index) {
+  void toggleButtonVisibility(int index) {
     if (index >= 0 && index < _savedButtons.length) {
       final button = _savedButtons[index];
       _savedButtons[index] = button.copyWith(
@@ -234,4 +202,13 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
+  void moveButtonDataToNewType(ButtonType newType) {
+    if (_temporaryButton != null) {
+      _temporaryButton = ButtonBuilder()
+          .fromButtonData(_temporaryButton!)
+          .setType(newType)
+          .build();
+      notifyListeners();
+    }
+  }
 }

@@ -30,27 +30,34 @@ class _GridPageState extends State<GridPage> {
   }
 
   void _setInitialSelection() {
-  if (widget.selectedButtonType != null) {
-    final index = widget.buttonModel.factoryButtons.indexWhere(
-      (button) => button.type == widget.selectedButtonType,
-    );
-    if (index != -1) {
-      setState(() {
-        _selectedIndex = index;
-      });
-    }
-  } else if (widget.buttonModel.temporaryButton != null) {
-    final index = widget.buttonModel.factoryButtons.indexWhere(
-      (button) => button.type == widget.buttonModel.temporaryButton!.type,
-    );
-    if (index != -1) {
-      setState(() {
-        _selectedIndex = index;
-      });
+    if (widget.selectedButtonType != null) {
+      final index = widget.buttonModel.factoryButtons.indexWhere(
+        (button) => button.type == widget.selectedButtonType,
+      );
+      if (index != -1) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      }
+    } else if (widget.buttonModel.temporaryButton != null) {
+      final index = widget.buttonModel.factoryButtons.indexWhere(
+        (button) => button.type == widget.buttonModel.temporaryButton!.type,
+      );
+      if (index != -1) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      }
     }
   }
-}
 
+  void _onButtonTypeSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+      final selectedButtonData = widget.buttonModel.factoryButtons[index];
+      widget.buttonModel.moveButtonDataToNewType(selectedButtonData.type);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,13 +91,7 @@ class _GridPageState extends State<GridPage> {
                 return SelectableBox(
                   height: 180,
                   isSelected: _selectedIndex == index,
-                  onTap: () {
-                    setState(() {
-                      _selectedIndex = index;
-                      widget.buttonModel.selectButton(
-                          index); // Añadido para seleccionar el botón
-                    });
-                  },
+                  onTap: () => _onButtonTypeSelected(index),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

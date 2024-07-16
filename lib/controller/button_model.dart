@@ -223,4 +223,15 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
+   void toggleButtonVisibility(int index) {
+    if (index >= 0 && index < _savedButtons.length) {
+      final button = _savedButtons[index];
+      _savedButtons[index] = button.copyWith(
+        id: button.id,
+        isHidden: !button.isHidden,
+      );
+      notifyListeners();
+    }
+  }
+
 }

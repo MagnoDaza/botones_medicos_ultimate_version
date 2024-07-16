@@ -13,6 +13,7 @@ class AdaptiveButtonData extends ButtonData {
     required bool isUnderline,
     required bool isBorder,
     required String id,
+    bool isHidden = false,
   }) : super(
           id: id,
           type: type,
@@ -22,6 +23,7 @@ class AdaptiveButtonData extends ButtonData {
           isItalic: isItalic,
           isUnderline: isUnderline,
           isBorder: isBorder,
+          isHidden: isHidden,
         );
 
   @override
@@ -52,7 +54,8 @@ class AdaptiveButtonData extends ButtonData {
           color: textColor,
           fontStyle: isItalic ? FontStyle.italic : FontStyle.normal,
           fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-          decoration: isUnderline ? TextDecoration.underline : TextDecoration.none,
+          decoration:
+              isUnderline ? TextDecoration.underline : TextDecoration.none,
         ),
       ),
     );
@@ -73,7 +76,8 @@ class AdaptiveButtonData extends ButtonData {
       isItalic: newIsItalic,
       isUnderline: newIsUnderline,
       isBorder: newIsBorder,
-      document: Document.fromJson(document.toDelta().toJson()), // Clonar el documento
+      document:
+          Document.fromJson(document.toDelta().toJson()), // Clonar el documento
     );
   }
 
@@ -87,6 +91,7 @@ class AdaptiveButtonData extends ButtonData {
     bool? isItalic,
     bool? isUnderline,
     bool? isBorder,
+    bool? isHidden,
   }) {
     return AdaptiveButtonData(
       id: id ?? this.id,
@@ -97,6 +102,7 @@ class AdaptiveButtonData extends ButtonData {
       isItalic: isItalic ?? this.isItalic,
       isUnderline: isUnderline ?? this.isUnderline,
       isBorder: isBorder ?? this.isBorder,
+      isHidden: isHidden ?? this.isHidden,
     );
   }
 
@@ -115,6 +121,7 @@ class AdaptiveButtonData extends ButtonData {
       isItalic: json['isItalic'] == 1,
       isUnderline: json['isUnderline'] == 1,
       isBorder: json['isBorder'] == 1,
+      isHidden: json['isHidden'] == 1,
     );
   }
 }

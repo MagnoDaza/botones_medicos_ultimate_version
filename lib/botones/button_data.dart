@@ -17,6 +17,7 @@ abstract class ButtonData {
   final bool isItalic;
   final bool isUnderline;
   final bool isBorder;
+  final bool isHidden; // Nueva propiedad para manejar visibilidad
 
   ButtonData({
     required this.id,
@@ -27,6 +28,7 @@ abstract class ButtonData {
     required this.isItalic,
     required this.isUnderline,
     required this.isBorder,
+    this.isHidden = false, // Valor predeterminado es falso
   });
 
   // Construir el widget del botón
@@ -59,7 +61,9 @@ abstract class ButtonData {
     bool? isBold,
     bool? isItalic,
     bool? isUnderline,
-    bool? isBorder, required String id,
+    bool? isBorder,
+    bool? isHidden,
+    required String id,
   });
 
   // Método para convertir el objeto a JSON
@@ -73,6 +77,7 @@ abstract class ButtonData {
       'isItalic': isItalic ? 1 : 0,
       'isUnderline': isUnderline ? 1 : 0,
       'isBorder': isBorder ? 1 : 0,
+      'isHidden': isHidden ? 1 : 0,
     };
   }
 

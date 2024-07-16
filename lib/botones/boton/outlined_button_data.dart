@@ -13,6 +13,7 @@ class OutlinedButtonData extends ButtonData {
     required bool isUnderline,
     required bool isBorder,
     required String id,
+    bool isHidden = false,
   }) : super(
           id: id,
           type: type,
@@ -22,6 +23,7 @@ class OutlinedButtonData extends ButtonData {
           isItalic: isItalic,
           isBorder: isBorder,
           isUnderline: isUnderline,
+          isHidden: isHidden,
         );
 
   @override
@@ -93,6 +95,8 @@ class OutlinedButtonData extends ButtonData {
     bool? isItalic,
     bool? isUnderline,
     bool? isBorder,
+
+    bool? isHidden,
   }) {
     return OutlinedButtonData(
       id: id ?? this.id,
@@ -103,6 +107,7 @@ class OutlinedButtonData extends ButtonData {
       isItalic: isItalic ?? this.isItalic,
       isUnderline: isUnderline ?? this.isUnderline,
       isBorder: isBorder ?? this.isBorder,
+      isHidden: isHidden ?? this.isHidden,
     );
   }
 
@@ -121,6 +126,7 @@ class OutlinedButtonData extends ButtonData {
       isItalic: json['isItalic'] == 1,
       isUnderline: json['isUnderline'] == 1,
       isBorder: json['isBorder'] == 1,
+      isHidden: json['isHidden'] == 1,
     );
   }
 }

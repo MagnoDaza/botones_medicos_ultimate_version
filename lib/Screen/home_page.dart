@@ -6,10 +6,10 @@ import '../controller/button_model.dart';
 import '../controller/theme_notifier.dart';
 import '../widget/button_grid.dart';
 
+import 'toglevisibility.dart';
+
 class HomePage extends StatelessWidget {
-  HomePage({
-    super.key,
-  });
+  HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,6 @@ class HomePage extends StatelessWidget {
             padding: const EdgeInsets.only(right: 16.0),
             child: IconButton(
               icon: Icon(
-                // Usamos `isLightTheme` para determinar el ícono
                 Provider.of<ThemeNotifier>(context).isLightTheme
                     ? Icons.brightness_7 // ícono para el tema claro
                     : Icons.brightness_3, // ícono para el tema oscuro
@@ -44,8 +43,6 @@ class HomePage extends StatelessWidget {
                 label: const Text('Nuevo'),
                 icon: const Icon(Icons.add),
                 onPressed: () {
-                  // Provider.of<ButtonModel>(context, listen: false)
-                  //     .createNewButton();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const ButtonPage()),
@@ -53,18 +50,33 @@ class HomePage extends StatelessWidget {
                 },
               ),
             ),
-            ListTile(title: const Text("Organizar boton"),
-            trailing: ElevatedButton.icon(label: const Text('Organizar'),
-            icon: const Icon(Icons.sort),
-            onPressed: () {
-                Navigator.push(
+            ListTile(
+              title: const Text("Organizar botones"),
+              trailing: ElevatedButton.icon(
+                label: const Text('Organizar'),
+                icon: const Icon(Icons.sort),
+                onPressed: () {
+                  Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const OrderButtons()),
+                    MaterialPageRoute(
+                        builder: (context) => const OrderButtons()),
                   );
-              
-            },
-
-            )
+                },
+              ),
+            ),
+            ListTile(
+              title: const Text("Ocultar/Mostrar Botones"),
+              trailing: ElevatedButton.icon(
+                label: const Text('Ocultar/Mostrar'),
+                icon: const Icon(Icons.visibility),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ToggleVisibilityPage()),
+                  );
+                },
+              ),
             ),
             const SizedBox(height: 20),
             const Align(
@@ -89,7 +101,7 @@ class HomePage extends StatelessWidget {
                     final button = buttonModel.savedButtons[index];
                     return ListTile(
                       title: Text(
-                          '${button.text} (${button.type.toString().split('.').last})'), // Mostrar tipo de botón junto al nombre
+                          '${button.text} (${button.type.toString().split('.').last})'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -99,13 +111,11 @@ class HomePage extends StatelessWidget {
                               // Convierte el botón a JSON y lo imprime
                               final buttonJson = (button.toJson());
                               print('Editando botón: $buttonJson');
-
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
                                       ButtonPage(buttonData: button),
-                                  //print los datos del button
                                 ),
                               );
                             },
@@ -116,6 +126,7 @@ class HomePage extends StatelessWidget {
                               buttonModel.removeButton(index);
                             },
                           ),
+                          if (button.isHidden) const Icon(Icons.visibility_off),
                         ],
                       ),
                     );

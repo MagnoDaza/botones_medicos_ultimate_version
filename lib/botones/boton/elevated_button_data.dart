@@ -18,6 +18,7 @@ class ElevatedButtonData extends ButtonData {
     required bool isItalic,
     required bool isUnderline,
     required bool isBorder,
+    bool isHidden = false, // Nueva propiedad para manejar visibilidad
   }) : super(
           id: id,
           type: type,
@@ -27,6 +28,7 @@ class ElevatedButtonData extends ButtonData {
           isItalic: isItalic,
           isUnderline: isUnderline,
           isBorder: isBorder,
+          isHidden: isHidden,
         );
 
   @override
@@ -77,6 +79,7 @@ class ElevatedButtonData extends ButtonData {
     bool? isItalic,
     bool? isUnderline,
     bool? isBorder,
+    bool? isHidden,
   }) {
     return ElevatedButtonData(
       id: id ?? this.id,
@@ -89,6 +92,8 @@ class ElevatedButtonData extends ButtonData {
       isItalic: isItalic ?? this.isItalic,
       isUnderline: isUnderline ?? this.isUnderline,
       isBorder: isBorder ?? this.isBorder,
+      isHidden:
+          isHidden ?? this.isHidden, // Nueva propiedad para manejar visibilidad
     );
   }
 
@@ -133,6 +138,8 @@ class ElevatedButtonData extends ButtonData {
       isBorder: json['isBorder'] == 1,
       color: Color(json['color']),
       textColor: Color(json['textColor']),
+      isHidden:
+          json['isHidden'] == 1, // Nueva propiedad para manejar visibilidad
     );
   }
 }

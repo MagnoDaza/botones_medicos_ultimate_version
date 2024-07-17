@@ -1,10 +1,7 @@
-import 'package:botones_medicos_ultimate_version/botones/button_data/button_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'botones/bottons_builder/button_builder.dart';
 import 'widget/expansion_panel/controller_expansion_panel.dart';
 import 'controller/button_model.dart';
-import 'controller/button_name_notifier.dart';
 import 'controller/color_notifier.dart';
 import 'controller/text_style_notifier.dart';
 import 'controller/theme_notifier.dart';
@@ -16,7 +13,6 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => ColorNotifier()),
         ChangeNotifierProvider(create: (context) => TextStyleNotifier()),
-        ChangeNotifierProvider(create: (context) => ButtonNameNotifier()),
         ChangeNotifierProvider(create: (context) => ThemeNotifier()),
         ChangeNotifierProvider(create: (context) => ExpansionPanelController()),
         ChangeNotifierProvider(create: (context) => ButtonModel()),

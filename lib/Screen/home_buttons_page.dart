@@ -1,12 +1,12 @@
-import 'package:botones_medicos_ultimate_version/Screen/order_buttons.dart';
+import 'package:botones_medicos_ultimate_version/Screen/order_buttons_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'page_screen.dart';
+import 'button_page.dart';
 import '../controller/button_model.dart';
 import '../controller/theme_notifier.dart';
-import '../widget/button_grid.dart';
+import '../widget/grid_button/button_grid.dart';
 
-import 'toglevisibility.dart';
+import 'togle_visibility_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});

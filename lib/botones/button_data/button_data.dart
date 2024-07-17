@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'boton/adaptive_button.dart';
-import 'boton/elevated_button_data.dart';
-import 'boton/outlined_button_data.dart';
+import '../boton_types/adaptive_button.dart';
+import '../boton_types/elevated_button_data.dart';
+import '../boton_types/outlined_button_data.dart';
 
 // Enum para tipos de botones
 enum ButtonType { elevated, outlined, adaptive }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../botones/button_data.dart';
+import '../../botones/button_data/button_data.dart';
 
 class ButtonTile extends StatelessWidget {
   final ButtonData button;

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:uuid/uuid.dart';
 
-import '../boton/adaptive_button.dart';
-import '../boton/elevated_button_data.dart';
-import '../boton/outlined_button_data.dart';
-import '../button_data.dart';
+import '../boton_types/adaptive_button.dart';
+import '../boton_types/elevated_button_data.dart';
+import '../boton_types/outlined_button_data.dart';
+import '../button_data/button_data.dart';
 
 class ButtonBuilder {
   String? id;

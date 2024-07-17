@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import '../button_data.dart';
-import '../button_sheet.dart';
+import '../button_data/button_data.dart';
+import '../../widget/quill/button_sheet/button_sheet.dart';
 
-class ElevatedButtonData extends ButtonData {
-  final Color color;
-  final Color textColor;
-
-  ElevatedButtonData({
-    required String id,
+class OutlinedButtonData extends ButtonData {
+  OutlinedButtonData({
     required ButtonType type,
     required String text,
     required Document document,
-    required this.color,
-    required this.textColor,
     required bool isBold,
     required bool isItalic,
     required bool isUnderline,
     required bool isBorder,
-    bool isHidden = false, // Nueva propiedad para manejar visibilidad
+    required String id,
+    bool isHidden = false,
   }) : super(
           id: id,
           type: type,
@@ -26,21 +21,22 @@ class ElevatedButtonData extends ButtonData {
           document: document,
           isBold: isBold,
           isItalic: isItalic,
-          isUnderline: isUnderline,
           isBorder: isBorder,
+          isUnderline: isUnderline,
           isHidden: isHidden,
         );
 
   @override
   Widget build(BuildContext context) {
+    final Document document = this.document;
     final quillController = QuillController(
       document: document,
       selection: const TextSelection.collapsed(offset: 0),
     );
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        foregroundColor: textColor,
-        backgroundColor: color,
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        alignment: Alignment.center,
         shape: isBorder
             ? RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
@@ -57,7 +53,7 @@ class ElevatedButtonData extends ButtonData {
       child: Text(
         text,
         style: TextStyle(
-          color: textColor,
+          color: Theme.of(context).textTheme.displayMedium!.color,
           fontStyle: isItalic ? FontStyle.italic : FontStyle.normal,
           fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
           decoration:
@@ -68,37 +64,7 @@ class ElevatedButtonData extends ButtonData {
   }
 
   @override
-  ElevatedButtonData copyWith({
-    String? id,
-    ButtonType? type,
-    String? text,
-    Document? document,
-    Color? color,
-    Color? textColor,
-    bool? isBold,
-    bool? isItalic,
-    bool? isUnderline,
-    bool? isBorder,
-    bool? isHidden,
-  }) {
-    return ElevatedButtonData(
-      id: id ?? this.id,
-      type: type ?? this.type,
-      text: text ?? this.text,
-      document: document ?? this.document,
-      color: color ?? this.color,
-      textColor: textColor ?? this.textColor,
-      isBold: isBold ?? this.isBold,
-      isItalic: isItalic ?? this.isItalic,
-      isUnderline: isUnderline ?? this.isUnderline,
-      isBorder: isBorder ?? this.isBorder,
-      isHidden:
-          isHidden ?? this.isHidden, // Nueva propiedad para manejar visibilidad
-    );
-  }
-
-  @override
-  ElevatedButtonData cloneWithText({
+  OutlinedButtonData cloneWithText({
     required String newText,
     required bool newIsBold,
     required bool newIsItalic,
@@ -118,16 +84,40 @@ class ElevatedButtonData extends ButtonData {
   }
 
   @override
-  Map<String, dynamic> toJson() {
-    return super.toJson()
-      ..addAll({
-        'color': color.value,
-        'textColor': textColor.value,
-      });
+  OutlinedButtonData copyWith({
+    String? id,
+    ButtonType? type,
+    String? text,
+    Document? document,
+    Color? color,
+    Color? textColor,
+    bool? isBold,
+    bool? isItalic,
+    bool? isUnderline,
+    bool? isBorder,
+
+    bool? isHidden,
+  }) {
+    return OutlinedButtonData(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      text: text ?? this.text,
+      document: document ?? this.document,
+      isBold: isBold ?? this.isBold,
+      isItalic: isItalic ?? this.isItalic,
+      isUnderline: isUnderline ?? this.isUnderline,
+      isBorder: isBorder ?? this.isBorder,
+      isHidden: isHidden ?? this.isHidden,
+    );
   }
 
-  factory ElevatedButtonData.fromJson(Map<String, dynamic> json) {
-    return ElevatedButtonData(
+  @override
+  Map<String, dynamic> toJson() {
+    return super.toJson();
+  }
+
+  factory OutlinedButtonData.fromJson(Map<String, dynamic> json) {
+    return OutlinedButtonData(
       id: json['id'],
       type: ButtonType.values.firstWhere((e) => e.toString() == json['type']),
       text: json['text'],
@@ -136,10 +126,7 @@ class ElevatedButtonData extends ButtonData {
       isItalic: json['isItalic'] == 1,
       isUnderline: json['isUnderline'] == 1,
       isBorder: json['isBorder'] == 1,
-      color: Color(json['color']),
-      textColor: Color(json['textColor']),
-      isHidden:
-          json['isHidden'] == 1, // Nueva propiedad para manejar visibilidad
+      isHidden: json['isHidden'] == 1,
     );
   }
 }

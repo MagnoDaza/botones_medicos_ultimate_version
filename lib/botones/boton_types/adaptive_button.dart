@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import '../button_data.dart';
-import '../button_sheet.dart';
+import '../button_data/button_data.dart';
+import '../../widget/quill/button_sheet/button_sheet.dart';
 
-class OutlinedButtonData extends ButtonData {
-  OutlinedButtonData({
+class AdaptiveButtonData extends ButtonData {
+  AdaptiveButtonData({
     required ButtonType type,
     required String text,
     required Document document,
@@ -21,22 +21,20 @@ class OutlinedButtonData extends ButtonData {
           document: document,
           isBold: isBold,
           isItalic: isItalic,
-          isBorder: isBorder,
           isUnderline: isUnderline,
+          isBorder: isBorder,
           isHidden: isHidden,
         );
 
   @override
   Widget build(BuildContext context) {
-    final Document document = this.document;
+    final textColor = Theme.of(context).textTheme.bodyMedium?.color;
     final quillController = QuillController(
       document: document,
       selection: const TextSelection.collapsed(offset: 0),
     );
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.transparent,
-        alignment: Alignment.center,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
         shape: isBorder
             ? RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
@@ -53,7 +51,7 @@ class OutlinedButtonData extends ButtonData {
       child: Text(
         text,
         style: TextStyle(
-          color: Theme.of(context).textTheme.displayMedium!.color,
+          color: textColor,
           fontStyle: isItalic ? FontStyle.italic : FontStyle.normal,
           fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
           decoration:
@@ -64,7 +62,7 @@ class OutlinedButtonData extends ButtonData {
   }
 
   @override
-  OutlinedButtonData cloneWithText({
+  AdaptiveButtonData cloneWithText({
     required String newText,
     required bool newIsBold,
     required bool newIsItalic,
@@ -84,21 +82,18 @@ class OutlinedButtonData extends ButtonData {
   }
 
   @override
-  OutlinedButtonData copyWith({
+  AdaptiveButtonData copyWith({
     String? id,
     ButtonType? type,
     String? text,
     Document? document,
-    Color? color,
-    Color? textColor,
     bool? isBold,
     bool? isItalic,
     bool? isUnderline,
     bool? isBorder,
-
     bool? isHidden,
   }) {
-    return OutlinedButtonData(
+    return AdaptiveButtonData(
       id: id ?? this.id,
       type: type ?? this.type,
       text: text ?? this.text,
@@ -116,8 +111,8 @@ class OutlinedButtonData extends ButtonData {
     return super.toJson();
   }
 
-  factory OutlinedButtonData.fromJson(Map<String, dynamic> json) {
-    return OutlinedButtonData(
+  factory AdaptiveButtonData.fromJson(Map<String, dynamic> json) {
+    return AdaptiveButtonData(
       id: json['id'],
       type: ButtonType.values.firstWhere((e) => e.toString() == json['type']),
       text: json['text'],

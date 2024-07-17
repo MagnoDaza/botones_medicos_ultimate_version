@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chips_choice/chips_choice.dart';
-import '../botones/widget/rainbow_icon.dart';
-import '../widget/color_picker_dialog.dart';
+import '../../../common/color_icon/rainbow_icon.dart';
+import 'color_picker_dialog.dart';
 
 class ColorChoice {
   final Color color;

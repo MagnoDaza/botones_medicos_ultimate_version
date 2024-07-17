@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import '../button_data.dart';
-import '../button_sheet.dart';
+import '../button_data/button_data.dart';
+import '../../widget/quill/button_sheet/button_sheet.dart';
 
-class AdaptiveButtonData extends ButtonData {
-  AdaptiveButtonData({
+class ElevatedButtonData extends ButtonData {
+  final Color color;
+  final Color textColor;
+
+  ElevatedButtonData({
+    required String id,
     required ButtonType type,
     required String text,
     required Document document,
+    required this.color,
+    required this.textColor,
     required bool isBold,
     required bool isItalic,
     required bool isUnderline,
     required bool isBorder,
-    required String id,
-    bool isHidden = false,
+    bool isHidden = false, // Nueva propiedad para manejar visibilidad
   }) : super(
           id: id,
           type: type,
@@ -28,13 +33,14 @@ class AdaptiveButtonData extends ButtonData {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = Theme.of(context).textTheme.bodyMedium?.color;
     final quillController = QuillController(
       document: document,
       selection: const TextSelection.collapsed(offset: 0),
     );
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
+        foregroundColor: textColor,
+        backgroundColor: color,
         shape: isBorder
             ? RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
@@ -62,7 +68,37 @@ class AdaptiveButtonData extends ButtonData {
   }
 
   @override
-  AdaptiveButtonData cloneWithText({
+  ElevatedButtonData copyWith({
+    String? id,
+    ButtonType? type,
+    String? text,
+    Document? document,
+    Color? color,
+    Color? textColor,
+    bool? isBold,
+    bool? isItalic,
+    bool? isUnderline,
+    bool? isBorder,
+    bool? isHidden,
+  }) {
+    return ElevatedButtonData(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      text: text ?? this.text,
+      document: document ?? this.document,
+      color: color ?? this.color,
+      textColor: textColor ?? this.textColor,
+      isBold: isBold ?? this.isBold,
+      isItalic: isItalic ?? this.isItalic,
+      isUnderline: isUnderline ?? this.isUnderline,
+      isBorder: isBorder ?? this.isBorder,
+      isHidden:
+          isHidden ?? this.isHidden, // Nueva propiedad para manejar visibilidad
+    );
+  }
+
+  @override
+  ElevatedButtonData cloneWithText({
     required String newText,
     required bool newIsBold,
     required bool newIsItalic,
@@ -82,37 +118,16 @@ class AdaptiveButtonData extends ButtonData {
   }
 
   @override
-  AdaptiveButtonData copyWith({
-    String? id,
-    ButtonType? type,
-    String? text,
-    Document? document,
-    bool? isBold,
-    bool? isItalic,
-    bool? isUnderline,
-    bool? isBorder,
-    bool? isHidden,
-  }) {
-    return AdaptiveButtonData(
-      id: id ?? this.id,
-      type: type ?? this.type,
-      text: text ?? this.text,
-      document: document ?? this.document,
-      isBold: isBold ?? this.isBold,
-      isItalic: isItalic ?? this.isItalic,
-      isUnderline: isUnderline ?? this.isUnderline,
-      isBorder: isBorder ?? this.isBorder,
-      isHidden: isHidden ?? this.isHidden,
-    );
-  }
-
-  @override
   Map<String, dynamic> toJson() {
-    return super.toJson();
+    return super.toJson()
+      ..addAll({
+        'color': color.value,
+        'textColor': textColor.value,
+      });
   }
 
-  factory AdaptiveButtonData.fromJson(Map<String, dynamic> json) {
-    return AdaptiveButtonData(
+  factory ElevatedButtonData.fromJson(Map<String, dynamic> json) {
+    return ElevatedButtonData(
       id: json['id'],
       type: ButtonType.values.firstWhere((e) => e.toString() == json['type']),
       text: json['text'],
@@ -121,7 +136,10 @@ class AdaptiveButtonData extends ButtonData {
       isItalic: json['isItalic'] == 1,
       isUnderline: json['isUnderline'] == 1,
       isBorder: json['isBorder'] == 1,
-      isHidden: json['isHidden'] == 1,
+      color: Color(json['color']),
+      textColor: Color(json['textColor']),
+      isHidden:
+          json['isHidden'] == 1, // Nueva propiedad para manejar visibilidad
     );
   }
 }

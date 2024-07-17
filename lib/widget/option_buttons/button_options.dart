@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../botones/boton/elevated_button_data.dart';
-import '../botones/widget/expansion_panel/custom_expansion_panel.dart';
-import '../botones/widget/rainbow_icon.dart';
-import '../controller/button_model.dart';
-import '../controller/color_notifier.dart';
-import '../controller/text_style_notifier.dart';
-import '../botones/button_data.dart';
-import '../rowbuttoncolor/custom_color_row.dart';
+import '../../botones/boton_types/elevated_button_data.dart';
+import '../expansion_panel/custom_expansion_panel.dart';
+import '../../common/color_icon/rainbow_icon.dart';
+import '../../controller/button_model.dart';
+import '../../controller/color_notifier.dart';
+import '../../controller/text_style_notifier.dart';
+import '../../botones/button_data/button_data.dart';
+import 'color_options/custom_color_row.dart';
 class ButtonOptions extends StatefulWidget {
   final TextEditingController buttonTextController;
   final TextStyleNotifier textStyleNotifier;

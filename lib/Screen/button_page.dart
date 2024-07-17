@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
-import '../botones/button_data.dart';
-import '../botones/patron_builder/button_builder.dart';
-import '../botones/quill/quill_page.dart';
+import '../botones/button_data/button_data.dart';
+import '../botones/bottons_builder/button_builder.dart';
+import '../widget/quill/quill_page.dart';
 import '../controller/button_model.dart';
 import '../controller/text_style_notifier.dart';
 import '../controller/theme_notifier.dart';
-import '../preview_button.dart';
-import '../widget/button_options.dart';
-import 'button_grid_widget.dart';
+import '../widget/preview_button/preview_button.dart';
+import '../widget/option_buttons/button_options.dart';
+import 'grid_ page.dart';
 
 class ButtonPage extends StatefulWidget {
   final ButtonData? buttonData; // ButtonData opcional para edición

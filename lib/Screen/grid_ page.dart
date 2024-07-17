@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selectable_box/selectable_box.dart';
-import '../botones/button_data.dart';
+import '../botones/button_data/button_data.dart';
 import '../controller/button_model.dart';
 
 class GridPage extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:uuid/uuid.dart';
-import '../botones/button_data.dart';
-import '../botones/patron_builder/button_builder.dart';
+import '../botones/button_data/button_data.dart';
+import '../botones/bottons_builder/button_builder.dart';
 
 class ButtonModel with ChangeNotifier {
   final List<ButtonData> _factoryButtons = [];

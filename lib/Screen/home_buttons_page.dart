@@ -1,4 +1,4 @@
-import 'package:botones_medicos_ultimate_version/Screen/order_buttons_page.dart';
+import 'package:botones_medicos_ultimate_version/screen/order_buttons_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'button_page.dart';

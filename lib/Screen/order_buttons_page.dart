@@ -17,18 +17,11 @@ class _OrderButtonsState extends State<OrderButtons> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Reordenar Botones'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () {
-              // No es necesario hacer nada adicional aquí,
-              // los cambios ya se han guardado en el modelo.
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
+   
       ),
       body: ReorderableListView(
+        buildDefaultDragHandles: true,
+
         onReorder: (oldIndex, newIndex) {
           buttonModel.reorderButtons(oldIndex, newIndex);
         },

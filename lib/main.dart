@@ -5,7 +5,7 @@ import 'controller/button_model.dart';
 import 'controller/color_notifier.dart';
 import 'controller/text_style_notifier.dart';
 import 'controller/theme_notifier.dart';
-import 'Screen/home_buttons_page.dart';
+import 'screen/home_buttons_page.dart';
 
 void main() {
   runApp(

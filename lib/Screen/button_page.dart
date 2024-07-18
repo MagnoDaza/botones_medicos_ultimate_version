@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
-import '../botones/button_data/button_data.dart';
+
 import '../botones/bottons_builder/button_builder.dart';
+import '../botones/button_data/button_data.dart';
+import '../widget/option_buttons/button_options.dart';
+import '../widget/preview_button/preview_button.dart';
 import '../widget/quill/quill_page.dart';
 import '../controller/button_model.dart';
 import '../controller/text_style_notifier.dart';
 import '../controller/theme_notifier.dart';
-import '../widget/preview_button/preview_button.dart';
-import '../widget/option_buttons/button_options.dart';
-import 'grid_ page.dart';
+import 'grid_select_button.dart';
+
 
 class ButtonPage extends StatefulWidget {
-  final ButtonData? buttonData; // ButtonData opcional para edición
+  final ButtonData? buttonData;
 
   const ButtonPage({super.key, this.buttonData});
 
@@ -41,10 +43,8 @@ class ButtonPageState extends State<ButtonPage> {
       selectedButtonType = widget.buttonData!.type;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-        final textStyleNotifier =
-            Provider.of<TextStyleNotifier>(context, listen: false);
-        int index = buttonModel.savedButtons
-            .indexWhere((button) => button.id == widget.buttonData!.id);
+        final textStyleNotifier = Provider.of<TextStyleNotifier>(context, listen: false);
+        int index = buttonModel.savedButtons.indexWhere((button) => button.id == widget.buttonData!.id);
         if (index != -1) {
           buttonModel.selectSavedButton(index);
           final selectedButton = buttonModel.savedButtons[index];
@@ -57,6 +57,9 @@ class ButtonPageState extends State<ButtonPage> {
     } else {
       _buttonTextController.text = 'Servicio';
       _controller = QuillController.basic();
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await _selectButtonType();
+      });
     }
     _focusNode.addListener(() {
       if (_focusNode.hasFocus && !isEditing) {
@@ -82,14 +85,10 @@ class ButtonPageState extends State<ButtonPage> {
             .fromButtonData(buttonModel.temporaryButton!)
             .setText(newValues['text'] ?? buttonModel.temporaryButton!.text)
             .setBold(newValues['isBold'] ?? buttonModel.temporaryButton!.isBold)
-            .setItalic(
-                newValues['isItalic'] ?? buttonModel.temporaryButton!.isItalic)
-            .setUnderline(newValues['isUnderline'] ??
-                buttonModel.temporaryButton!.isUnderline)
-            .setBorder(
-                newValues['isBorder'] ?? buttonModel.temporaryButton!.isBorder)
-            .setDocument(
-                newValues['document'] ?? buttonModel.temporaryButton!.document)
+            .setItalic(newValues['isItalic'] ?? buttonModel.temporaryButton!.isItalic)
+            .setUnderline(newValues['isUnderline'] ?? buttonModel.temporaryButton!.isUnderline)
+            .setBorder(newValues['isBorder'] ?? buttonModel.temporaryButton!.isBorder)
+            .setDocument(newValues['document'] ?? buttonModel.temporaryButton!.document)
             .build();
         buttonModel.updateButton(updatedButton);
       }
@@ -105,8 +104,7 @@ class ButtonPageState extends State<ButtonPage> {
         buttonModel.saveNewButton();
       }
       setState(() {
-        message =
-            'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
+        message = 'Se ha ${isEditing ? 'editado' : 'creado'} un nuevo botón con el texto ${_buttonTextController.text}';
         if (!isEditing) {
           _buttonTextController.text = '';
           selectedButtonType = null;
@@ -130,12 +128,11 @@ class ButtonPageState extends State<ButtonPage> {
         ),
       ),
     );
-
     if (selectedIndex != null) {
       setState(() {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
         final newType = buttonModel.factoryButtons[selectedIndex].type;
-        buttonModel.moveButtonDataToNewType(newType);
+        buttonModel.createNewButton(newType);
         selectedButtonType = newType;
         _buttonTextController.text = buttonModel.temporaryButton?.text ?? '';
       });
@@ -153,11 +150,10 @@ class ButtonPageState extends State<ButtonPage> {
           IconButton(
             icon: Icon(
               Provider.of<ThemeNotifier>(context).isLightTheme
-                  ? Icons.brightness_7 // ícono para el tema claro
-                  : Icons.brightness_3, // ícono para el tema oscuro
+                  ? Icons.brightness_7
+                  : Icons.brightness_3,
             ),
             onPressed: () {
-              // Cambia el tema
               Provider.of<ThemeNotifier>(context, listen: false).toggleTheme();
             },
           ),
@@ -173,118 +169,112 @@ class ButtonPageState extends State<ButtonPage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Center(
-            child: selectedButtonType == null
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Selecciona un tipo de botón'),
-                      ElevatedButton(
-                        onPressed: _selectButtonType,
-                        child: const Text('Seleccionar tipo de botón'),
-                      ),
-                    ],
-                  )
-                : Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 160,
-                        child: PreviewButton(
-                          controller: _buttonTextController,
-                          textStyleNotifier:
-                              Provider.of<TextStyleNotifier>(context),
-                          buttonData: selectedButton,
-                          quillController: _controller,
-                        ),
-                      ),
-                      TextFormField(
-                        focusNode: _focusNode,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Texto del botón',
-                          hintText: 'Texto del botón',
-                        ),
-                        controller: _buttonTextController,
-                        onChanged: (text) {
-                          // Verificar el estado para evitar interferencias
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            updateButtonAttributes({'text': text});
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      if (selectedButtonType != null)
-                        ListTile(
-                          title: const Text('Selecciona un botón'),
-                          trailing: ElevatedButton(
+            child: buttonModel.isLoading
+                ? CircularProgressIndicator()
+                : selectedButtonType == null
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Selecciona un tipo de botón'),
+                          ElevatedButton(
                             onPressed: _selectButtonType,
-                            child: Text(
-                              selectedButton?.type.toString().split('.').last ??
-                                  'Seleccionar tipo de botón',
+                            child: const Text('Seleccionar tipo de botón'),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: 160,
+                            child: PreviewButton(
+                              controller: _buttonTextController,
+                              textStyleNotifier: Provider.of<TextStyleNotifier>(context),
+                              buttonData: selectedButton,
+                              quillController: _controller,
                             ),
                           ),
-                        ),
-                      ListTile(
-                        leading: const Icon(Icons.description),
-                        title: const Text('Contenido'),
-                        trailing: ElevatedButton.icon(
-                          onPressed: () async {
-                            final result = await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    QuillPage(controller: _controller),
-                              ),
-                            );
-                            if (result != null) {
-                              setState(() {
-                                _controller = QuillController(
-                                  document: Document.fromJson(result),
-                                  selection:
-                                      const TextSelection.collapsed(offset: 0),
-                                );
-                                updateButtonAttributes(
-                                    {'document': _controller.document});
+                          TextFormField(
+                            focusNode: _focusNode,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Texto del botón',
+                              hintText: 'Texto del botón',
+                            ),
+                            controller: _buttonTextController,
+                            onChanged: (text) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                updateButtonAttributes({'text': text});
                               });
-                            }
-                          },
-                          label: const Text('Nuevo'),
-                          icon: const Icon(Icons.description),
-                        ),
-                      ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              const Text(
-                                'Opciones de los botones',
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              const SizedBox(height: 10),
-                              ButtonOptions(
-                                textStyleNotifier:
-                                    Provider.of<TextStyleNotifier>(context),
-                                buttonTextController: _buttonTextController,
-                                selectedButtonType: selectedButtonType,
-                              ),
-                              ElevatedButton(
-                                child: const Text('Guardar'),
-                                onPressed: () {
-                                  if (_buttonTextController.text.isEmpty) {
-                                    setState(() {
-                                      message =
-                                          'Por favor, proporciona un texto para el botón.';
-                                    });
-                                  } else {
-                                    saveButton();
-                                  }
-                                },
-                              ),
-                              Text(message),
-                            ],
+                            },
                           ),
-                        ),
+                          const SizedBox(height: 10),
+                          if (selectedButtonType != null)
+                            ListTile(
+                              title: const Text('Selecciona un botón'),
+                              trailing: ElevatedButton(
+                                onPressed: _selectButtonType,
+                                child: Text(
+                                  selectedButton?.type.toString().split('.').last ?? 'Seleccionar tipo de botón',
+                                ),
+                              ),
+                            ),
+                          ListTile(
+                            leading: const Icon(Icons.description),
+                            title: const Text('Contenido'),
+                            trailing: ElevatedButton.icon(
+                              onPressed: () async {
+                                final result = await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => QuillPage(controller: _controller),
+                                  ),
+                                );
+                                if (result != null) {
+                                  setState(() {
+                                    _controller = QuillController(
+                                      document: Document.fromJson(result),
+                                      selection: const TextSelection.collapsed(offset: 0),
+                                    );
+                                    updateButtonAttributes({'document': _controller.document});
+                                  });
+                                }
+                              },
+                              label: const Text('Nuevo'),
+                              icon: const Icon(Icons.description),
+                            ),
+                          ),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  const Text(
+                                    'Opciones de los botones',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  ButtonOptions(
+                                    textStyleNotifier: Provider.of<TextStyleNotifier>(context),
+                                    buttonTextController: _buttonTextController,
+                                    selectedButtonType: selectedButtonType,
+                                  ),
+                                  ElevatedButton(
+                                    child: const Text('Guardar'),
+                                    onPressed: () {
+                                      if (_buttonTextController.text.isEmpty) {
+                                        setState(() {
+                                          message = 'Por favor, proporciona un texto para el botón.';
+                                        });
+                                      } else {
+                                        saveButton();
+                                      }
+                                    },
+                                  ),
+                                  Text(message),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
           ),
         ),
       ),

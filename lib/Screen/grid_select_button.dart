@@ -91,7 +91,14 @@ class _GridPageState extends State<GridPage> {
                 return SelectableBox(
                   height: 180,
                   isSelected: _selectedIndex == index,
-                  onTap: () => _onButtonTypeSelected(index),
+                  onTap: () {
+                    setState(() {
+                      _selectedIndex = index;
+                    });
+                    final selectedButtonData = buttonModel.factoryButtons[index];
+                    buttonModel.moveButtonDataToNewType(selectedButtonData.type);
+                    Navigator.pop(context, index);
+                  },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

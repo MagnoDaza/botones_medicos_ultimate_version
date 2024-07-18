@@ -11,6 +11,7 @@ class ButtonModel with ChangeNotifier {
   int _selectedIndex = -1;
   bool _buttonsInitialized = false;
   ButtonData? _temporaryButton; // Nueva instancia temporal para edición
+  bool _isLoading = false;
 
   List<ButtonData> get factoryButtons => List.unmodifiable(_factoryButtons);
   int get selectedIndex => _selectedIndex;
@@ -18,6 +19,12 @@ class ButtonModel with ChangeNotifier {
   bool get buttonsInitialized => _buttonsInitialized;
   ButtonData? get temporaryButton =>
       _temporaryButton; // Obtener la instancia temporal
+  bool get isLoading => _isLoading;
+
+  void setLoading(bool isLoading) {
+    _isLoading = isLoading;
+    notifyListeners();
+  }
 
   void addButton(ButtonData buttonData) {
     _factoryButtons.add(buttonData);

@@ -1,5 +1,4 @@
-// Clase ButtonPage
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 
@@ -114,6 +113,7 @@ class ButtonPageState extends State<ButtonPage> {
       context,
       MaterialPageRoute(
         builder: (context) => GridPage(
+          currentText: _buttonTextController.text,
           buttonModel: Provider.of<ButtonModel>(context, listen: false),
           selectedButtonType: selectedButtonType,
         ),
@@ -123,9 +123,9 @@ class ButtonPageState extends State<ButtonPage> {
       setState(() {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
         final newType = buttonModel.factoryButtons[selectedIndex].type;
-        buttonModel.createNewButton(newType);
+        final currentText = _buttonTextController.text;
+        buttonModel.createNewButton(newType, currentText);  // Mantener el texto actual
         selectedButtonType = newType;
-        _buttonTextController.text = buttonModel.temporaryButton?.text ?? '';
       });
     }
   }
@@ -276,3 +276,4 @@ class ButtonPageState extends State<ButtonPage> {
     );
   }
 }
+

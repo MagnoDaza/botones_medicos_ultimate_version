@@ -9,10 +9,12 @@ import '../controller/button_model.dart';
 class GridPage extends StatefulWidget {
   final ButtonModel buttonModel;
   final ButtonType? selectedButtonType;
+  final String currentText; // Nuevo argumento para el texto actual
 
   const GridPage({
     required this.buttonModel,
     this.selectedButtonType,
+    required this.currentText, // Inicializar el nuevo argumento
   });
 
   @override
@@ -90,7 +92,8 @@ class _GridPageState extends State<GridPage> {
                       _selectedIndex = index;
                     });
                     final selectedButtonData = buttonModel.factoryButtons[index];
-                    buttonModel.moveButtonDataToNewType(selectedButtonData.type);
+                    final currentText = widget.currentText; // Usar el texto actual del widget
+                    buttonModel.createNewButton(selectedButtonData.type, currentText); // Mantener el texto actual
                     Navigator.pop(context, index);
                   },
                   child: Column(

@@ -1,9 +1,12 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:uuid/uuid.dart';
 import '../botones/button_data/button_data.dart';
 import '../botones/bottons_builder/button_builder.dart';
 
+
+// Modelo de ButtonModel
 class ButtonModel with ChangeNotifier {
   final List<ButtonData> _factoryButtons = [];
   final List<ButtonData> _savedButtons = [];
@@ -17,8 +20,7 @@ class ButtonModel with ChangeNotifier {
   int get selectedIndex => _selectedIndex;
   List<ButtonData> get savedButtons => List.unmodifiable(_savedButtons);
   bool get buttonsInitialized => _buttonsInitialized;
-  ButtonData? get temporaryButton =>
-      _temporaryButton; // Obtener la instancia temporal
+  ButtonData? get temporaryButton => _temporaryButton; // Obtener la instancia temporal
   bool get isLoading => _isLoading;
 
   void setLoading(bool isLoading) {
@@ -41,8 +43,7 @@ class ButtonModel with ChangeNotifier {
 
   void updateExistingButton() {
     if (_temporaryButton == null) return;
-    final index =
-        _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+    final index = _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
     if (index != -1) {
       _savedButtons[index] = _temporaryButton!;
     }
@@ -53,8 +54,7 @@ class ButtonModel with ChangeNotifier {
   void selectButton(int index) {
     if (index >= 0 && index < _factoryButtons.length) {
       _selectedIndex = index;
-      _temporaryButton =
-          ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
+      _temporaryButton = ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
       notifyListeners();
     }
   }
@@ -62,8 +62,7 @@ class ButtonModel with ChangeNotifier {
   void selectSavedButton(int index) {
     if (index >= 0 && index < _savedButtons.length) {
       _selectedIndex = index;
-      _temporaryButton =
-          ButtonBuilder().fromButtonData(_savedButtons[index]).build();
+      _temporaryButton = ButtonBuilder().fromButtonData(_savedButtons[index]).build();
       notifyListeners();
     }
   }
@@ -87,10 +86,10 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
-  void createNewButton(ButtonType type) {
+  void createNewButton(ButtonType type, String currentText) {
     final newButton = ButtonBuilder()
         .setType(type)
-        .setText(_defaultText)
+        .setText(currentText)
         .setDocument(Document())
         .build();
     _temporaryButton = newButton;

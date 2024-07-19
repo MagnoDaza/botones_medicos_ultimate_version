@@ -1,6 +1,8 @@
+// Clase GridPage
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selectable_box/selectable_box.dart';
+
 import '../botones/button_data/button_data.dart';
 import '../controller/button_model.dart';
 
@@ -49,14 +51,6 @@ class _GridPageState extends State<GridPage> {
         });
       }
     }
-  }
-
-  void _onButtonTypeSelected(int index) {
-    setState(() {
-      _selectedIndex = index;
-      final selectedButtonData = widget.buttonModel.factoryButtons[index];
-      widget.buttonModel.moveButtonDataToNewType(selectedButtonData.type);
-    });
   }
 
   @override

@@ -1,21 +1,21 @@
+// Clase ButtonPage
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 
 import '../botones/bottons_builder/button_builder.dart';
 import '../botones/button_data/button_data.dart';
-import '../widget/option_buttons/button_options.dart';
-import '../widget/preview_button/preview_button.dart';
-import '../widget/quill/quill_page.dart';
 import '../controller/button_model.dart';
 import '../controller/text_style_notifier.dart';
 import '../controller/theme_notifier.dart';
+import '../widget/option_buttons/button_options.dart';
+import '../widget/preview_button/preview_button.dart';
+import '../widget/quill/quill_page.dart';
+import 'button_field.dart';
 import 'grid_select_button.dart';
-
 
 class ButtonPage extends StatefulWidget {
   final ButtonData? buttonData;
-
   const ButtonPage({super.key, this.buttonData});
 
   @override
@@ -23,7 +23,6 @@ class ButtonPage extends StatefulWidget {
 }
 
 class ButtonPageState extends State<ButtonPage> {
-  final FocusNode _focusNode = FocusNode();
   final TextEditingController _buttonTextController = TextEditingController();
   late QuillController _controller;
   String message = '';
@@ -61,18 +60,10 @@ class ButtonPageState extends State<ButtonPage> {
         await _selectButtonType();
       });
     }
-    _focusNode.addListener(() {
-      if (_focusNode.hasFocus && !isEditing) {
-        setState(() {
-          _buttonTextController.text = '';
-        });
-      }
-    });
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
     _buttonTextController.dispose();
     super.dispose();
   }
@@ -139,6 +130,19 @@ class ButtonPageState extends State<ButtonPage> {
     }
   }
 
+  Future<void> _editButtonText() async {
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => TextFormFieldDialog(controller: _buttonTextController),
+    );
+    if (result != null) {
+      setState(() {
+        _buttonTextController.text = result;
+        updateButtonAttributes({'text': result});
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final buttonModel = Provider.of<ButtonModel>(context);
@@ -149,9 +153,7 @@ class ButtonPageState extends State<ButtonPage> {
         actions: [
           IconButton(
             icon: Icon(
-              Provider.of<ThemeNotifier>(context).isLightTheme
-                  ? Icons.brightness_7
-                  : Icons.brightness_3,
+              Provider.of<ThemeNotifier>(context).isLightTheme ? Icons.brightness_7 : Icons.brightness_3,
             ),
             onPressed: () {
               Provider.of<ThemeNotifier>(context, listen: false).toggleTheme();
@@ -193,19 +195,12 @@ class ButtonPageState extends State<ButtonPage> {
                               quillController: _controller,
                             ),
                           ),
-                          TextFormField(
-                            focusNode: _focusNode,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Texto del botón',
-                              hintText: 'Texto del botón',
+                          ListTile(
+                            title: Text(_buttonTextController.text),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: _editButtonText,
                             ),
-                            controller: _buttonTextController,
-                            onChanged: (text) {
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                updateButtonAttributes({'text': text});
-                              });
-                            },
                           ),
                           const SizedBox(height: 10),
                           if (selectedButtonType != null)

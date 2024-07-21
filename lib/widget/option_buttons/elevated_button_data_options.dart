@@ -24,7 +24,7 @@ class ElevatedButtonDataOptions extends ButtonDataOptions {
 
     if (buttonData == null || buttonData is! ElevatedButtonData) {
       // Mostrar un widget de error o una vista vacía si buttonData es nulo o no es del tipo correcto
-      return Center(
+      return const Center(
           child:
               Text('Error: No hay datos disponibles para el botón elevado.'));
     }
@@ -71,75 +71,55 @@ class ElevatedButtonDataOptions extends ButtonDataOptions {
                 ),
               ],
             ),
-            PanelItem(
-              leading: Icon(Icons.format_bold),
-              headerValue: "Negrita",
-              expandedValue: [
-                CustomSwitchRow(
-                  initialValue: elevatedButtonData.isBold,
-                  updateButtonAttribute: (bool newValue) {
-                    buttonModel.updateButton(
-                      buttonData.copyWith(isBold: newValue),
-                    );
-                    Provider.of<TextStyleNotifier>(context, listen: false)
-                        .setBold(newValue);
-                  },
-                  label: 'Negrita',
-                ),
-              ],
-            ),
-            PanelItem(
-              leading: Icon(Icons.format_italic),
-              headerValue: "Itálica",
-              expandedValue: [
-                CustomSwitchRow(
-                  initialValue: elevatedButtonData.isItalic,
-                  updateButtonAttribute: (bool newValue) {
-                    buttonModel.updateButton(
-                      buttonData.copyWith(isItalic: newValue),
-                    );
-                    Provider.of<TextStyleNotifier>(context, listen: false)
-                        .setItalic(newValue);
-                  },
-                  label: 'Itálica',
-                ),
-              ],
-            ),
-            PanelItem(
-              leading: Icon(Icons.format_underline),
-              headerValue: "Subrayado",
-              expandedValue: [
-                CustomSwitchRow(
-                  initialValue: elevatedButtonData.isUnderline,
-                  updateButtonAttribute: (bool newValue) {
-                    buttonModel.updateButton(
-                      buttonData.copyWith(isUnderline: newValue),
-                    );
-                    Provider.of<TextStyleNotifier>(context, listen: false)
-                        .setUnderline(newValue);
-                  },
-                  label: 'Subrayado',
-                ),
-              ],
-            ),
-            PanelItem(
-              leading: Icon(Icons.border_outer),
-              headerValue: "Borde",
-              expandedValue: [
-                CustomSwitchRow(
-                  initialValue: elevatedButtonData.isBorder,
-                  updateButtonAttribute: (bool newValue) {
-                    buttonModel.updateButton(
-                      buttonData.copyWith(isBorder: newValue),
-                    );
-                    Provider.of<TextStyleNotifier>(context, listen: false)
-                        .setBorder(newValue);
-                  },
-                  label: 'Borde',
-                ),
-              ],
-            ),
           ],
+        ),
+        CustomSwitchRow(
+          initialValue: elevatedButtonData.isBold,
+          updateButtonAttribute: (bool newValue) {
+            buttonModel.updateButton(
+              buttonData.copyWith(isBold: newValue),
+            );
+            Provider.of<TextStyleNotifier>(context, listen: false)
+                .setBold(newValue);
+          },
+          label: 'Negrita',
+          iconData: Icons.format_bold,
+        ),
+        CustomSwitchRow(
+          initialValue: elevatedButtonData.isItalic,
+          updateButtonAttribute: (bool newValue) {
+            buttonModel.updateButton(
+              buttonData.copyWith(isItalic: newValue),
+            );
+            Provider.of<TextStyleNotifier>(context, listen: false)
+                .setItalic(newValue);
+          },
+          label: 'Itálica',
+          iconData: Icons.format_italic,
+        ),
+        CustomSwitchRow(
+          initialValue: elevatedButtonData.isUnderline,
+          updateButtonAttribute: (bool newValue) {
+            buttonModel.updateButton(
+              buttonData.copyWith(isUnderline: newValue),
+            );
+            Provider.of<TextStyleNotifier>(context, listen: false)
+                .setUnderline(newValue);
+          },
+          label: 'Subrayado',
+          iconData: Icons.format_underline,
+        ),
+        CustomSwitchRow(
+          initialValue: elevatedButtonData.isBorder,
+          updateButtonAttribute: (bool newValue) {
+            buttonModel.updateButton(
+              buttonData.copyWith(isBorder: newValue),
+            );
+            Provider.of<TextStyleNotifier>(context, listen: false)
+                .setBorder(newValue);
+          },
+          label: 'Borde',
+          iconData: Icons.border_outer,
         ),
       ],
     );

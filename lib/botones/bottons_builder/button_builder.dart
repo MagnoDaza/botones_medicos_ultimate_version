@@ -1,3 +1,4 @@
+import 'package:botones_medicos_ultimate_version/botones/buttons_types/animated_button_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:uuid/uuid.dart';
@@ -52,6 +53,9 @@ class ButtonBuilder {
         break;
       case ButtonType.adaptive:
         // No hay propiedades específicas adicionales en AdaptiveButtonData
+        break;
+      case ButtonType.colorful:
+        // No hay propiedades específicas adicionales en AnimateColoridedButtonData
         break;
       default:
         throw Exception('Tipo de botón no soportado: ${buttonData.type}');
@@ -159,6 +163,18 @@ class ButtonBuilder {
           isUnderline: isUnderline ?? false,
           isBorder: isBorder ?? false,
         );
+      case ButtonType.colorful:
+        return ColorfulButtonData(
+          id: buttonId,
+          type: buttonType,
+          text: buttonText,
+          document: buttonDocument,
+          isBold: isBold ?? false,
+          isItalic: isItalic ?? false,
+          isUnderline: isUnderline ?? false,
+          isBorder: isBorder ?? false,
+        );
+
       default:
         throw Exception('Tipo de botón no soportado: $buttonType');
     }

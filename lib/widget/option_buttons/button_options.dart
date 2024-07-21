@@ -4,6 +4,7 @@ import '../../botones/button_data/button_data.dart';
 import '../../controller/button_model.dart';
 import '../../controller/text_style_notifier.dart';
 import 'options_types_buttons/adaptive_button_data_options.dart';
+import 'options_types_buttons/colorful_button_data_option.dart';
 import 'options_types_buttons/elevated_button_data_options.dart';
 import 'options_types_buttons/outline_button_data_optiions.dart';
 
@@ -36,6 +37,8 @@ class ButtonOptions extends StatelessWidget {
           case ButtonType.adaptive:
             return AdaptiveButtonDataOptions(
                 textStyleNotifier: textStyleNotifier);
+          case ButtonType.colorful:
+            return ColorfulButtonOption(textStyleNotifier: textStyleNotifier);
           // Agregar más casos según sea necesario
           default:
             return const Center(child: Text("Tipo de botón no soportado"));

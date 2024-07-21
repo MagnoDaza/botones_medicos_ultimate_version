@@ -37,7 +37,7 @@ class AdaptiveButtonData extends ButtonData {
       style: ElevatedButton.styleFrom(
         shape: isBorder
             ? RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(8),
               )
             : null,
       ),

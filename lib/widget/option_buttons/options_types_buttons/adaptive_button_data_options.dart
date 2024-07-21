@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../botones/boton_types/outlined_button_data.dart';
-import '../../botones/button_data/button_data.dart';
-import '../../controller/button_model.dart';
-import '../../controller/text_style_notifier.dart';
-import 'buttondataoptions.dart';
-import 'custom_switch_row.dart';
+import '../../../botones/buttons_types/adaptive_button.dart';
+import '../../../botones/button_data/button_data.dart';
+import '../../../controller/button_model.dart';
+import '../../../controller/text_style_notifier.dart';
+import '../buttondataoptions.dart';
+import '../custom_switch_row.dart';
 
-class OutlinedButtonDataOptions extends ButtonDataOptions {
-  const OutlinedButtonDataOptions(
-      {Key? key, required TextStyleNotifier textStyleNotifier})
+class AdaptiveButtonDataOptions extends ButtonDataOptions {
+  const AdaptiveButtonDataOptions({Key? key, required TextStyleNotifier textStyleNotifier})
       : super(key: key, textStyleNotifier: textStyleNotifier);
 
   @override
@@ -18,19 +17,17 @@ class OutlinedButtonDataOptions extends ButtonDataOptions {
     final buttonModel = Provider.of<ButtonModel>(context, listen: false);
     final ButtonData? buttonData = buttonModel.temporaryButton;
 
-    if (buttonData == null || buttonData is! OutlinedButtonData) {
+    if (buttonData == null || buttonData is! AdaptiveButtonData) {
       // Mostrar un widget de error o una vista vacía si buttonData es nulo o no es del tipo correcto
-      return Center(
-          child:
-              Text('Error: No hay datos disponibles para el botón delineado.'));
+      return const Center(child: Text('Error: No hay datos disponibles para el botón adaptativo.'));
     }
 
-    final OutlinedButtonData outlinedButtonData = buttonData;
+    final AdaptiveButtonData adaptiveButtonData = buttonData;
 
     return Column(
       children: [
         CustomSwitchRow(
-          initialValue: outlinedButtonData.isBold,
+          initialValue: adaptiveButtonData.isBold,
           updateButtonAttribute: (bool newValue) {
             buttonModel.updateButton(
               buttonData.copyWith(isBold: newValue),
@@ -41,7 +38,7 @@ class OutlinedButtonDataOptions extends ButtonDataOptions {
           iconData: Icons.format_bold,
         ),
         CustomSwitchRow(
-          initialValue: outlinedButtonData.isItalic,
+          initialValue: adaptiveButtonData.isItalic,
           updateButtonAttribute: (bool newValue) {
             buttonModel.updateButton(
               buttonData.copyWith(isItalic: newValue),
@@ -52,7 +49,7 @@ class OutlinedButtonDataOptions extends ButtonDataOptions {
           iconData: Icons.format_italic,
         ),
         CustomSwitchRow(
-          initialValue: outlinedButtonData.isUnderline,
+          initialValue: adaptiveButtonData.isUnderline,
           updateButtonAttribute: (bool newValue) {
             buttonModel.updateButton(
               buttonData.copyWith(isUnderline: newValue),
@@ -63,7 +60,7 @@ class OutlinedButtonDataOptions extends ButtonDataOptions {
           iconData: Icons.format_underline,
         ),
         CustomSwitchRow(
-          initialValue: outlinedButtonData.isBorder,
+          initialValue: adaptiveButtonData.isBorder,
           updateButtonAttribute: (bool newValue) {
             buttonModel.updateButton(
               buttonData.copyWith(isBorder: newValue),

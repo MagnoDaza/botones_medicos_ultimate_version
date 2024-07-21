@@ -1,7 +1,7 @@
 
-import '../botones/boton_types/adaptive_button.dart';
-import '../botones/boton_types/elevated_button_data.dart';
-import '../botones/boton_types/outlined_button_data.dart';
+import '../botones/buttons_types/adaptive_button.dart';
+import '../botones/buttons_types/elevated_button_data.dart';
+import '../botones/buttons_types/outlined_button_data.dart';
 import '../botones/button_data/button_data.dart';
 
 // Importa otros tipos de botón según los tengas

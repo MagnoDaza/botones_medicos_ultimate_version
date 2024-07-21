@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../botones/boton_types/elevated_button_data.dart';
-import '../../botones/button_data/button_data.dart';
-import '../../common/color_icon/rainbow_icon.dart';
-import '../../controller/button_model.dart';
-import '../../controller/color_notifier.dart';
-import '../../controller/text_style_notifier.dart';
-import '../expansion_panel/custom_expansion_panel.dart';
-import 'buttondataoptions.dart';
-import 'color_options/custom_color_row.dart';
-import 'custom_switch_row.dart';
+import '../../../botones/buttons_types/elevated_button_data.dart';
+import '../../../botones/button_data/button_data.dart';
+import '../../../common/color_icon/rainbow_icon.dart';
+import '../../../controller/button_model.dart';
+import '../../../controller/color_notifier.dart';
+import '../../../controller/text_style_notifier.dart';
+import '../../expansion_panel/custom_expansion_panel.dart';
+import '../buttondataoptions.dart';
+import '../color_options/custom_color_row.dart';
+import '../custom_switch_row.dart';
 
 class ElevatedButtonDataOptions extends ButtonDataOptions {
   const ElevatedButtonDataOptions(

@@ -10,17 +10,26 @@ import '../../controller/text_style_notifier.dart';
 import '../expansion_panel/custom_expansion_panel.dart';
 import 'buttondataoptions.dart';
 import 'color_options/custom_color_row.dart';
-
+import 'custom_switch_row.dart';
 
 class ElevatedButtonDataOptions extends ButtonDataOptions {
-  const ElevatedButtonDataOptions({Key? key, required TextStyleNotifier textStyleNotifier})
+  const ElevatedButtonDataOptions(
+      {Key? key, required TextStyleNotifier textStyleNotifier})
       : super(key: key, textStyleNotifier: textStyleNotifier);
 
   @override
   Widget build(BuildContext context) {
     final buttonModel = Provider.of<ButtonModel>(context, listen: false);
-    final ButtonData buttonData = buttonModel.temporaryButton!;
-    final ElevatedButtonData elevatedButtonData = buttonData as ElevatedButtonData;
+    final ButtonData? buttonData = buttonModel.temporaryButton;
+
+    if (buttonData == null || buttonData is! ElevatedButtonData) {
+      // Mostrar un widget de error o una vista vacía si buttonData es nulo o no es del tipo correcto
+      return Center(
+          child:
+              Text('Error: No hay datos disponibles para el botón elevado.'));
+    }
+
+    final ElevatedButtonData elevatedButtonData = buttonData;
 
     return Column(
       children: [
@@ -59,6 +68,74 @@ class ElevatedButtonDataOptions extends ButtonDataOptions {
                     Provider.of<ColorNotifier>(context, listen: false)
                         .setTextColor(buttonData.id, newColor);
                   },
+                ),
+              ],
+            ),
+            PanelItem(
+              leading: Icon(Icons.format_bold),
+              headerValue: "Negrita",
+              expandedValue: [
+                CustomSwitchRow(
+                  initialValue: elevatedButtonData.isBold,
+                  updateButtonAttribute: (bool newValue) {
+                    buttonModel.updateButton(
+                      buttonData.copyWith(isBold: newValue),
+                    );
+                    Provider.of<TextStyleNotifier>(context, listen: false)
+                        .setBold(newValue);
+                  },
+                  label: 'Negrita',
+                ),
+              ],
+            ),
+            PanelItem(
+              leading: Icon(Icons.format_italic),
+              headerValue: "Itálica",
+              expandedValue: [
+                CustomSwitchRow(
+                  initialValue: elevatedButtonData.isItalic,
+                  updateButtonAttribute: (bool newValue) {
+                    buttonModel.updateButton(
+                      buttonData.copyWith(isItalic: newValue),
+                    );
+                    Provider.of<TextStyleNotifier>(context, listen: false)
+                        .setItalic(newValue);
+                  },
+                  label: 'Itálica',
+                ),
+              ],
+            ),
+            PanelItem(
+              leading: Icon(Icons.format_underline),
+              headerValue: "Subrayado",
+              expandedValue: [
+                CustomSwitchRow(
+                  initialValue: elevatedButtonData.isUnderline,
+                  updateButtonAttribute: (bool newValue) {
+                    buttonModel.updateButton(
+                      buttonData.copyWith(isUnderline: newValue),
+                    );
+                    Provider.of<TextStyleNotifier>(context, listen: false)
+                        .setUnderline(newValue);
+                  },
+                  label: 'Subrayado',
+                ),
+              ],
+            ),
+            PanelItem(
+              leading: Icon(Icons.border_outer),
+              headerValue: "Borde",
+              expandedValue: [
+                CustomSwitchRow(
+                  initialValue: elevatedButtonData.isBorder,
+                  updateButtonAttribute: (bool newValue) {
+                    buttonModel.updateButton(
+                      buttonData.copyWith(isBorder: newValue),
+                    );
+                    Provider.of<TextStyleNotifier>(context, listen: false)
+                        .setBorder(newValue);
+                  },
+                  label: 'Borde',
                 ),
               ],
             ),

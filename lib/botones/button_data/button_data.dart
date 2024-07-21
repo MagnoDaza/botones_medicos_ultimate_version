@@ -34,25 +34,6 @@ abstract class ButtonData {
   // Construir el widget del botón
   Widget build(BuildContext context);
 
-  // Clonar el botón con nuevo texto y estilos
-  ButtonData cloneWithText({
-    required String newText,
-    required bool newIsBold,
-    required bool newIsItalic,
-    required bool newIsUnderline,
-    required bool newIsBorder,
-    required Document document,
-  }) {
-    return copyWith(
-      id: id,
-      text: newText,
-      isBold: newIsBold,
-      isItalic: newIsItalic,
-      isUnderline: newIsUnderline,
-      isBorder: newIsBorder,
-      document: Document.fromJson(document.toDelta().toJson()),
-    );
-  }
 
   // Método copyWith para actualizar propiedades
   ButtonData copyWith({

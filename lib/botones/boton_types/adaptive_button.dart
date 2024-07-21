@@ -61,25 +61,7 @@ class AdaptiveButtonData extends ButtonData {
     );
   }
 
-  @override
-  AdaptiveButtonData cloneWithText({
-    required String newText,
-    required bool newIsBold,
-    required bool newIsItalic,
-    required bool newIsUnderline,
-    required bool newIsBorder,
-    required Document document,
-  }) {
-    return copyWith(
-      text: newText,
-      isBold: newIsBold,
-      isItalic: newIsItalic,
-      isUnderline: newIsUnderline,
-      isBorder: newIsBorder,
-      document:
-          Document.fromJson(document.toDelta().toJson()), // Clonar el documento
-    );
-  }
+
 
   @override
   AdaptiveButtonData copyWith({

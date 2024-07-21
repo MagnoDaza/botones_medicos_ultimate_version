@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../botones/button_data/button_data.dart';
 import '../../controller/button_model.dart';
 import '../../controller/text_style_notifier.dart';
+import 'adaptive_button_data_options.dart';
 import 'elevated_button_data_options.dart';
 import 'outline_button_data_optiions.dart';
 
@@ -33,7 +34,7 @@ class ButtonOptions extends StatelessWidget {
             return OutlinedButtonDataOptions(
                 textStyleNotifier: textStyleNotifier);
           case ButtonType.adaptive:
-            return ElevatedButtonDataOptions(
+            return AdaptiveButtonDataOptions(
                 textStyleNotifier: textStyleNotifier);
           // Agregar más casos según sea necesario
           default:

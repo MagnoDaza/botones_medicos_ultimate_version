@@ -1,7 +1,6 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
-
 import '../botones/bottons_builder/button_builder.dart';
 import '../botones/button_data/button_data.dart';
 import '../controller/button_model.dart';
@@ -15,6 +14,7 @@ import 'grid_select_button.dart';
 
 class ButtonPage extends StatefulWidget {
   final ButtonData? buttonData;
+
   const ButtonPage({super.key, this.buttonData});
 
   @override
@@ -31,14 +31,15 @@ class ButtonPageState extends State<ButtonPage> {
   @override
   void initState() {
     super.initState();
-    isEditing = widget.buttonData != null;
-    if (isEditing) {
+    if (widget.buttonData != null) {
+      isEditing = true;
       _buttonTextController.text = widget.buttonData!.text;
       _controller = QuillController(
         document: widget.buttonData!.document,
         selection: const TextSelection.collapsed(offset: 0),
       );
       selectedButtonType = widget.buttonData!.type;
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
         final textStyleNotifier = Provider.of<TextStyleNotifier>(context, listen: false);
@@ -46,10 +47,12 @@ class ButtonPageState extends State<ButtonPage> {
         if (index != -1) {
           buttonModel.selectSavedButton(index);
           final selectedButton = buttonModel.savedButtons[index];
-          textStyleNotifier.isBold = selectedButton.isBold;
-          textStyleNotifier.isItalic = selectedButton.isItalic;
-          textStyleNotifier.isUnderline = selectedButton.isUnderline;
-          textStyleNotifier.isBorder = selectedButton.isBorder;
+          textStyleNotifier.updateTextStyle(
+            isBold: selectedButton.isBold,
+            isItalic: selectedButton.isItalic,
+            isUnderline: selectedButton.isUnderline,
+            isBorder: selectedButton.isBorder,
+          );
         }
       });
     } else {
@@ -124,7 +127,7 @@ class ButtonPageState extends State<ButtonPage> {
         final buttonModel = Provider.of<ButtonModel>(context, listen: false);
         final newType = buttonModel.factoryButtons[selectedIndex].type;
         final currentText = _buttonTextController.text;
-        buttonModel.createNewButton(newType, currentText);  // Mantener el texto actual
+        buttonModel.createNewButton(newType, currentText); // Mantener el texto actual
         selectedButtonType = newType;
       });
     }
@@ -147,6 +150,7 @@ class ButtonPageState extends State<ButtonPage> {
   Widget build(BuildContext context) {
     final buttonModel = Provider.of<ButtonModel>(context);
     final selectedButton = buttonModel.temporaryButton;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Editar Botón' : 'Crear Botón'),
@@ -260,6 +264,8 @@ class ButtonPageState extends State<ButtonPage> {
                                         });
                                       } else {
                                         saveButton();
+                                     
+
                                       }
                                     },
                                   ),
@@ -276,4 +282,3 @@ class ButtonPageState extends State<ButtonPage> {
     );
   }
 }
-

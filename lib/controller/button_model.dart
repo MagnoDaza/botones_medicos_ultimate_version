@@ -1,26 +1,23 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:uuid/uuid.dart';
 import '../botones/button_data/button_data.dart';
 import '../botones/bottons_builder/button_builder.dart';
 
-
-// Modelo de ButtonModel
 class ButtonModel with ChangeNotifier {
   final List<ButtonData> _factoryButtons = [];
   final List<ButtonData> _savedButtons = [];
   final String _defaultText = 'Servicio';
   int _selectedIndex = -1;
   bool _buttonsInitialized = false;
-  ButtonData? _temporaryButton; // Nueva instancia temporal para edición
+  ButtonData? _temporaryButton;
   bool _isLoading = false;
 
   List<ButtonData> get factoryButtons => List.unmodifiable(_factoryButtons);
   int get selectedIndex => _selectedIndex;
   List<ButtonData> get savedButtons => List.unmodifiable(_savedButtons);
   bool get buttonsInitialized => _buttonsInitialized;
-  ButtonData? get temporaryButton => _temporaryButton; // Obtener la instancia temporal
+  ButtonData? get temporaryButton => _temporaryButton;
   bool get isLoading => _isLoading;
 
   void setLoading(bool isLoading) {
@@ -74,11 +71,6 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
-  void setTemporaryButton(ButtonData button) {
-    _temporaryButton = ButtonBuilder().fromButtonData(button).build();
-    notifyListeners();
-  }
-
   void removeButton(int index) {
     if (index >= 0 && index < _savedButtons.length) {
       _savedButtons.removeAt(index);
@@ -107,26 +99,6 @@ class ButtonModel with ChangeNotifier {
     }
   }
 
-  void cloneText(String buttonText,
-      {bool? isBold,
-      bool? isItalic,
-      bool? isUnderline,
-      bool? isBorder,
-      Document? document}) {
-    if (_temporaryButton != null) {
-      _temporaryButton = _temporaryButton!.copyWith(
-        id: const Uuid().v4(),
-        text: buttonText,
-        isBold: isBold ?? false,
-        isItalic: isItalic ?? false,
-        isUnderline: isUnderline ?? false,
-        isBorder: isBorder ?? false,
-        document: document ?? Document(),
-      );
-      notifyListeners();
-    }
-  }
-
   void updateButtonTextStyle(
       bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
     if (_temporaryButton != null) {
@@ -146,28 +118,6 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateButtonAttributes({
-    String? text,
-    ButtonType? type,
-    bool? isBold,
-    bool? isItalic,
-    bool? isUnderline,
-    bool? isBorder,
-    Document? document,
-  }) {
-    if (_temporaryButton != null) {
-      _temporaryButton = _temporaryButton!.copyWith(
-          id: const Uuid().v4(),
-          text: text ?? _temporaryButton!.text,
-          isBold: isBold ?? _temporaryButton!.isBold,
-          isItalic: isItalic ?? _temporaryButton!.isItalic,
-          isUnderline: isUnderline ?? _temporaryButton!.isUnderline,
-          isBorder: isBorder ?? _temporaryButton!.isBorder,
-          document: document ?? _temporaryButton!.document);
-      notifyListeners();
-    }
-  }
-
   void initializeButtons() {
     if (!_buttonsInitialized) {
       final List<ButtonData> buttons = [];
@@ -182,7 +132,7 @@ class ButtonModel with ChangeNotifier {
       _buttonsInitialized = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_factoryButtons.isNotEmpty) {
-          selectButton(0); // Seleccionar el primer botón como predeterminado
+          selectButton(0);
         }
       });
     }
@@ -204,16 +154,6 @@ class ButtonModel with ChangeNotifier {
         id: button.id,
         isHidden: !button.isHidden,
       );
-      notifyListeners();
-    }
-  }
-
-  void moveButtonDataToNewType(ButtonType newType) {
-    if (_temporaryButton != null) {
-      _temporaryButton = ButtonBuilder()
-          .fromButtonData(_temporaryButton!)
-          .setType(newType)
-          .build();
       notifyListeners();
     }
   }

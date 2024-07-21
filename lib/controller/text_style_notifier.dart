@@ -11,33 +11,10 @@ class TextStyleNotifier with ChangeNotifier {
   bool get isUnderline => _isUnderline;
   bool get isBorder => _isBorder;
 
-  set isBold(bool value) {
-    if (_isBold != value) {
-      _isBold = value;
-      notifyListeners();
-    }
-  }
-
-  set isItalic(bool value) {
-    if (_isItalic != value) {
-      _isItalic = value;
-      notifyListeners();
-    }
-  }
-
-  set isUnderline(bool value) {
-    if (_isUnderline != value) {
-      _isUnderline = value;
-      notifyListeners();
-    }
-  }
-
-  set isBorder(bool value) {
-    if (_isBorder != value) {
-      _isBorder = value;
-      notifyListeners();
-    }
-  }
+  void setBold(bool value) => _updateStyle(() => _isBold = value);
+  void setItalic(bool value) => _updateStyle(() => _isItalic = value);
+  void setUnderline(bool value) => _updateStyle(() => _isUnderline = value);
+  void setBorder(bool value) => _updateStyle(() => _isBorder = value);
 
   void updateTextStyle({
     bool? isBold,
@@ -46,7 +23,6 @@ class TextStyleNotifier with ChangeNotifier {
     bool? isBorder,
   }) {
     bool shouldNotify = false;
-
     if (isBold != null && _isBold != isBold) {
       _isBold = isBold;
       shouldNotify = true;
@@ -63,7 +39,6 @@ class TextStyleNotifier with ChangeNotifier {
       _isBorder = isBorder;
       shouldNotify = true;
     }
-
     if (shouldNotify) {
       notifyListeners();
     }
@@ -74,6 +49,11 @@ class TextStyleNotifier with ChangeNotifier {
     _isItalic = false;
     _isUnderline = false;
     _isBorder = false;
+    notifyListeners();
+  }
+
+  void _updateStyle(VoidCallback updateFn) {
+    updateFn();
     notifyListeners();
   }
 }

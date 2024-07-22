@@ -184,7 +184,6 @@ class _AnimatedButtonState extends State<AnimatedButton>
                 child: Text(
                   widget.text,
                   style: TextStyle(
-                    fontSize: 16,
                     fontWeight:
                         widget.isBold ? FontWeight.bold : FontWeight.w300,
                     fontStyle:

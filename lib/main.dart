@@ -1,3 +1,4 @@
+import 'package:botones_medicos_ultimate_version/widget/quill/controller/quill_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'widget/expansion_panel/controller_expansion_panel.dart';
@@ -14,6 +15,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => ColorNotifier()),
         ChangeNotifierProvider(create: (context) => TextStyleNotifier()),
         ChangeNotifierProvider(create: (context) => ThemeNotifier()),
+        ChangeNotifierProvider(create: (context) => QuillProvider()),
         ChangeNotifierProvider(create: (context) => ExpansionPanelController()),
         ChangeNotifierProvider(create: (context) => ButtonModel()),
       ],

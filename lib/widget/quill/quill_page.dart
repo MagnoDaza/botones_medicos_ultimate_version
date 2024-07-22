@@ -1,7 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import 'quill_editor.dart';
+import 'quill_toolbar.dart';
 
 class QuillPage extends StatefulWidget {
   final QuillController controller;
@@ -35,7 +39,8 @@ class _QuillPageState extends State<QuillPage> {
   }
 
   void _saveDocument() {
-    _documentVersions.add(Document.fromJson(widget.controller.document.toDelta().toJson()));
+    _documentVersions
+        .add(Document.fromJson(widget.controller.document.toDelta().toJson()));
     _notifyContentSaved(); // Llama a la nueva función aquí
     print('Documento guardado');
   }
@@ -65,7 +70,8 @@ class _QuillPageState extends State<QuillPage> {
               onPressed: () {
                 // Llama a tu función de guardado aquí
                 _saveDocument();
-                Navigator.of(context).pop(widget.controller.document.toDelta().toJson());
+                Navigator.of(context)
+                    .pop(widget.controller.document.toDelta().toJson());
               },
             ),
           ),
@@ -75,44 +81,60 @@ class _QuillPageState extends State<QuillPage> {
         children: [
           Align(
             alignment: Alignment.topCenter,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Wrap(
-                direction: Axis.horizontal,
-                children: [
-                  QuillSimpleToolbar(
-                    configurations: QuillSimpleToolbarConfigurations(
-                      axis: Axis.horizontal,
-                      controller: widget.controller,
-                      headerStyleType: HeaderStyleType.buttons,
-                      toolbarSectionSpacing: 8.0,
-                    ),
-                  ),
-                ],
-              ),
+            child: CustomQuillTollbar(
+              controller: widget.controller,
+              focusNode: FocusNode(),
             ),
           ),
           Expanded(
-            child: QuillEditor.basic(
-              scrollController: ScrollController(),
+            child: CustomQuillEditor(
               configurations: QuillEditorConfigurations(
-                enableInteractiveSelection: true,
+                sharedConfigurations: _sharedConfigurations,
                 autoFocus: true,
-                padding: const EdgeInsets.all(16.0),
                 scrollable: true,
-                controller: widget.controller,
-                disableClipboard: false,
                 elementOptions: const QuillEditorElementOptions(
+                  codeBlock: QuillEditorCodeBlockElementOptions(
+                    enableLineNumbers: true,
+                  ),
                   orderedList: QuillEditorOrderedListElementOptions(
                     useTextColorForDot: true,
                   ),
                 ),
+                controller: widget.controller,
               ),
-              focusNode: FocusNode(),
             ),
+            // QuillEditor.basic(
+            //   scrollController: ScrollController(),
+            //   configurations: QuillEditorConfigurations(
+            //     enableInteractiveSelection: true,
+            //     autoFocus: true,
+            //     padding: const EdgeInsets.all(16.0),
+            //     scrollable: true,
+            //     controller: widget.controller,
+            //     disableClipboard: false,
+            //     elementOptions: const QuillEditorElementOptions(
+            //       orderedList: QuillEditorOrderedListElementOptions(
+            //         useTextColorForDot: true,
+            //       ),
+            //     ),
+            //   ),
+            //   focusNode: FocusNode(),
+            // ),
           ),
         ],
       ),
+    );
+  }
+
+  QuillSharedConfigurations get _sharedConfigurations {
+    return const QuillSharedConfigurations(
+      // locale: Locale('en'),
+      extraConfigurations: {
+        QuillSharedExtensionsConfigurations.key:
+            QuillSharedExtensionsConfigurations(
+          assetsPrefix: 'assets', // Defaults to assets
+        ),
+      },
     );
   }
 }

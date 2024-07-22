@@ -174,7 +174,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
                 style: TextButton.styleFrom(
                   minimumSize: const Size(0, 40), // Altura fija
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16), // Espaciado horizontal
+                      horizontal: 24), // Espaciado horizontal
                   shape: RoundedRectangleBorder(
                     borderRadius: widget.isBorder
                         ? BorderRadius.circular(8)

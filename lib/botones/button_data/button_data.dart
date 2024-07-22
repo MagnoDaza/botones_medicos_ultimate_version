@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import '../buttons_types/adaptive_button.dart';
-import '../buttons_types/animated_button_data.dart';
+import '../buttons_types/colorful_button_data.dart';
 import '../buttons_types/elevated_button_data.dart';
 import '../buttons_types/outlined_button_data.dart';
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../botones/button_data/button_data.dart';
-import '../../../botones/buttons_types/animated_button_data.dart';
+import '../../../botones/buttons_types/colorful_button_data.dart';
 import '../../../controller/button_model.dart';
 import '../../../controller/text_style_notifier.dart';
 import '../buttondataoptions.dart';

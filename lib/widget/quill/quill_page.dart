@@ -81,7 +81,7 @@ class _QuillPageState extends State<QuillPage> {
         children: [
           Align(
             alignment: Alignment.topCenter,
-            child: CustomQuillTollbar(
+            child: CustomQuillToolbar(
               controller: widget.controller,
               focusNode: FocusNode(),
             ),

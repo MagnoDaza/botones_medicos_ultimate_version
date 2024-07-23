@@ -1,6 +1,6 @@
 import 'dart:io' as io show File;
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_quill/extensions.dart' show isAndroid, isIOS, isWeb;
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
@@ -9,12 +9,11 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
-import 'package:provider/provider.dart';
 import 'controller/quill_controller.dart';
 import 'embeds/timestamp_embed.dart';
 
-class CustomQuillTollbar extends StatefulWidget {
-  const CustomQuillTollbar({
+class CustomQuillToolbar extends StatefulWidget {
+  const CustomQuillToolbar({
     required this.controller,
     required this.focusNode,
     Key? key,
@@ -24,12 +23,10 @@ class CustomQuillTollbar extends StatefulWidget {
   final FocusNode focusNode;
 
   @override
-  State<CustomQuillTollbar> createState() => _CustomQuillTollbarState();
+  State<CustomQuillToolbar> createState() => _CustomQuillToolbarState();
 }
 
-class _CustomQuillTollbarState extends State<CustomQuillTollbar> {
-  // Rest of your QuillToolbar implementation goes here...
-
+class _CustomQuillToolbarState extends State<CustomQuillToolbar> {
   Future<void> onImageInsertWithCropping(
     String image,
     QuillController controller,
@@ -113,6 +110,10 @@ class _CustomQuillTollbarState extends State<CustomQuillTollbar> {
                   ),
                   QuillToolbarHistoryButton(
                     isUndo: true,
+                    controller: widget.controller,
+                  ),
+                  QuillToolbarHistoryButton(
+                    isUndo: false,
                     controller: widget.controller,
                   ),
                   QuillToolbarToggleStyleButton(
@@ -217,7 +218,7 @@ class _CustomQuillTollbarState extends State<CustomQuillTollbar> {
                 '35': '35.0',
                 '40': '40.0'
               },
-              customButtons: <QuillToolbarCustomButtonOptions>[
+              customButtons: [
                 QuillToolbarCustomButtonOptions(
                   icon: const Icon(Icons.add_alarm_rounded),
                   onPressed: () {
@@ -251,6 +252,16 @@ class _CustomQuillTollbarState extends State<CustomQuillTollbar> {
                       ),
                       ChangeSource.local,
                     );
+                    widget.controller.document.insert(
+                      widget.controller.selection.extentOffset,
+                      '\n',
+                    );
+                    widget.controller.updateSelection(
+                      TextSelection.collapsed(
+                        offset: widget.controller.selection.extentOffset + 1,
+                      ),
+                      ChangeSource.local,
+                    );
                   },
                 ),
                 QuillToolbarCustomButtonOptions(
@@ -274,6 +285,7 @@ class _CustomQuillTollbarState extends State<CustomQuillTollbar> {
                         : onImageInsert,
                   ),
                 ),
+                tableButtonOptions: const QuillToolbarTableButtonOptions(),
               ),
             ),
           );

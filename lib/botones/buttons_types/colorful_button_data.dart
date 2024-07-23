@@ -152,6 +152,8 @@ class _AnimatedButtonState extends State<AnimatedButton>
         builder: (context, child) {
           return IntrinsicWidth(
             child: Container(
+              height: 40,
+              
               decoration: BoxDecoration(
                 borderRadius: widget.isBorder
                     ? BorderRadius.circular(8)
@@ -172,7 +174,9 @@ class _AnimatedButtonState extends State<AnimatedButton>
               child: TextButton(
                 onPressed: widget.onPressed,
                 style: TextButton.styleFrom(
-                  minimumSize: const Size(0, 40), // Altura fija
+                  minimumSize: const Size(0, 40),
+
+                  // Altura fija
                   padding: const EdgeInsets.symmetric(
                       horizontal: 24), // Espaciado horizontal
                   shape: RoundedRectangleBorder(

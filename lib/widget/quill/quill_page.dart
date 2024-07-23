@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 import 'quill_editor.dart';
 import 'quill_toolbar.dart';
 
 class QuillPage extends StatefulWidget {
   final QuillController controller;
-
   const QuillPage({super.key, required this.controller});
 
   @override
@@ -92,6 +90,7 @@ class _QuillPageState extends State<QuillPage> {
                 sharedConfigurations: _sharedConfigurations,
                 autoFocus: true,
                 scrollable: true,
+                embedBuilders: [...FlutterQuillEmbeds.defaultEditorBuilders()],
                 elementOptions: const QuillEditorElementOptions(
                   codeBlock: QuillEditorCodeBlockElementOptions(
                     enableLineNumbers: true,
@@ -103,23 +102,6 @@ class _QuillPageState extends State<QuillPage> {
                 controller: widget.controller,
               ),
             ),
-            // QuillEditor.basic(
-            //   scrollController: ScrollController(),
-            //   configurations: QuillEditorConfigurations(
-            //     enableInteractiveSelection: true,
-            //     autoFocus: true,
-            //     padding: const EdgeInsets.all(16.0),
-            //     scrollable: true,
-            //     controller: widget.controller,
-            //     disableClipboard: false,
-            //     elementOptions: const QuillEditorElementOptions(
-            //       orderedList: QuillEditorOrderedListElementOptions(
-            //         useTextColorForDot: true,
-            //       ),
-            //     ),
-            //   ),
-            //   focusNode: FocusNode(),
-            // ),
           ),
         ],
       ),

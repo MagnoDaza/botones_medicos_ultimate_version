@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 
-// Función para mostrar una hoja inferior personalizada
 Future<void> showCustomBottomSheet({
   required BuildContext context,
   required QuillController controller,
@@ -39,8 +39,10 @@ Future<void> showCustomBottomSheet({
                       ),
                       alignment: Alignment.bottomLeft,
                       padding: const EdgeInsets.only(left: 16.0),
-                      child: Text('Detalles',
-                          style: Theme.of(context).textTheme.headlineSmall),
+                      child: Text(
+                        'Detalles',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
                     ),
                   ),
                   pinned: true,
@@ -55,6 +57,9 @@ Future<void> showCustomBottomSheet({
                             QuillEditor.basic(
                               configurations: QuillEditorConfigurations(
                                 controller: readOnlyController,
+                                embedBuilders: [
+                                  ...FlutterQuillEmbeds.defaultEditorBuilders(),
+                                ],
                               ),
                               scrollController: ScrollController(),
                             ),
@@ -80,14 +85,15 @@ Future<void> showCustomBottomSheet({
   );
 }
 
-topButtonIndicator() {
+Widget topButtonIndicator() {
   return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Center(
-            child: Wrap(children: <Widget>[
-          Container(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      Center(
+        child: Wrap(
+          children: <Widget>[
+            Container(
               width: 100,
               margin: const EdgeInsets.only(top: 10, bottom: 10),
               height: 5,
@@ -95,27 +101,29 @@ topButtonIndicator() {
                 color: Colors.black45,
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-              )),
-        ])),
-      ]);
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate({
-    required this.child,
-  });
-
+  _SliverAppBarDelegate({required this.child});
   final Widget child;
 
   @override
   double get minExtent => 40.0;
-
   @override
   double get maxExtent => 80.0;
-
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return SizedBox.expand(child: child);
   }
 

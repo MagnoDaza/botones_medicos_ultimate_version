@@ -58,10 +58,10 @@ class _GridPageState extends State<GridPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkTheme
-        ? const Color.fromARGB(20, 18, 24, 255)
-        : const Color.fromARGB(254, 247, 255, 255);
+    // final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+    // final backgroundColor = isDarkTheme
+    //     ? const Color.fromARGB(20, 18, 24, 255)
+    //     : const Color.fromARGB(254, 247, 255, 255);
 
     return Scaffold(
       appBar: AppBar(
@@ -101,8 +101,10 @@ class _GridPageState extends State<GridPage> {
               itemBuilder: (context, index) {
                 final buttonData = buttonModel.factoryButtons[index];
                 return SelectableBox(
-                  color: backgroundColor,
-                  checkboxAlignment: Alignment.topCenter,
+                  selectedColor: Colors.transparent,
+                  color: Colors.transparent,
+                  checkboxAlignment: Alignment.bottomCenter,
+                  checkboxPadding: const EdgeInsets.only(bottom: 16),
                   showCheckbox: true,
                   height: 180,
                   isSelected: _selectedIndex == index,

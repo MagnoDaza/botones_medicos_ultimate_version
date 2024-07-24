@@ -9,6 +9,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
+
 import 'controller/quill_controller.dart';
 import 'embeds/timestamp_embed.dart';
 
@@ -39,12 +40,12 @@ class _CustomQuillToolbarState extends State<CustomQuillToolbar> {
         CropAspectRatioPreset.ratio3x2,
         CropAspectRatioPreset.original,
         CropAspectRatioPreset.ratio4x3,
-        CropAspectRatioPreset.ratio16x9
+        CropAspectRatioPreset.ratio16x9,
       ],
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Cropper',
-          toolbarColor: Colors.deepOrange,
+          toolbarTitle: 'Recorte',
+          toolbarColor: Colors.transparent,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
@@ -57,7 +58,6 @@ class _CustomQuillToolbarState extends State<CustomQuillToolbar> {
         ),
       ],
     );
-
     final newImage = croppedFile?.path;
     if (newImage == null) {
       return;
@@ -94,6 +94,15 @@ class _CustomQuillToolbarState extends State<CustomQuillToolbar> {
   @override
   Widget build(BuildContext context) {
     final quillProvider = Provider.of<QuillProvider>(context);
+    final imageButtonOptions = QuillToolbarImageButtonOptions(
+      imageButtonConfigurations: QuillToolbarImageConfigurations(
+        onImageInsertCallback:
+            isAndroid(supportWeb: false) || isIOS(supportWeb: false) || isWeb()
+                ? (image, controller) =>
+                    onImageInsertWithCropping(image, controller, context)
+                : onImageInsert,
+      ),
+    );
 
     return quillProvider.useCustomQuillToolbar
         ? QuillToolbar(
@@ -136,6 +145,7 @@ class _CustomQuillToolbarState extends State<CustomQuillToolbar> {
                   const VerticalDivider(),
                   QuillToolbarImageButton(
                     controller: widget.controller,
+                    options: imageButtonOptions,
                   ),
                   QuillToolbarCameraButton(
                     controller: widget.controller,
@@ -272,19 +282,7 @@ class _CustomQuillToolbarState extends State<CustomQuillToolbar> {
                 ),
               ],
               embedButtons: FlutterQuillEmbeds.toolbarButtons(
-                imageButtonOptions: QuillToolbarImageButtonOptions(
-                  imageButtonConfigurations: QuillToolbarImageConfigurations(
-                    onImageInsertCallback: isAndroid(supportWeb: false) ||
-                            isIOS(supportWeb: false) ||
-                            isWeb()
-                        ? (image, controller) => onImageInsertWithCropping(
-                              image,
-                              controller,
-                              context,
-                            )
-                        : onImageInsert,
-                  ),
-                ),
+                imageButtonOptions: imageButtonOptions,
                 tableButtonOptions: const QuillToolbarTableButtonOptions(),
               ),
             ),

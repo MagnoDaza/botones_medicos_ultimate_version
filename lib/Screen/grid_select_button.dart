@@ -64,6 +64,23 @@ class _GridPageState extends State<GridPage> {
     //     : const Color.fromARGB(254, 247, 255, 255);
 
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+floatingActionButton: _selectedIndex != null
+    ? FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.pop(context, _selectedIndex);
+        },
+        label: const Text("Seleccionar"),
+        elevation: 5,
+        icon: const Icon(Icons.check),
+      )
+    : const FloatingActionButton.extended(
+        onPressed: null,
+        label: Text("Seleccionar"),
+        elevation: 0,
+        icon: Icon(Icons.check),
+        backgroundColor: Colors.grey,
+      ),
       appBar: AppBar(
         title: const Text('Selecciona un tipo de botón'),
         actions: [

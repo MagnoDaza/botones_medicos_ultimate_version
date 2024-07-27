@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class UniversalButton extends StatefulWidget {
   final VoidCallback onPressed;
   final String text;
-  final bool isBold;
-  final bool isItalic;
-  final bool isUnderline;
-  final bool isBorder;
+  final FontWeight isBold;
+  final FontStyle isItalic;
+  final TextDecoration isUnderline;
+  final BorderRadiusGeometry isBorder;
   const UniversalButton(
       {super.key,
       required this.onPressed,
@@ -31,7 +31,7 @@ class _UniversalButtonState extends State<UniversalButton> {
       child: IntrinsicWidth(
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: widget.isBorder ? BorderRadius.circular(8) : BorderRadius.circular(24),
+            borderRadius: widget.isBorder , // widget.isBorder ? BorderRadius.circular(8) : BorderRadius.circular(24)
             border: Border.all(
               color: borderColor,
               width: 2,
@@ -51,16 +51,16 @@ class _UniversalButtonState extends State<UniversalButton> {
               minimumSize: const Size(0, 40), // Altura fija
               padding: const EdgeInsets.symmetric(horizontal: 24), // Espaciado horizontal
               shape: RoundedRectangleBorder(
-                borderRadius: widget.isBorder ? BorderRadius.circular(8) : BorderRadius.circular(24),
+                borderRadius: widget.isBorder,
               ),
             ),
             child: Text(
              widget.text,
               style: TextStyle(
                 fontSize: 16,
-                fontWeight: widget.isBold ? FontWeight.bold : FontWeight.w300,
-                fontStyle: widget.isItalic ? FontStyle.italic : FontStyle.normal,
-                decoration: widget.isUnderline ? TextDecoration.underline : TextDecoration.none,
+                fontWeight: widget.isBold, // widget.isBold ? FontWeight.bold : FontWeight.normal
+                fontStyle: widget.isItalic, // widget.isItalic ? FontStyle.italic : FontStyle.normal
+                decoration: widget.isUnderline , // widget.isUnderline ? TextDecoration.underline : TextDecoration.none
                 color: textColor,
               ),
             ),

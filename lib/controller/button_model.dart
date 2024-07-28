@@ -40,7 +40,8 @@ class ButtonModel with ChangeNotifier {
 
   void updateExistingButton() {
     if (_temporaryButton == null) return;
-    final index = _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+    final index =
+        _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
     if (index != -1) {
       _savedButtons[index] = _temporaryButton!;
     }
@@ -51,7 +52,8 @@ class ButtonModel with ChangeNotifier {
   void selectButton(int index) {
     if (index >= 0 && index < _factoryButtons.length) {
       _selectedIndex = index;
-      _temporaryButton = ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
+      _temporaryButton =
+          ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
       notifyListeners();
     }
   }
@@ -59,7 +61,8 @@ class ButtonModel with ChangeNotifier {
   void selectSavedButton(int index) {
     if (index >= 0 && index < _savedButtons.length) {
       _selectedIndex = index;
-      _temporaryButton = ButtonBuilder().fromButtonData(_savedButtons[index]).build();
+      _temporaryButton =
+          ButtonBuilder().fromButtonData(_savedButtons[index]).build();
       notifyListeners();
     }
   }
@@ -83,38 +86,12 @@ class ButtonModel with ChangeNotifier {
         .setType(type)
         .setText(currentText)
         .setDocument(Document())
+        .setBold(false)
+        .setItalic(false)
+        .setUnderline(false)
+        .setBorder(false)
         .build();
     _temporaryButton = newButton;
-    notifyListeners();
-  }
-
-  void resetButton() {
-    if (_temporaryButton != null) {
-      _temporaryButton = ButtonBuilder()
-          .setType(_temporaryButton!.type)
-          .setText(_defaultText)
-          .setDocument(Document())
-          .build();
-      notifyListeners();
-    }
-  }
-
-  void updateButtonTextStyle(
-      bool isBold, bool isItalic, bool isUnderline, bool isBorder) {
-    if (_temporaryButton != null) {
-      _temporaryButton = _temporaryButton!.copyWith(
-        id: const Uuid().v4(),
-        isBold: isBold,
-        isItalic: isItalic,
-        isUnderline: isUnderline,
-        isBorder: isBorder,
-      );
-      notifyListeners();
-    }
-  }
-
-  void resetTemporaryButton() {
-    _temporaryButton = null;
     notifyListeners();
   }
 
@@ -126,6 +103,10 @@ class ButtonModel with ChangeNotifier {
             .setType(type)
             .setText(_defaultText)
             .setDocument(Document())
+            .setBold(false)
+            .setItalic(false)
+            .setUnderline(false)
+            .setBorder(false)
             .build());
       }
       _factoryButtons.addAll(buttons);

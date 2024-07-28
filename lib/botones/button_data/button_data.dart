@@ -25,10 +25,10 @@ abstract class ButtonData {
     required this.type,
     required this.text,
     required this.document,
-    required this.isBold,
-    required this.isItalic,
-    required this.isUnderline,
-    required this.isBorder,
+     this.isBold = false,
+     this.isItalic  = false,
+     this.isUnderline = false,
+     this.isBorder  = false,
     this.isHidden = false, // Valor predeterminado es falso
   });
 

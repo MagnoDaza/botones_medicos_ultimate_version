@@ -3,6 +3,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:uuid/uuid.dart';
 import '../botones/button_data/button_data.dart';
 import '../botones/bottons_builder/button_builder.dart';
+import '../controller/text_style_notifier.dart';
 
 class ButtonModel with ChangeNotifier {
   final List<ButtonData> _factoryButtons = [];
@@ -30,40 +31,40 @@ class ButtonModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void saveNewButton() {
+  void saveNewButton(TextStyleNotifier textStyleNotifier) {
     if (_temporaryButton == null) return;
     _temporaryButton = _temporaryButton!.copyWith(id: const Uuid().v4());
     _savedButtons.add(_temporaryButton!);
     _temporaryButton = null;
+    textStyleNotifier.resetTextStyle();
     notifyListeners();
   }
 
-  void updateExistingButton() {
+  void updateExistingButton(TextStyleNotifier textStyleNotifier) {
     if (_temporaryButton == null) return;
-    final index =
-        _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+    final index = _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
     if (index != -1) {
       _savedButtons[index] = _temporaryButton!;
     }
     _temporaryButton = null;
+    textStyleNotifier.resetTextStyle();
     notifyListeners();
   }
 
   void selectButton(int index) {
     if (index >= 0 && index < _factoryButtons.length) {
       _selectedIndex = index;
-      _temporaryButton =
-          ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
+      _temporaryButton = ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
       notifyListeners();
     }
   }
 
-  void selectSavedButton(int index) {
+  void selectSavedButton(int index, TextStyleNotifier textStyleNotifier) {
     if (index >= 0 && index < _savedButtons.length) {
       _selectedIndex = index;
-      _temporaryButton =
-          ButtonBuilder().fromButtonData(_savedButtons[index]).build();
+      _temporaryButton = ButtonBuilder().fromButtonData(_savedButtons[index]).build();
       notifyListeners();
+      _updateTextStyleNotifier(textStyleNotifier);
     }
   }
 
@@ -83,14 +84,14 @@ class ButtonModel with ChangeNotifier {
 
   void createNewButton(ButtonType type, String currentText) {
     final newButton = ButtonBuilder()
-        .setType(type)
-        .setText(currentText)
-        .setDocument(Document())
-        .setBold(false)
-        .setItalic(false)
-        .setUnderline(false)
-        .setBorder(false)
-        .build();
+      .setType(type)
+      .setText(currentText)
+      .setDocument(Document())
+      .setBold(false)
+      .setItalic(false)
+      .setUnderline(false)
+      .setBorder(false)
+      .build();
     _temporaryButton = newButton;
     notifyListeners();
   }
@@ -100,14 +101,14 @@ class ButtonModel with ChangeNotifier {
       final List<ButtonData> buttons = [];
       for (ButtonType type in ButtonType.values) {
         buttons.add(ButtonBuilder()
-            .setType(type)
-            .setText(_defaultText)
-            .setDocument(Document())
-            .setBold(false)
-            .setItalic(false)
-            .setUnderline(false)
-            .setBorder(false)
-            .build());
+          .setType(type)
+          .setText(_defaultText)
+          .setDocument(Document())
+          .setBold(false)
+          .setItalic(false)
+          .setUnderline(false)
+          .setBorder(false)
+          .build());
       }
       _factoryButtons.addAll(buttons);
       _buttonsInitialized = true;
@@ -136,6 +137,17 @@ class ButtonModel with ChangeNotifier {
         isHidden: !button.isHidden,
       );
       notifyListeners();
+    }
+  }
+
+  void _updateTextStyleNotifier(TextStyleNotifier textStyleNotifier) {
+    if (_temporaryButton != null) {
+      textStyleNotifier.updateTextStyle(
+        isBold: _temporaryButton!.isBold,
+        isItalic: _temporaryButton!.isItalic,
+        isUnderline: _temporaryButton!.isUnderline,
+        isBorder: _temporaryButton!.isBorder,
+      );
     }
   }
 }

@@ -36,25 +36,29 @@ class ButtonModel with ChangeNotifier {
     _temporaryButton = _temporaryButton!.copyWith(id: const Uuid().v4());
     _savedButtons.add(_temporaryButton!);
     _temporaryButton = null;
-    textStyleNotifier.resetTextStyle(); // Resetear los estilos después de guardar
+    textStyleNotifier
+        .resetTextStyle(); // Resetear los estilos después de guardar
     notifyListeners();
   }
 
   void updateExistingButton(TextStyleNotifier textStyleNotifier) {
     if (_temporaryButton == null) return;
-    final index = _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
+    final index =
+        _savedButtons.indexWhere((button) => button.id == _temporaryButton!.id);
     if (index != -1) {
       _savedButtons[index] = _temporaryButton!;
     }
     _temporaryButton = null;
-    textStyleNotifier.resetTextStyle(); // Resetear los estilos después de actualizar
+    textStyleNotifier
+        .resetTextStyle(); // Resetear los estilos después de actualizar
     notifyListeners();
   }
 
   void selectButton(int index) {
     if (index >= 0 && index < _factoryButtons.length) {
       _selectedIndex = index;
-      _temporaryButton = ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
+      _temporaryButton =
+          ButtonBuilder().fromButtonData(_factoryButtons[index]).build();
       notifyListeners();
     }
   }
@@ -62,7 +66,8 @@ class ButtonModel with ChangeNotifier {
   void selectSavedButton(int index, TextStyleNotifier textStyleNotifier) {
     if (index >= 0 && index < _savedButtons.length) {
       _selectedIndex = index;
-      _temporaryButton = ButtonBuilder().fromButtonData(_savedButtons[index]).build();
+      _temporaryButton =
+          ButtonBuilder().fromButtonData(_savedButtons[index]).build();
       notifyListeners();
       _updateTextStyleNotifier(textStyleNotifier);
     }
@@ -84,39 +89,41 @@ class ButtonModel with ChangeNotifier {
 
   void createNewButton(ButtonType type, String currentText) {
     final newButton = ButtonBuilder()
-      .setType(type)
-      .setText(currentText)
-      .setDocument(Document())
-      .setBold(false)
-      .setItalic(false)
-      .setUnderline(false)
-      .setBorder(false)
-      .build();
+        .setType(type)
+        .setText(currentText)
+        .setDocument(Document())
+        .setBold(false)
+        .setItalic(false)
+        .setUnderline(false)
+        .setBorder(false)
+        .build();
     _temporaryButton = newButton;
     notifyListeners();
   }
 
-  void changeButtonType(ButtonType newType, {required TextStyleNotifier textStyleNotifier}) {
+  void changeButtonType(ButtonType newType,
+      {required TextStyleNotifier textStyleNotifier}) {
     if (_temporaryButton == null) return;
     final currentText = _temporaryButton!.text;
     final currentDocument = _temporaryButton!.document;
-    final currentIsBold = _temporaryButton!.isBold;
-    final currentIsItalic = _temporaryButton!.isItalic;
-    final currentIsUnderline = _temporaryButton!.isUnderline;
-    final currentIsBorder = _temporaryButton!.isBorder;
+    final currentIsBold = textStyleNotifier.isBold;
+    final currentIsItalic = textStyleNotifier.isItalic;
+    final currentIsUnderline = textStyleNotifier.isUnderline;
+    final currentIsBorder = textStyleNotifier.isBorder;
 
     _temporaryButton = ButtonBuilder()
-      .fromButtonData(_temporaryButton!)
-      .setType(newType)
-      .setText(currentText)
-      .setDocument(currentDocument)
-      .setBold(currentIsBold)
-      .setItalic(currentIsItalic)
-      .setUnderline(currentIsUnderline)
-      .setBorder(currentIsBorder)
-      .build();
+        .fromButtonData(_temporaryButton!)
+        .setType(newType)
+        .setText(currentText)
+        .setDocument(currentDocument)
+        .setBold(currentIsBold)
+        .setItalic(currentIsItalic)
+        .setUnderline(currentIsUnderline)
+        .setBorder(currentIsBorder)
+        .build();
     notifyListeners();
-    _updateTextStyleNotifier(textStyleNotifier); // Asegurarse de que el TextStyleNotifier se actualice
+    _updateTextStyleNotifier(
+        textStyleNotifier); // Asegurarse de que el TextStyleNotifier se actualice
   }
 
   void initializeButtons() {
@@ -124,14 +131,14 @@ class ButtonModel with ChangeNotifier {
       final List<ButtonData> buttons = [];
       for (ButtonType type in ButtonType.values) {
         buttons.add(ButtonBuilder()
-          .setType(type)
-          .setText(_defaultText)
-          .setDocument(Document())
-          .setBold(false)
-          .setItalic(false)
-          .setUnderline(false)
-          .setBorder(false)
-          .build());
+            .setType(type)
+            .setText(_defaultText)
+            .setDocument(Document())
+            .setBold(false)
+            .setItalic(false)
+            .setUnderline(false)
+            .setBorder(false)
+            .build());
       }
       _factoryButtons.addAll(buttons);
       _buttonsInitialized = true;

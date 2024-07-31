@@ -17,24 +17,29 @@ class _OrderButtonsState extends State<OrderButtons> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Reordenar Botones'),
-   
       ),
-      body: ReorderableListView(
-        buildDefaultDragHandles: true,
-
-        onReorder: (oldIndex, newIndex) {
-          buttonModel.reorderButtons(oldIndex, newIndex);
-        },
-        children: [
-          for (final button in buttonModel.savedButtons)
-            ListTile(
-              key: ValueKey(button.id),
-              title: Text(
-                  '${button.text} (${button.type.toString().split('.').last})'),
-              trailing: const Icon(Icons.drag_handle),
+      body: buttonModel.savedButtons.isEmpty
+          ? const Center(
+              child: Text(
+                'Aún no hay botones para reordenar',
+                style: TextStyle(fontSize: 18),
+              ),
+            )
+          : ReorderableListView(
+              buildDefaultDragHandles: true,
+              onReorder: (oldIndex, newIndex) {
+                buttonModel.reorderButtons(oldIndex, newIndex);
+              },
+              children: [
+                for (final button in buttonModel.savedButtons)
+                  ListTile(
+                    key: ValueKey(button.id),
+                    title: Text(
+                        '${button.text} (${button.type.toString().split('.').last})'),
+                    trailing: const Icon(Icons.drag_handle),
+                  ),
+              ],
             ),
-        ],
-      ),
     );
   }
 }

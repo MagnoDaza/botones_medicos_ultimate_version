@@ -45,13 +45,13 @@ class _CustomQuillToolbarState extends State<CustomQuillToolbar> {
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Recorte',
-          toolbarColor: Colors.transparent,
+          toolbarColor: Colors.orange,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
         ),
         IOSUiSettings(
-          title: 'Cropper',
+          title: 'Recorte',
         ),
         WebUiSettings(
           context: context,
